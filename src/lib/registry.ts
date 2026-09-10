@@ -83,6 +83,20 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     keywords: ["edi", "x12", "edifact", "850", "810", "856", "orders", "invoic", "xml", "json", "supply chain", "hipaa", "b2b"],
     status: "ready",
   },
+  {
+    id: "jwt-inspector",
+    name: "JWT & OAuth Token Debugger",
+    slug: "/tools/jwt-inspector",
+    category: "Security & Dev",
+    shortDesc: "Decode, verify Web Crypto signatures, and inspect OAuth tokens client-side.",
+    description:
+      "Inspect JSON Web Tokens client-side. Live expiration countdown, RFC 7519 claim humanizer, and Web Crypto signature verification for HS256/384/512 and RS256 with zero data egress.",
+    icon: "Key",
+    badge: "Zero Egress",
+    supportedFormats: ["JWT", "JWS", "OAuth", "OIDC", "JSON"],
+    keywords: ["jwt", "token", "oauth", "oidc", "bearer", "auth", "decode", "verify", "hs256", "rs256", "security"],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

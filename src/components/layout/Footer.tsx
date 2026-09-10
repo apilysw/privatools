@@ -51,6 +51,11 @@ export function Footer() {
                   EDI X12 & EDIFACT Viewer
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/jwt-inspector" className="hover:text-emerald-500 transition-colors">
+                  JWT & OAuth Token Debugger
+                </Link>
+              </li>
             </ul>
           </div>
 

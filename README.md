@@ -44,7 +44,12 @@ Privatools is an open, high-performance suite of utility converters built with *
 - Interactive segment tree inspector with real-time segment search and element breakdown.
 - Export and convert EDI to **Formatted EDI (.edi)**, **Structured JSON (.json)**, and **Semantic XML (.xml)** with zero data egress.
 
-### 6. Verifiable Privacy Audit (`/privacy-audit`)
+### 6. JWT & OAuth Token Debugger (`/tools/jwt-inspector`)
+- Inspect JSON Web Tokens client-side: Tri-color token segment breakdown, live expiration countdown timer, and claim humanizer.
+- Cryptographic signature verification via native Web Crypto for HMAC (HS256, HS384, HS512) and RSA (RS256, RS384, RS512).
+- Live token editing and re-signing sandbox for local testing with zero network requests.
+
+### 7. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---

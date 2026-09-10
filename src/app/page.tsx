@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   Binary,
   Code2,
+  Key,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -24,6 +25,7 @@ const iconMap: Record<string, React.ElementType> = {
   Binary,
   ShieldCheck,
   Code2,
+  Key,
 };
 
 export default function HomePage() {
