@@ -54,6 +54,7 @@ export default function SqliteLabPage() {
   const [overview, setOverview] = useState<DatabaseOverview | null>(null);
   const [activeView, setActiveView] = useState<LabView>("tables");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // --- TABLE EXPLORER STATE ---
@@ -127,6 +128,7 @@ ORDER BY total_spent DESC;`
   const handleLoadSampleDb = async () => {
     try {
       setIsLoading(true);
+      setErrorMsg(null);
       const bytes = await generateSampleDatabase();
       if (db) db.close();
 
@@ -136,8 +138,9 @@ ORDER BY total_spent DESC;`
       setDbSize(bytes.byteLength);
       refreshOverview(newDb);
       setQueryResult(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load sample database:", err);
+      setErrorMsg(err?.message || "Failed to load sample database.");
     } finally {
       setIsLoading(false);
     }
@@ -147,6 +150,7 @@ ORDER BY total_spent DESC;`
   const handleCreateBlankDb = async () => {
     try {
       setIsLoading(true);
+      setErrorMsg(null);
       if (db) db.close();
       const newDb = await createDatabase();
       // Initialize an example table
@@ -159,8 +163,9 @@ ORDER BY total_spent DESC;`
       setDbSize(bytes.byteLength);
       refreshOverview(newDb);
       setQueryResult(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to create blank database:", err);
+      setErrorMsg(err?.message || "Failed to initialize blank database.");
     } finally {
       setIsLoading(false);
     }
@@ -170,6 +175,7 @@ ORDER BY total_spent DESC;`
   const handleFileUpload = async (file: File) => {
     try {
       setIsLoading(true);
+      setErrorMsg(null);
       const buffer = await file.arrayBuffer();
       const bytes = new Uint8Array(buffer);
 
@@ -181,9 +187,9 @@ ORDER BY total_spent DESC;`
       setDbSize(bytes.byteLength);
       refreshOverview(newDb);
       setQueryResult(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to open SQLite database:", err);
-      alert("Unable to parse SQLite database file. Ensure it is a valid .sqlite or .db file.");
+      setErrorMsg(err?.message || "Unable to parse SQLite database file. Ensure it is a valid .sqlite or .db file.");
     } finally {
       setIsLoading(false);
     }
@@ -306,6 +312,22 @@ ORDER BY total_spent DESC;`
           </button>
         </div>
       </div>
+
+      {/* Error Notification */}
+      {errorMsg && (
+        <div className="flex items-center justify-between gap-2.5 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs animate-in fade-in">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span className="font-medium">{errorMsg}</span>
+          </div>
+          <button
+            onClick={() => setErrorMsg(null)}
+            className="p-1 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-600"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* NO DATABASE STATE (DROPZONE) */}

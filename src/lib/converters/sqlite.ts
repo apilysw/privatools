@@ -7,6 +7,9 @@ export async function getSqlJs(): Promise<SqlJsStatic> {
   if (!sqlPromise) {
     sqlPromise = initSqlJs({
       locateFile: (file) => `/${file}`,
+    }).catch((err) => {
+      sqlPromise = null;
+      throw err;
     });
   }
   return sqlPromise;
