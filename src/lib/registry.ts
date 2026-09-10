@@ -111,6 +111,20 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     keywords: ["pdf", "merge", "split", "extract", "rotate", "combine", "pages", "privacy", "document", "organize"],
     status: "ready",
   },
+  {
+    id: "hash-studio",
+    name: "Cryptographic Checksum & File Hash Studio",
+    slug: "/tools/hash-studio",
+    category: "Security & Dev",
+    shortDesc: "Compute and verify SHA-256, SHA-512, MD5, CRC32, HMACs, and PBKDF2 keys.",
+    description:
+      "Hardware-accelerated cryptographic hash calculation and file checksum verification. Compute SHA-256, SHA-512, MD5, CRC32, generate keyed HMACs, and derive PBKDF2 keys in local memory with zero data egress.",
+    icon: "Hash",
+    badge: "Zero Egress",
+    supportedFormats: ["SHA-256", "SHA-512", "MD5", "CRC-32", "HMAC", "PBKDF2"],
+    keywords: ["hash", "checksum", "sha256", "sha512", "md5", "crc32", "hmac", "pbkdf2", "crypto", "verify", "digest", "signature"],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

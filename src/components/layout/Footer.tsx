@@ -61,6 +61,11 @@ export function Footer() {
                   PDF Privacy Lab (Merge & Split)
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/hash-studio" className="hover:text-emerald-500 transition-colors">
+                  Checksum & Hash Studio (SHA/MD5/HMAC)
+                </Link>
+              </li>
             </ul>
           </div>
 

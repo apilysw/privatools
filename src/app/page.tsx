@@ -17,6 +17,7 @@ import {
   Code2,
   Key,
   FileText,
+  Hash,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -28,6 +29,7 @@ const iconMap: Record<string, React.ElementType> = {
   Code2,
   Key,
   FileText,
+  Hash,
 };
 
 export default function HomePage() {

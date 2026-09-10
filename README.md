@@ -56,7 +56,15 @@ Privatools is an open, high-performance suite of utility converters built with *
 - **Sample PDF Generator:** 1-click in-browser generation of a sample 3-page A4 document for immediate testing without local files.
 - 100% in-memory execution via `pdf-lib` with zero server uploads or disk caching.
 
-### 8. Verifiable Privacy Audit (`/privacy-audit`)
+### 8. Cryptographic Checksum & File Hash Studio (`/tools/hash-studio`)
+- **File Checksum & Integrity Verifier:** In-memory hardware-accelerated digestion for **SHA-256**, **SHA-512**, **SHA-384**, **SHA-1**, **MD5**, and **CRC-32**.
+- **Live Checksum Matcher:** Paste expected vendor/release hashes and get instant green verification with auto-detected algorithms.
+- **Live String & Text Hasher:** Instant parallel calculation of all 6 algorithms with test vectors and multi-format output (Lowercase Hex, Uppercase Hex, Base64).
+- **HMAC Message Authentication:** Compute keyed signatures (HMAC-SHA256, HMAC-SHA512, etc.) for API webhooks and security tokens.
+- **PBKDF2 Key Derivation:** Derive cryptographic master keys from passwords with configurable iterations (10k to 600k), salt generation, and bit lengths.
+- **Manifest Export:** Download standard `.sha256` / `checksums.txt` files directly.
+
+### 9. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---
