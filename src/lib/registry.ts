@@ -125,6 +125,20 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     keywords: ["hash", "checksum", "sha256", "sha512", "md5", "crc32", "hmac", "pbkdf2", "crypto", "verify", "digest", "signature"],
     status: "ready",
   },
+  {
+    id: "sqlite-lab",
+    name: "SQLite Database Explorer & Exporter",
+    slug: "/tools/sqlite-lab",
+    category: "Data & Config",
+    shortDesc: "Open, query, browse tables, and export SQLite databases via in-browser WebAssembly.",
+    description:
+      "Run the official SQLite engine compiled to WebAssembly locally in your browser. Inspect table schemas, browse paginated records, run arbitrary SQL queries, and export tables to CSV or JSON with zero data egress.",
+    icon: "Database",
+    badge: "Zero Egress",
+    supportedFormats: ["SQLite", "DB", "SQL", "CSV", "JSON"],
+    keywords: ["sqlite", "db", "sql", "database", "query", "table", "schema", "csv", "json", "export", "wasm"],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

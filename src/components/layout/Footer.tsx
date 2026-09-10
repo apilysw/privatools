@@ -66,6 +66,11 @@ export function Footer() {
                   Checksum & Hash Studio (SHA/MD5/HMAC)
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/sqlite-lab" className="hover:text-emerald-500 transition-colors">
+                  SQLite Database Explorer & Exporter
+                </Link>
+              </li>
             </ul>
           </div>
 

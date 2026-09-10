@@ -64,7 +64,15 @@ Privatools is an open, high-performance suite of utility converters built with *
 - **PBKDF2 Key Derivation:** Derive cryptographic master keys from passwords with configurable iterations (10k to 600k), salt generation, and bit lengths.
 - **Manifest Export:** Download standard `.sha256` / `checksums.txt` files directly.
 
-### 9. Verifiable Privacy Audit (`/privacy-audit`)
+### 9. SQLite Database Explorer & Exporter (`/tools/sqlite-lab`)
+- **In-Browser WebAssembly Runtime:** Runs the official SQLite C engine compiled to WebAssembly (`sql.js`) with zero network egress.
+- **Table Explorer & Data Grid:** Inspect table schemas, column types, primary keys, and browse paginated table records with live search filtering.
+- **Interactive SQL Console:** Run arbitrary SQL queries (`SELECT`, `INSERT`, `JOIN`, `GROUP BY`, `PRAGMA`), view sub-millisecond execution benchmarks, and export query result sets.
+- **Format Converters:** Export individual tables or custom SQL queries directly to **CSV** and **JSON**.
+- **Binary Database Export:** Save modified or newly created databases directly as `.sqlite` / `.db` files.
+- **Sample Database Generator:** 1-click generation of an e-commerce database (`customers`, `products`, `orders`) for immediate testing.
+
+### 10. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---
