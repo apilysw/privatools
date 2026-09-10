@@ -141,10 +141,14 @@ export async function parseCertificate(
   let cert: X509Certificate;
 
   if (typeof input === "string") {
-    let clean = input.trim();
-    if (!clean.includes("-----BEGIN CERTIFICATE-----")) {
-      // Check if raw base64, clean non-base64 characters
-      const base64Clean = clean.replace(/\s+/g, "");
+    let clean = input.replace(/\r\n/g, "\n").trim();
+    const beginIndex = clean.indexOf("-----BEGIN CERTIFICATE-----");
+    const endIndex = clean.indexOf("-----END CERTIFICATE-----");
+
+    if (beginIndex !== -1 && endIndex !== -1) {
+      clean = clean.substring(beginIndex, endIndex + "-----END CERTIFICATE-----".length);
+    } else if (!clean.includes("-----BEGIN")) {
+      const base64Clean = clean.replace(/[^A-Za-z0-9+/=]/g, "");
       clean = `-----BEGIN CERTIFICATE-----\n${base64Clean}\n-----END CERTIFICATE-----`;
     }
     cert = new X509Certificate(clean);
@@ -397,44 +401,53 @@ qtMDCQSBRYo4e0ZgbDYSQ3Hp6pXi/D+yi0a6Zxe6xLVqALREOSgPdXyAZAVtGjEi
     name: "Internal Root CA Certificate",
     description: "Self-signed Certificate Authority with Certificate Signing and CRL Signing flags.",
     pem: `-----BEGIN CERTIFICATE-----
-MIIDRjCCAi6gAwIBAgIQX7Xj1x+9qR3p8k2w8o7uOTANBgkqhkiG9w0BAQsFADA4
-MRUwEwYDVQQDEwxQcml2YXRlIFJvb3QxEDAOBgNVBAoTB0FjbWUgQ0ExCzAJBgNV
-BAYTAlVTMB4XDTI1MDEwMTAwMDAwMFoXDTM1MDEwMTAwMDAwMFowODEVMBMGA1UE
-AxMMUHJpdmF0ZSBSb290MRAwDgYDVQQKEwdBY21lIENBMQswCQYDVQQGEwJVUzCC
-ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKxQG9Z2Hk1vXlX8Q0zM5gT1
-d3v8K7d2l4n6m9q1r3t5u8w0x2y4z6a8b0c2d4e6f8g0h2j4l6n8p0r2t4v6x8z0
-A1b3c5e7g9i1k3m5o7q9s1u3w5y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i3
-k5m7o9q1s3u5w7y9a1c3e5g7i9k1m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u7
-w9y1a3c5e7g9i1k3m5o7q9s1u3w5y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1
-AgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1Ud
-DgQWBBR2s3v4y5z6A1b2c3d4e5f6g7h8iTANBgkqhkiG9w0BAQsFAAOCAQEAMk7u
-3v8K7d2l4n6m9q1r3t5u8w0x2y4z6a8b0c2d4e6f8g0h2j4l6n8p0r2t4v6x8z0A
-1b3c5e7g9i1k3m5o7q9s1u3w5y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i3k
-5m7o9q1s3u5w7y9a1c3e5g7i9k1m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u7w
-9y1a3c5e7g9i1k3m5o7q9s1u3w5y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i
-3k5m7o9q1s3u5w7y9a1c3e5g7i9k1m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u=
+MIID5jCCAs6gAwIBAgIISo8rHJ0OP1owDQYJKoZIhvcNAQELBQAwgZ4xJDAiBgNV
+BAMTG1ByaXZhdG9vbHMgSW50ZXJuYWwgUm9vdCBDQTEcMBoGA1UEChMTUHJpdmF0
+b29scyBTZWN1cml0eTEeMBwGA1UECxMVQ2VydGlmaWNhdGUgQXV0aG9yaXR5MQsw
+CQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy
+YW5jaXNjbzAeFw0yNDAxMDEwMDAwMDBaFw0zNDAxMDEwMDAwMDBaMIGeMSQwIgYD
+VQQDExtQcml2YXRvb2xzIEludGVybmFsIFJvb3QgQ0ExHDAaBgNVBAoTE1ByaXZh
+dG9vbHMgU2VjdXJpdHkxHjAcBgNVBAsTFUNlcnRpZmljYXRlIEF1dGhvcml0eTEL
+MAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG
+cmFuY2lzY28wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCgiIJU1kWj
+BLhRVs1iemlxP9fDPGMFWu4fPMG/0yYk7TEML5eaJ9BPtUcaSHSZRaqWuctvHUdh
+ojq0o3mwIMxq4ZvUOg9ozouq08Q0/cNZ8l7g/zAHhFIfaWzS6/eL5WSQ7AeSKy9P
+AC+KpxhGjMhpQjz5Sx4pJG2fVzl199x1A9g0v4Mnc5y3j+hwKtT2Yi4wAtLV495A
+tAdtOJXosobSWhw7KLhyKRQhVj1npXjJN1PA9v1jdRrD6g9xldgWf4LDbNr09418
+Bzuah27+qDfW35Bm5hWNLbcBImByEveM+p09JGsOxs5axWYn47l/DkePp8ZszoeL
+P49ESfdbCfUhAgMBAAGjJjAkMBIGA1UdEwEB/wQIMAYBAf8CAQMwDgYDVR0PAQH/
+BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4IBAQAerEiRksO0wb6kiDSkMhJ/oh7IluO1
+v00b0OAbIS5kc+gnw3BdXYrs/815GpN3AspFirp1+UvHSure8IW57CLXLDb+pFKT
+ZcWctlPtTcwDBvpUXHDEdp+rdMUy6U+YoMb/Bdb8A+2SGoLae0qPjLXH9C8WnhZd
+qwRxLOUPMxho6/jPK6l/95OebXMW2P/KJlEvHZGKLwUJlIPz5JgcHw4VSZRf01Az
+IhJ1WjxXyJrESBneza/GotLiH2b+u+RwcvzqhDtZzFb4IW0bVv3u6VAweYF3DHCA
+ZWvs8SJK01OyZRYCw/nC5dmQYJKSAhD2nvBSm2Eb+95ne9OYm9nxtJuj
 -----END CERTIFICATE-----`,
   },
   expired: {
     name: "Expired TLS Certificate (Historical Audit)",
     description: "Certificate that has passed its notAfter validity window, triggering expiration audit warnings.",
     pem: `-----BEGIN CERTIFICATE-----
-MIIDDzCCAfegAwIBAgIUW3zQ7Z4+0p0P6q5v8u9t4r3q2s8wDQYJKoZIhvcNAQEL
-BQAwNjEUMBIGA1UEAxMLb2xkLXNpdGUuY2ExEDAOBgNVBAoTB0xlZ2FjeTETMBEG
-A1UEBxMKTmV3IFlvcmswHhcNMjEwMTAxMDAwMDAwWhcNMjIwMTAxMDAwMDAwWjA2
-MRQwEgYDVQQDEwtvbGQtc2l0ZS5jYTEQMA4GA1UEChMHTGVnYWN5MRMwEQYDVQQH
-EwpOZXcgWW9yazCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM3l4n6m
-9q1r3t5u8w0x2y4z6a8b0c2d4e6f8g0h2j4l6n8p0r2t4v6x8z0A1b3c5e7g9i1k
-3m5o7q9s1u3w5y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i3k5m7o9q1s3u5w
-7y9a1c3e5g7i9k1m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u7w9y1a3c5e7g9i
-1k3m5o7q9s1u3w5y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i3k5m7o9q1s3u
-5w7y9a1c3e5g7i9k1m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u7w9y1a3c5e7g9
-AgMBAAEwDQYJKoZIhvcNAQELBQADggEBAFk7u3v8K7d2l4n6m9q1r3t5u8w0x2y4
-z6a8b0c2d4e6f8g0h2j4l6n8p0r2t4v6x8z0A1b3c5e7g9i1k3m5o7q9s1u3w5y7
-a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i3k5m7o9q1s3u5w7y9a1c3e5g7i9k1
-m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u7w9y1a3c5e7g9i1k3m5o7q9s1u3w5
-y7a9c1e3g5i7k9m1o3q5s7u9w1y3a5c7e9g1i3k5m7o9q1s3u5w7y9a1c3e5g7i9
-k1m3o5q7s9u1w3y5a7c9e1g3i5k7m9o1q3s5u7w9y1a3c5e7g9i1k3m5o7q9s1u3=
+MIIDrzCCApegAwIBAgIIezqcHV6PKkswDQYJKoZIhvcNAQELBQAweTEfMB0GA1UE
+AxMWbGVnYWN5LXBvcnRhbC5pbnRlcm5hbDEjMCEGA1UEChMaTGVnYWN5IEluZnJh
+c3RydWN0dXJlIENvcnAxCzAJBgNVBAYTAlVTMREwDwYDVQQIEwhOZXcgWW9yazER
+MA8GA1UEBxMITmV3IFlvcmswHhcNMjEwMTAxMDAwMDAwWhcNMjIwMTAxMDAwMDAw
+WjB5MR8wHQYDVQQDExZsZWdhY3ktcG9ydGFsLmludGVybmFsMSMwIQYDVQQKExpM
+ZWdhY3kgSW5mcmFzdHJ1Y3R1cmUgQ29ycDELMAkGA1UEBhMCVVMxETAPBgNVBAgT
+CE5ldyBZb3JrMREwDwYDVQQHEwhOZXcgWW9yazCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAKTGexmyrnTcnvYcoMorVDyfZohFXJqhYpb8Tbz2YzHrUC06
++xkChw9rLZjTmTzLwAZGPHJZ+70ahl8bA9IVy+RSplh4KAkLGvzgbamk5WxEyhVf
+zcxb3e3bXr0L22+4oNR6XBLoOitPu9Vv6UOEuYEzvb+Dx6yQQ2/DbSVJ0bY/ydOE
+zFRSRp4SFGQBsJEkIyhoRNJNMhpHMAexGv0SHbHlzSTZE5NIQwML+4PjXG6ZmgsL
+KSyf0VsUnSPpIEv9CdcPpwLJ1QxMnWVE7cCmjRWtw3clR0OEuX5D8cMf3D+Pyb+r
+c52KJtqG8SkEgexVO+EWUdzTlS7JxYt/VTk+pHkCAwEAAaM7MDkwNwYDVR0RBDAw
+LoIWbGVnYWN5LXBvcnRhbC5pbnRlcm5hbIIUb2xkLXNlcnZpY2UuaW50ZXJuYWww
+DQYJKoZIhvcNAQELBQADggEBAHajuTVOLX+xMJe4lCFiEZF+QGMJDyHYOzxqvoo5
+uaRHLo1uiQxDNPrKTBPEj62sYCOMA+4nlKRNuGVV6UirFX8ARlg3CSH7+6vrr/Np
+zirHs5rO2IReZAggC1lGPfZtF72Z4MfcilWe091hCA8gIrdHVEEYiWnbDtqahk2C
+mbARLugp3cxqGdMwqoaDIsTp+vjzUK5AQNcnKY6suvLsfSKPX3Ndvoo4ow/BSsed
++D+M+w3kkLTRZeofIjIEcFtQQ9E3aW7QBwNSholQ5IS/6w17Y20OcMV3blSZ2U+z
+lsngaNR+KvIi1oo5c2xiZYMLtym6FmXCC2O9p1gNwGud0EM=
 -----END CERTIFICATE-----`,
   },
 };
