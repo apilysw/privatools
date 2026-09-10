@@ -41,6 +41,11 @@ export function Footer() {
                   Base64 / Hex / URL / Markdown
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/cert-inspector" className="hover:text-emerald-500 transition-colors">
+                  X.509 Certificate Inspector
+                </Link>
+              </li>
             </ul>
           </div>
 

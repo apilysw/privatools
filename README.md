@@ -33,7 +33,12 @@ Privatools is an open, high-performance suite of utility converters built with *
 - **Case Converters:** `camelCase`, `snake_case`, `kebab-case`, `PascalCase`, `CONSTANT_CASE`.
 - Real-time character, word, and byte size indicators.
 
-### 4. Verifiable Privacy Audit (`/privacy-audit`)
+### 4. X.509 Certificate Inspector & Exporter (`/tools/cert-inspector`)
+- Inspect SSL/TLS certificates client-side: Subject, Issuer, SANs, validity window, serial number, algorithms, and key usages.
+- Calculates SHA-256 and SHA-1 cryptographic thumbprints in-browser via Web Crypto.
+- Export and convert certificates between **PEM (.crt)**, **Binary DER (.der)**, **Public Key SPKI (.pub.pem)**, and **JSON report**.
+
+### 5. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---
