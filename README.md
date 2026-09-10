@@ -38,7 +38,13 @@ Privatools is an open, high-performance suite of utility converters built with *
 - Calculates SHA-256 and SHA-1 cryptographic thumbprints in-browser via Web Crypto.
 - Export and convert certificates between **PEM (.crt)**, **Binary DER (.der)**, **Public Key SPKI (.pub.pem)**, and **JSON report**.
 
-### 5. Verifiable Privacy Audit (`/privacy-audit`)
+### 5. EDI X12 & UN/EDIFACT Viewer & Converter (`/tools/edi-viewer`)
+- Humanize cryptic B2B EDI files with dictionary definitions for segments and elements.
+- Auto-detects delimiters and standards (ANSI X12 850, 810, 856 and UN/EDIFACT ORDERS, INVOIC).
+- Interactive segment tree inspector with real-time segment search and element breakdown.
+- Export and convert EDI to **Formatted EDI (.edi)**, **Structured JSON (.json)**, and **Semantic XML (.xml)** with zero data egress.
+
+### 6. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---

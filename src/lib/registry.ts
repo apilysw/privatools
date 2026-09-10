@@ -71,17 +71,17 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   },
   {
     id: "edi-viewer",
-    name: "EDI X12 & EDIFACT Viewer",
+    name: "EDI X12 & EDIFACT Viewer & Converter",
     slug: "/tools/edi-viewer",
     category: "Security & Dev",
-    shortDesc: "Translate cryptic EDI segments into structured tree views and JSON.",
+    shortDesc: "Inspect ANSI X12 and EDIFACT documents and convert between EDI, JSON, and XML.",
     description:
-      "Humanize ANSI X12 (850, 810, 856) and EDIFACT documents. Expands cryptic element definitions and converts EDI to clean JSON.",
+      "Humanize cryptic EDI documents with dictionary definitions for segments and elements. Translate ANSI X12 (850, 810, 856) and UN/EDIFACT into interactive trees, formatted EDI, structured JSON, and XML with zero data egress.",
     icon: "Code2",
-    badge: "Planned",
-    supportedFormats: ["X12", "EDIFACT", "JSON"],
-    keywords: ["edi", "x12", "edifact", "850", "810", "segments", "supply chain"],
-    status: "planned",
+    badge: "Zero Egress",
+    supportedFormats: ["X12", "EDIFACT", "JSON", "XML", "EDI"],
+    keywords: ["edi", "x12", "edifact", "850", "810", "856", "orders", "invoic", "xml", "json", "supply chain", "hipaa", "b2b"],
+    status: "ready",
   },
 ];
 

@@ -46,6 +46,11 @@ export function Footer() {
                   X.509 Certificate Inspector
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/edi-viewer" className="hover:text-emerald-500 transition-colors">
+                  EDI X12 & EDIFACT Viewer
+                </Link>
+              </li>
             </ul>
           </div>
 
