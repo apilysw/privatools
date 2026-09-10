@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X, ArrowRight, FileSpreadsheet, Image, Binary, ShieldCheck, Code2, Key } from "lucide-react";
+import { Search, X, ArrowRight, FileSpreadsheet, Image, Binary, ShieldCheck, Code2, Key, FileText } from "lucide-react";
 import { TOOLS_REGISTRY, ToolMetadata } from "@/lib/registry";
 
 interface CommandPaletteProps {
@@ -17,6 +17,7 @@ const iconMap: Record<string, React.ElementType> = {
   ShieldCheck,
   Code2,
   Key,
+  FileText,
 };
 
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {

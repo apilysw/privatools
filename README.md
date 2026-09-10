@@ -49,7 +49,14 @@ Privatools is an open, high-performance suite of utility converters built with *
 - Cryptographic signature verification via native Web Crypto for HMAC (HS256, HS384, HS512) and RSA (RS256, RS384, RS512).
 - Live token editing and re-signing sandbox for local testing with zero network requests.
 
-### 7. Verifiable Privacy Audit (`/privacy-audit`)
+### 7. Client-Side PDF Privacy Lab (`/tools/pdf-lab`)
+- **Merge Mode:** Combine multiple PDF documents with drag-and-drop / arrow reordering and page statistics.
+- **Split & Extract Mode:** Extract page ranges (e.g. `1, 3-5, 8`) or select pages visually using an interactive blueprint grid.
+- **Rotate & Organize Mode:** Rotate individual pages (90°, 180°, 270°), bulk rotate, and purge unwanted or blank pages.
+- **Sample PDF Generator:** 1-click in-browser generation of a sample 3-page A4 document for immediate testing without local files.
+- 100% in-memory execution via `pdf-lib` with zero server uploads or disk caching.
+
+### 8. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---

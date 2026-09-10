@@ -56,6 +56,11 @@ export function Footer() {
                   JWT & OAuth Token Debugger
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/pdf-lab" className="hover:text-emerald-500 transition-colors">
+                  PDF Privacy Lab (Merge & Split)
+                </Link>
+              </li>
             </ul>
           </div>
 

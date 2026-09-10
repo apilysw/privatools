@@ -97,6 +97,20 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     keywords: ["jwt", "token", "oauth", "oidc", "bearer", "auth", "decode", "verify", "hs256", "rs256", "security"],
     status: "ready",
   },
+  {
+    id: "pdf-lab",
+    name: "Client-Side PDF Privacy Lab",
+    slug: "/tools/pdf-lab",
+    category: "Data & Config",
+    shortDesc: "Merge, split, extract, rotate, and organize PDF documents with zero server uploads.",
+    description:
+      "Perform confidential PDF transformations directly in your browser. Combine multiple PDF documents, extract page ranges with an interactive picker, rotate orientations, and purge unwanted pages with 100% in-memory privacy.",
+    icon: "FileText",
+    badge: "Zero Egress",
+    supportedFormats: ["PDF", "Merge", "Split", "Rotate", "Extract"],
+    keywords: ["pdf", "merge", "split", "extract", "rotate", "combine", "pages", "privacy", "document", "organize"],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [
