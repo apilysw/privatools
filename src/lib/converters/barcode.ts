@@ -294,7 +294,16 @@ export function generateBarcodeSVG(opts: BarcodeRenderOptions): BarcodeRenderRes
       bwipOptions.parsefnc = true;
     }
 
-    const svg = bwipjs.toSVG(bwipOptions);
+    let svg = bwipjs.toSVG(bwipOptions);
+    // Ensure SVG has explicit width and height attributes matching its viewBox dimensions
+    // so browsers do not collapse its intrinsic dimensions to 0 in flexbox containers
+    const viewBoxMatch = svg.match(/viewBox=["']0\s+0\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)["']/);
+    if (viewBoxMatch) {
+      const vbWidth = viewBoxMatch[1];
+      const vbHeight = viewBoxMatch[2];
+      svg = svg.replace("<svg", `<svg width="${vbWidth}" height="${vbHeight}" style="max-width:100%;height:auto;display:block;margin:0 auto;"`);
+    }
+
     return { svg, error: null };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);

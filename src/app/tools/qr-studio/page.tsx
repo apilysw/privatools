@@ -380,11 +380,13 @@ export default function QRStudioPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <ToolHeader
-        title="Offline QR Code & Barcode Studio"
-        description="Generate, customize, batch print, and decode 1D/2D barcodes for warehousing, distribution, retail, and logistics. 100% in-browser with zero data egress."
-        badge="Zero Egress"
-      />
+      <div className="print:hidden">
+        <ToolHeader
+          title="Offline QR Code & Barcode Studio"
+          description="Generate, customize, batch print, and decode 1D/2D barcodes for warehousing, distribution, retail, and logistics. 100% in-browser with zero data egress."
+          badge="Zero Egress"
+        />
+      </div>
 
       {/* Distribution Presets Block (matches cert-inspector & diff-viewer) */}
       <div className="flex items-center justify-between gap-4 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm print:hidden">
@@ -464,9 +466,9 @@ export default function QRStudioPage() {
       {/* TAB 1: SINGLE STUDIO */}
       {/* ========================================================================= */}
       {activeTab === "single" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start print:block print:w-full">
           {/* Controls Column */}
-          <div className="lg:col-span-6 space-y-5">
+          <div className="lg:col-span-6 space-y-5 print:hidden">
             {/* Symbology Selector */}
             <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
@@ -691,16 +693,16 @@ export default function QRStudioPage() {
           </div>
 
           {/* Preview & Export Column */}
-          <div className="lg:col-span-6 space-y-5">
-            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col items-center justify-center min-h-[380px] relative">
-              <div className="absolute top-4 left-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          <div className="lg:col-span-6 space-y-5 print:w-full print:m-0 print:p-0">
+            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col items-center justify-center min-h-[380px] relative print:border-none print:shadow-none print:p-0 print:min-h-0 print:bg-white print:w-full">
+              <div className="absolute top-4 left-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 print:hidden">
                 <Eye className="w-3.5 h-3.5" />
                 <span>Live Barcode Preview</span>
               </div>
 
               {/* Error Message */}
               {renderError ? (
-                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 max-w-md text-center space-y-2 my-auto">
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 max-w-md text-center space-y-2 my-auto print:hidden">
                   <AlertCircle className="w-6 h-6 text-red-500 mx-auto" />
                   <div className="text-xs font-semibold text-red-700 dark:text-red-400">
                     Encoding Validation Error
@@ -710,14 +712,14 @@ export default function QRStudioPage() {
                   </p>
                 </div>
               ) : svgOutput ? (
-                <div className="my-auto p-6 rounded-xl bg-white border border-zinc-100 shadow-inner flex items-center justify-center overflow-auto max-w-full">
+                <div className="my-auto p-6 rounded-xl bg-white border border-zinc-100 shadow-inner flex items-center justify-center overflow-auto max-w-full print:border-2 print:border-dashed print:border-zinc-500 print:p-8 print:shadow-none print:m-auto print:rounded-2xl print:max-w-lg">
                   <div
                     dangerouslySetInnerHTML={{ __html: svgOutput }}
-                    className="flex items-center justify-center [&>svg]:max-w-full [&>svg]:h-auto"
+                    className="w-full flex items-center justify-center [&>svg]:max-w-full [&>svg]:h-auto"
                   />
                 </div>
               ) : (
-                <div className="text-center text-zinc-400 space-y-2 my-auto">
+                <div className="text-center text-zinc-400 space-y-2 my-auto print:hidden">
                   <BarcodeIcon className="w-12 h-12 stroke-[1.2] mx-auto text-zinc-300 dark:text-zinc-600" />
                   <p className="text-xs">Enter text or select a preset to generate a barcode.</p>
                 </div>
@@ -726,7 +728,7 @@ export default function QRStudioPage() {
 
             {/* Action Buttons */}
             {svgOutput && !renderError && (
-              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
+              <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3 print:hidden">
                 <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Export & Print Actions
                 </div>
@@ -871,22 +873,22 @@ export default function QRStudioPage() {
 
           {/* Generated Label Sheet Grid */}
           <div
-            className={`grid gap-4 ${
+            className={`grid gap-4 print:grid print:gap-3 print:w-full print:p-0 ${
               batchColumns === 1
-                ? "grid-cols-1"
+                ? "grid-cols-1 print:grid-cols-1"
                 : batchColumns === 2
-                ? "grid-cols-1 sm:grid-cols-2"
+                ? "grid-cols-1 sm:grid-cols-2 print:grid-cols-2"
                 : batchColumns === 3
-                ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
-                : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+                ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 print:grid-cols-3"
+                : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 print:grid-cols-4"
             }`}
           >
             {batchResults.map((item, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs flex flex-col items-center justify-between text-center page-break-inside-avoid print:border-zinc-400 print:shadow-none"
+                className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs flex flex-col items-center justify-between text-center page-break-inside-avoid print:border print:border-zinc-400 print:shadow-none print:p-3 print:rounded-xl print:bg-white"
               >
-                <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 truncate max-w-full">
+                <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 mb-2 truncate max-w-full print:text-black">
                   #{idx + 1}: {item.text}
                 </div>
 
@@ -897,7 +899,7 @@ export default function QRStudioPage() {
                 ) : item.svg ? (
                   <div
                     dangerouslySetInnerHTML={{ __html: item.svg }}
-                    className="my-auto py-2 [&>svg]:max-w-full [&>svg]:h-auto flex items-center justify-center"
+                    className="w-full my-auto py-2 flex items-center justify-center [&>svg]:max-w-full [&>svg]:h-auto"
                   />
                 ) : null}
               </div>
@@ -910,7 +912,7 @@ export default function QRStudioPage() {
       {/* TAB 3: SCAN & DECODE */}
       {/* ========================================================================= */}
       {activeTab === "scan" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start print:hidden">
           {/* Scanner Input Options */}
           <div className="lg:col-span-6 space-y-4">
             <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
