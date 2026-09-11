@@ -337,6 +337,38 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     ],
     status: "ready",
   },
+  {
+    id: "video-lab",
+    name: "Video & Audio Transcoder Studio",
+    slug: "/tools/video-lab",
+    category: "Media & Images",
+    shortDesc: "Strip audio losslessly from video, extract audio to 16-bit WAV, transcode, and convert to GIF.",
+    description:
+      "Zero-egress client-side media lab. Lossless MP4 audio stripper with ISOBMFF demuxing, video-to-WAV audio extractor with waveform visualizer, resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer.",
+    icon: "Video",
+    badge: "Zero Egress",
+    supportedFormats: ["MP4", "WebM", "MOV", "WAV", "GIF", "PCM", "Audio"],
+    keywords: [
+      "video",
+      "audio",
+      "transcoder",
+      "convert",
+      "strip audio",
+      "mute video",
+      "extract audio",
+      "mp4",
+      "webm",
+      "wav",
+      "gif",
+      "trim",
+      "cut",
+      "resize",
+      "downscale",
+      "lossless",
+      "isobmff",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

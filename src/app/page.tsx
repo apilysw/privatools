@@ -26,6 +26,7 @@ import {
   Camera,
   Network,
   Clock,
+  Video,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -46,6 +47,7 @@ const iconMap: Record<string, React.ElementType> = {
   Camera,
   Network,
   Clock,
+  Video,
 };
 
 export default function HomePage() {

@@ -106,6 +106,11 @@ export function Footer() {
                   Date, Time & Epoch Studio
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/video-lab" className="hover:text-emerald-500 transition-colors">
+                  Video & Audio Transcoder Studio
+                </Link>
+              </li>
             </ul>
           </div>
 
