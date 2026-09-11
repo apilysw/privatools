@@ -28,6 +28,7 @@ import {
   Clock,
   Video,
   Palette,
+  Dices,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -50,6 +51,7 @@ const iconMap: Record<string, React.ElementType> = {
   Clock,
   Video,
   Palette,
+  Dices,
 };
 
 export default function HomePage() {
