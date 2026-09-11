@@ -530,6 +530,62 @@ export const POPULAR_IANA_TIMEZONES: Array<{ timeZone: string; label: string }> 
   { timeZone: "Africa/Nairobi", label: "Africa/Nairobi (Kenya)" },
 ];
 
+export interface TimezoneOption {
+  timeZone: string;
+  label: string;
+  region: string;
+  citySuggestion: string;
+  countrySuggestion: string;
+}
+
+export function getAllAvailableTimezones(): TimezoneOption[] {
+  let rawList: string[] = [];
+  if (
+    typeof Intl !== "undefined" &&
+    typeof (Intl as unknown as { supportedValuesOf?: (key: string) => string[] })
+      .supportedValuesOf === "function"
+  ) {
+    try {
+      rawList = (
+        Intl as unknown as { supportedValuesOf: (key: string) => string[] }
+      ).supportedValuesOf("timeZone");
+    } catch {
+      rawList = [];
+    }
+  }
+
+  if (!rawList || rawList.length === 0) {
+    rawList = POPULAR_IANA_TIMEZONES.map((p) => p.timeZone);
+  }
+
+  return rawList.map((tz) => {
+    const popular = POPULAR_IANA_TIMEZONES.find((p) => p.timeZone === tz);
+    const parts = tz.split("/");
+    const rawRegion = parts.length > 1 ? parts[0] : "Universal";
+    const rawCity =
+      parts.length > 1 ? parts.slice(1).join(" / ").replace(/_/g, " ") : tz;
+
+    let region = rawRegion;
+    if (rawRegion === "America") region = "Americas";
+    if (rawRegion === "Europe") region = "Europe";
+    if (rawRegion === "Asia") region = "Asia & Middle East";
+    if (rawRegion === "Australia" || rawRegion === "Pacific")
+      region = "Australia & Pacific";
+    if (rawRegion === "Africa") region = "Africa";
+    if (rawRegion === "Etc" || tz === "UTC") region = "Universal / UTC";
+
+    const label = popular ? popular.label : `${tz} (${rawCity})`;
+
+    return {
+      timeZone: tz,
+      label,
+      region,
+      citySuggestion: rawCity,
+      countrySuggestion: region,
+    };
+  });
+}
+
 export function isValidTimezone(tz: string): boolean {
   if (!tz || typeof tz !== "string") return false;
   try {

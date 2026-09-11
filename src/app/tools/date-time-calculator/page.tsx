@@ -27,6 +27,7 @@ import {
   RotateCcw,
   X,
   MapPin,
+  Search,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
@@ -45,6 +46,8 @@ import {
   TimezoneCityConfig,
   POPULAR_IANA_TIMEZONES,
   isValidTimezone,
+  getAllAvailableTimezones,
+  TimezoneOption,
 } from "@/lib/converters/datetime";
 
 type StudioTab = "math" | "epoch" | "tz" | "cron";
@@ -104,7 +107,9 @@ export default function DateTimeCalculatorPage() {
   const [showAddCity, setShowAddCity] = useState<boolean>(false);
   const [newCityName, setNewCityName] = useState<string>("");
   const [newCountryName, setNewCountryName] = useState<string>("");
-  const [newTimeZone, setNewTimeZone] = useState<string>("UTC");
+  const [newTimeZone, setNewTimeZone] = useState<string>("");
+  const [isManualTz, setIsManualTz] = useState<boolean>(false);
+  const [tzSearchQuery, setTzSearchQuery] = useState<string>("");
   const [newTzError, setNewTzError] = useState<string>("");
 
   // Cron State
@@ -207,6 +212,54 @@ export default function DateTimeCalculatorPage() {
     return calculateTimezonesMatrix(base, timezoneCities);
   }, [matrixHourScrubber, timezoneCities]);
 
+  // Load all available timezones once
+  const allAvailableTimezones = useMemo(() => getAllAvailableTimezones(), []);
+
+  // Filter and group timezones by region
+  const filteredTimezoneGroups = useMemo(() => {
+    const q = tzSearchQuery.trim().toLowerCase();
+    const filtered = allAvailableTimezones.filter((item) => {
+      if (!q) return true;
+      return (
+        item.label.toLowerCase().includes(q) ||
+        item.timeZone.toLowerCase().includes(q) ||
+        item.region.toLowerCase().includes(q) ||
+        item.citySuggestion.toLowerCase().includes(q)
+      );
+    });
+
+    const groupsMap = new Map<string, TimezoneOption[]>();
+    for (const opt of filtered) {
+      const reg = opt.region || "Other";
+      if (!groupsMap.has(reg)) {
+        groupsMap.set(reg, []);
+      }
+      groupsMap.get(reg)!.push(opt);
+    }
+
+    return Array.from(groupsMap.entries()).map(([region, options]) => ({
+      region,
+      options,
+    }));
+  }, [allAvailableTimezones, tzSearchQuery]);
+
+  // Handle timezone select from dropdown
+  const handleTimezoneSelect = (tz: string) => {
+    setNewTimeZone(tz);
+    setNewTzError("");
+    if (!tz) return;
+
+    const match = allAvailableTimezones.find((item) => item.timeZone === tz);
+    if (match) {
+      if (!newCityName.trim()) {
+        setNewCityName(match.citySuggestion);
+      }
+      if (!newCountryName.trim()) {
+        setNewCountryName(match.countrySuggestion);
+      }
+    }
+  };
+
   // Calculate Cron Result
   const cronResult = useMemo(() => {
     return parseCronExpression(cronInput);
@@ -260,6 +313,10 @@ export default function DateTimeCalculatorPage() {
 
   const handleAddCustomCity = () => {
     const tzTrimmed = newTimeZone.trim();
+    if (!tzTrimmed) {
+      setNewTzError("Please select or enter a timezone.");
+      return;
+    }
     if (!isValidTimezone(tzTrimmed)) {
       setNewTzError(
         `"${tzTrimmed}" is not a recognized IANA timezone. Please select a valid timezone name.`
@@ -284,8 +341,10 @@ export default function DateTimeCalculatorPage() {
     setTimezoneCities((prev) => [...prev, newEntry]);
     setNewCityName("");
     setNewCountryName("");
-    setNewTimeZone("UTC");
+    setNewTimeZone("");
+    setTzSearchQuery("");
     setNewTzError("");
+    setIsManualTz(false);
     setShowAddCity(false);
   };
 
@@ -1365,8 +1424,77 @@ export default function DateTimeCalculatorPage() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="space-y-1">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                  {/* Timezone Selector (md:col-span-6) */}
+                  <div className="md:col-span-6 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-semibold text-zinc-500">
+                        IANA Timezone ({allAvailableTimezones.length} Available)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setIsManualTz(!isManualTz)}
+                        className="text-[10px] text-emerald-600 dark:text-emerald-400 hover:underline"
+                      >
+                        {isManualTz ? "← Back to Dropdown" : "Type Custom IANA →"}
+                      </button>
+                    </div>
+
+                    {isManualTz ? (
+                      <input
+                        type="text"
+                        placeholder="e.g. America/Indiana/Knox, Asia/Kuala_Lumpur..."
+                        value={newTimeZone}
+                        onChange={(e) => {
+                          setNewTimeZone(e.target.value);
+                          setNewTzError("");
+                        }}
+                        className="w-full p-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                    ) : (
+                      <div className="space-y-1.5">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Filter by city or timezone (e.g. Tokyo, Chicago, Berlin, GMT)..."
+                            value={tzSearchQuery}
+                            onChange={(e) => setTzSearchQuery(e.target.value)}
+                            className="w-full p-2 pl-7 pr-7 text-[11px] rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                          />
+                          <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2 top-2.5" />
+                          {tzSearchQuery && (
+                            <button
+                              type="button"
+                              onClick={() => setTzSearchQuery("")}
+                              className="absolute right-2 top-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+
+                        <select
+                          value={newTimeZone}
+                          onChange={(e) => handleTimezoneSelect(e.target.value)}
+                          className="w-full p-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option value="">-- Select a Timezone --</option>
+                          {filteredTimezoneGroups.map((group) => (
+                            <optgroup key={group.region} label={group.region}>
+                              {group.options.map((opt) => (
+                                <option key={opt.timeZone} value={opt.timeZone}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* City Name (md:col-span-3) */}
+                  <div className="md:col-span-3 space-y-1">
                     <label className="text-[11px] font-semibold text-zinc-500">
                       City Name
                     </label>
@@ -1379,7 +1507,8 @@ export default function DateTimeCalculatorPage() {
                     />
                   </div>
 
-                  <div className="space-y-1">
+                  {/* Country / Region (md:col-span-3) */}
+                  <div className="md:col-span-3 space-y-1">
                     <label className="text-[11px] font-semibold text-zinc-500">
                       Country / Region
                     </label>
@@ -1390,30 +1519,6 @@ export default function DateTimeCalculatorPage() {
                       onChange={(e) => setNewCountryName(e.target.value)}
                       className="w-full p-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                     />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500">
-                      IANA Timezone
-                    </label>
-                    <input
-                      type="text"
-                      list="iana-timezones-list"
-                      placeholder="e.g. Asia/Singapore, Europe/Berlin..."
-                      value={newTimeZone}
-                      onChange={(e) => {
-                        setNewTimeZone(e.target.value);
-                        setNewTzError("");
-                      }}
-                      className="w-full p-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none"
-                    />
-                    <datalist id="iana-timezones-list">
-                      {POPULAR_IANA_TIMEZONES.map((tz) => (
-                        <option key={tz.timeZone} value={tz.timeZone}>
-                          {tz.label}
-                        </option>
-                      ))}
-                    </datalist>
                   </div>
                 </div>
 
