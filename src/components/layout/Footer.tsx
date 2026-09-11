@@ -91,6 +91,11 @@ export function Footer() {
                   Markdown & Documentation Studio
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/media-lab" className="hover:text-emerald-500 transition-colors">
+                  Media Privacy & EXIF Studio
+                </Link>
+              </li>
             </ul>
           </div>
 

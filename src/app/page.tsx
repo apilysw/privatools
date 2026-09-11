@@ -23,6 +23,7 @@ import {
   QrCode,
   Regex,
   BookOpen,
+  Camera,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -40,6 +41,7 @@ const iconMap: Record<string, React.ElementType> = {
   QrCode,
   Regex,
   BookOpen,
+  Camera,
 };
 
 export default function HomePage() {

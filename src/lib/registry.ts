@@ -243,6 +243,37 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     ],
     status: "ready",
   },
+  {
+    id: "media-lab",
+    name: "Media Privacy Lab & Metadata Scrubber",
+    slug: "/tools/media-lab",
+    category: "Media & Images",
+    shortDesc: "Inspect & strip EXIF/GPS metadata from photos losslessly and trim audio waveforms.",
+    description:
+      "Client-side media privacy studio. Audit embedded GPS coordinates, camera serials, and device fingerprints. Strip metadata losslessly from JPEG/PNG images with zero recompression, batch scrub photo albums, and visually trim audio files with the Web Audio API in local RAM with zero data egress.",
+    icon: "Camera",
+    badge: "Zero Egress",
+    supportedFormats: ["EXIF", "JPEG", "PNG", "WebP", "TIFF", "WAV", "MP3"],
+    keywords: [
+      "exif",
+      "gps",
+      "metadata",
+      "scrub",
+      "strip",
+      "camera",
+      "serial",
+      "privacy",
+      "clean",
+      "photo",
+      "image",
+      "audio",
+      "wav",
+      "trim",
+      "waveform",
+      "batch",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [
