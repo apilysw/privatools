@@ -87,7 +87,14 @@ Privatools is an open, high-performance suite of utility converters built with *
 - **Zero-Egress Scanner & Decoder:** Decode barcodes via image drop/paste or live camera stream. Includes built-in GS1 Application Identifier parser and Wi-Fi credential decoder.
 - **Vector & Raster Export:** Infinite-resolution `.svg` and 300 DPI `.png` download, plus direct clipboard image copy.
 
-### 12. Verifiable Privacy Audit (`/privacy-audit`)
+### 12. Client-Side Regex Workbench & Tester (`/tools/regex-studio`)
+- **Real-Time Match Highlighting:** Color-coded match spans directly within the test text with intra-text navigation.
+- **Capturing Groups Inspector:** Detailed breakdown of numbered (`$1`, `$2`) and named (`$<name>`) capturing groups, start/end bounds, and line/col locations.
+- **Substitution Sandbox:** Live string replacement with support for `$1`, `$<name>`, `$&`, etc., and instant transformed output copy.
+- **Multi-Language Code Generator:** Instant copy-paste snippets for **TypeScript/JavaScript**, **Python**, **Go**, **Rust**, **Java**, **C#**, and **Bash / grep / sed**.
+- **Comprehensive Cheat Sheet:** Quick-reference syntax drawer for character classes, quantifiers, anchors, lookaheads, and lookbehinds.
+
+### 13. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---

@@ -21,6 +21,7 @@ import {
   Database,
   GitCompare,
   QrCode,
+  Regex,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -36,6 +37,7 @@ const iconMap: Record<string, React.ElementType> = {
   Database,
   GitCompare,
   QrCode,
+  Regex,
 };
 
 export default function HomePage() {

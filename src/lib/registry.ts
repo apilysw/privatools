@@ -185,6 +185,33 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     ],
     status: "ready",
   },
+  {
+    id: "regex-studio",
+    name: "Client-Side Regex Workbench & Tester",
+    slug: "/tools/regex-studio",
+    category: "Security & Dev",
+    shortDesc: "Test regular expressions with real-time match highlighting, group extraction, and substitution.",
+    description:
+      "Interactive client-side regular expression workbench. Real-time visual match highlighting, named capturing group breakdown, string substitution sandbox, multi-language code generators, and regex cheat sheet with zero data egress.",
+    icon: "Regex",
+    badge: "Zero Egress",
+    supportedFormats: ["Regex", "RegExp", "PCRE", "ECMAScript", "Pattern"],
+    keywords: [
+      "regex",
+      "regexp",
+      "regular expression",
+      "tester",
+      "matcher",
+      "substitute",
+      "replace",
+      "groups",
+      "pattern",
+      "log",
+      "parser",
+      "workbench",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

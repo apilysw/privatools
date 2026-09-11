@@ -81,6 +81,11 @@ export function Footer() {
                   Offline QR & Barcode Studio
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/regex-studio" className="hover:text-emerald-500 transition-colors">
+                  Regex Workbench & Tester
+                </Link>
+              </li>
             </ul>
           </div>
 
