@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="innerGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#10b981" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background container -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#27272a" stroke-width="4"/>
+
+  <!-- Glowing Shield -->
+  <g filter="url(#dropShadow)">
+    <path d="M 256 96 C 330 96 384 128 384 128 C 384 272 312 376 256 416 C 200 376 128 272 128 128 C 128 128 182 96 256 96 Z" fill="url(#shieldGrad)"/>
+    <!-- Subtle shield specular highlight -->
+    <path d="M 256 104 C 324 104 372 134 372 134 C 372 268 304 366 256 404 C 208 366 140 268 140 134 C 140 134 188 104 256 104 Z" fill="none" stroke="url(#innerGlow)" stroke-width="8"/>
+  </g>
+
+  <!-- Center Keyhole / Lock Core -->
+  <circle cx="256" cy="224" r="32" fill="#09090b"/>
+  <path d="M 244 232 L 268 232 L 274 296 C 274 300 270 304 266 304 L 246 304 C 242 304 238 300 238 296 Z" fill="#09090b"/>
+  
+  <!-- Subtle inner keyhole accent -->
+  <circle cx="256" cy="224" r="14" fill="#34d399"/>
+</svg>
