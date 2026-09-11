@@ -139,6 +139,20 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     keywords: ["sqlite", "db", "sql", "database", "query", "table", "schema", "csv", "json", "export", "wasm"],
     status: "ready",
   },
+  {
+    id: "diff-viewer",
+    name: "Code & Text Diff / Patch Studio",
+    slug: "/tools/diff-viewer",
+    category: "Data & Config",
+    shortDesc: "Compare code and text side-by-side with word-level highlighting and patch export.",
+    description:
+      "Perform private code, configuration, and text comparisons. View synchronized side-by-side or unified diffs, inspect intra-line word replacements, generate standard GNU/Git .patch files, and compare revisions with zero data egress.",
+    icon: "GitCompare",
+    badge: "Zero Egress",
+    supportedFormats: ["Diff", "Patch", "Code", "JSON", "Text"],
+    keywords: ["diff", "patch", "git", "compare", "side-by-side", "unified", "code", "merge", "changes"],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

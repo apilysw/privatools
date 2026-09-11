@@ -71,6 +71,11 @@ export function Footer() {
                   SQLite Database Explorer & Exporter
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/diff-viewer" className="hover:text-emerald-500 transition-colors">
+                  Code & Text Diff / Patch Studio
+                </Link>
+              </li>
             </ul>
           </div>
 

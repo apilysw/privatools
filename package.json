@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@peculiar/x509": "^2.1.0",
+    "@types/diff": "^7.0.2",
     "@types/sql.js": "^1.4.11",
     "clsx": "^2.1.1",
+    "diff": "^9.0.0",
     "fast-xml-parser": "^5.11.1",
     "js-yaml": "^5.4.1",
     "lucide-react": "^1.43.0",

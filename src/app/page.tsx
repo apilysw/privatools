@@ -19,6 +19,7 @@ import {
   FileText,
   Hash,
   Database,
+  GitCompare,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -32,6 +33,7 @@ const iconMap: Record<string, React.ElementType> = {
   FileText,
   Hash,
   Database,
+  GitCompare,
 };
 
 export default function HomePage() {

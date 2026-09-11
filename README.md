@@ -72,7 +72,14 @@ Privatools is an open, high-performance suite of utility converters built with *
 - **Binary Database Export:** Save modified or newly created databases directly as `.sqlite` / `.db` files.
 - **Sample Database Generator:** 1-click generation of an e-commerce database (`customers`, `products`, `orders`) for immediate testing.
 
-### 10. Verifiable Privacy Audit (`/privacy-audit`)
+### 10. Code & Text Diff / Patch Studio (`/tools/diff-viewer`)
+- **Dual Viewing Modes:** Synchronized side-by-side (split) diff view and unified (inline) hunk-based view.
+- **Intra-Line Word Highlighting:** Pinpoints exact word and token additions, deletions, and replacements within modified lines.
+- **Interactive Controls:** Instant "Swap Sides" diff inversion, ignore whitespace variations, and live dual-pane text editors.
+- **Standard Patch Generation:** Conforms to GNU diff and git apply specifications with one-click copy and `.patch` download.
+- **Realistic Presets:** Pre-loaded with TypeScript refactoring, JSON configuration drift, and legal contract revisions.
+
+### 11. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---
