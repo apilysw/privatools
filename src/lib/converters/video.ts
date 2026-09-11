@@ -763,7 +763,10 @@ export async function transcodeVideo(
     video.onloadedmetadata = async () => {
       const origW = video.videoWidth || 640;
       const origH = video.videoHeight || 360;
-      const origDur = video.duration || 1;
+      let origDur = video.duration;
+      if (!isFinite(origDur) || isNaN(origDur) || origDur <= 0) {
+        origDur = await resolveAccurateVideoDuration(videoBlob, video);
+      }
 
       const { width, height } = calculateScaledDimensions(
         origW,
@@ -989,7 +992,10 @@ export async function convertVideoToGif(
     video.src = videoUrl;
 
     video.onloadedmetadata = async () => {
-      const origDur = video.duration;
+      let origDur = video.duration;
+      if (!isFinite(origDur) || isNaN(origDur) || origDur <= 0) {
+        origDur = await resolveAccurateVideoDuration(videoBlob, video);
+      }
       const startSec = Math.max(0, options.startTimeSec || 0);
       const endSec = Math.min(origDur, options.endTimeSec !== undefined ? options.endTimeSec : origDur);
       const targetWidth = options.width || 400;
@@ -1412,6 +1418,68 @@ export async function generateSampleVideo(): Promise<File> {
 }
 
 /**
+ * Resolves a finite, positive duration (in seconds) for a video file or element.
+ * Browsers often report `Infinity` or `0` for streaming/MediaRecorder WebM blobs.
+ */
+export async function resolveAccurateVideoDuration(
+  fileOrBlob: Blob,
+  videoElement?: HTMLVideoElement
+): Promise<number> {
+  // 1. If videoElement already has a valid, finite duration > 0:
+  if (
+    videoElement &&
+    isFinite(videoElement.duration) &&
+    !isNaN(videoElement.duration) &&
+    videoElement.duration > 0
+  ) {
+    return Number(videoElement.duration.toFixed(2));
+  }
+
+  // 2. Probe audio track if present (very fast and accurate for MediaRecorder clips)
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (AudioContextClass) {
+      const ctx = new AudioContextClass();
+      const buf = await ctx.decodeAudioData(await fileOrBlob.slice(0).arrayBuffer());
+      if (buf.duration && isFinite(buf.duration) && buf.duration > 0) {
+        ctx.close();
+        return Number(buf.duration.toFixed(2));
+      }
+      ctx.close();
+    }
+  } catch {
+    // Audio decoding failed or silent video
+  }
+
+  // 3. Fallback: seek to large number if video element provided
+  if (videoElement) {
+    try {
+      const seekDur = await new Promise<number>((resolve) => {
+        const timeout = setTimeout(() => resolve(3), 500);
+        videoElement.onseeked = () => {
+          clearTimeout(timeout);
+          const dur =
+            isFinite(videoElement.duration) && videoElement.duration > 0
+              ? videoElement.duration
+              : isFinite(videoElement.currentTime) && videoElement.currentTime > 0
+              ? videoElement.currentTime
+              : 3;
+          resolve(Number(dur.toFixed(2)));
+        };
+        videoElement.currentTime = 1e101;
+      });
+      return seekDur;
+    } catch {
+      return 3;
+    }
+  }
+
+  return 3;
+}
+
+/**
  * Inspects video dimensions, duration, aspect ratio, and audio presence.
  */
 export async function inspectVideoMetadata(file: File | Blob): Promise<VideoMetadata> {
@@ -1423,8 +1491,16 @@ export async function inspectVideoMetadata(file: File | Blob): Promise<VideoMeta
     const url = URL.createObjectURL(file);
     video.src = url;
 
-    video.onloadedmetadata = () => {
-      const dur = video.duration || 0;
+    let isCleanedUp = false;
+    const cleanup = () => {
+      if (!isCleanedUp) {
+        isCleanedUp = true;
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    video.onloadedmetadata = async () => {
+      let dur = video.duration;
       const w = video.videoWidth || 0;
       const h = video.videoHeight || 0;
       const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
@@ -1436,9 +1512,17 @@ export async function inspectVideoMetadata(file: File | Blob): Promise<VideoMeta
         hasAudio = (video as unknown as { webkitAudioDecodedByteCount: number }).webkitAudioDecodedByteCount > 0;
       }
 
-      URL.revokeObjectURL(url);
+      if (!dur || !isFinite(dur) || isNaN(dur) || dur <= 0) {
+        dur = await resolveAccurateVideoDuration(file, video);
+      }
+
+      if (!isFinite(dur) || isNaN(dur) || dur <= 0) {
+        dur = 3;
+      }
+
+      cleanup();
       resolve({
-        duration: dur,
+        duration: Number(dur.toFixed(2)),
         width: w,
         height: h,
         aspectRatio: aspect,
@@ -1449,7 +1533,7 @@ export async function inspectVideoMetadata(file: File | Blob): Promise<VideoMeta
     };
 
     video.onerror = () => {
-      URL.revokeObjectURL(url);
+      cleanup();
       reject(new Error("Unable to parse video metadata. The format may not be supported directly by this browser."));
     };
   });
