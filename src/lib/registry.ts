@@ -153,6 +153,38 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     keywords: ["diff", "patch", "git", "compare", "side-by-side", "unified", "code", "merge", "changes"],
     status: "ready",
   },
+  {
+    id: "qr-studio",
+    name: "Offline QR Code & Barcode Studio",
+    slug: "/tools/qr-studio",
+    category: "Media & Images",
+    shortDesc: "Generate, batch print, and decode 1D/2D barcodes and QR codes client-side.",
+    description:
+      "Generate, customize, batch print, and decode 1D and 2D barcodes for warehousing, distribution, retail, and logistics. Supports Code 128, GS1-128 (SSCC), ITF-14, Data Matrix, QR Code, PDF417, EAN-13, and UPC-A with zero data egress.",
+    icon: "QrCode",
+    badge: "Zero Egress",
+    supportedFormats: ["QR", "Code 128", "GS1-128", "ITF-14", "Data Matrix", "PDF417", "EAN-13", "UPC-A"],
+    keywords: [
+      "qr",
+      "barcode",
+      "code128",
+      "gs1",
+      "sscc",
+      "itf14",
+      "datamatrix",
+      "pdf417",
+      "ean13",
+      "upc",
+      "pallet",
+      "distribution",
+      "warehouse",
+      "logistics",
+      "scanner",
+      "generator",
+      "batch",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

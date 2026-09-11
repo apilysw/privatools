@@ -12,6 +12,8 @@
     "@peculiar/x509": "^2.1.0",
     "@types/diff": "^7.0.2",
     "@types/sql.js": "^1.4.11",
+    "@zxing/library": "^0.23.0",
+    "bwip-js": "^4.11.4",
     "clsx": "^2.1.1",
     "diff": "^9.0.0",
     "fast-xml-parser": "^5.11.1",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bwip-js": "^3.2.3",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",

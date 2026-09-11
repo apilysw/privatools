@@ -79,7 +79,15 @@ Privatools is an open, high-performance suite of utility converters built with *
 - **Standard Patch Generation:** Conforms to GNU diff and git apply specifications with one-click copy and `.patch` download.
 - **Realistic Presets:** Pre-loaded with TypeScript refactoring, JSON configuration drift, and legal contract revisions.
 
-### 11. Verifiable Privacy Audit (`/privacy-audit`)
+### 11. Offline QR Code & Barcode Studio (`/tools/qr-studio`)
+- **Warehousing & Distribution 1D:** Generate and customize **Code 128**, **GS1-128 (SSCC-18 pallet tags, GTIN batch/expiry)**, **ITF-14 (cartons with bearer bars)**, **Code 39**, and **Code 93**.
+- **2D Matrix & High-Density:** Generate **QR Code**, **Data Matrix (GS1 parts/serials)**, **PDF417 (bills of lading & shipping manifests)**, and **Aztec Code**.
+- **Retail Point-of-Sale:** Standard **EAN-13**, **EAN-8**, **UPC-A**, **UPC-E**, and **Codabar**.
+- **Batch Generator:** Multi-code bulk generator with configurable columns and direct 1-click thermal/label sheet printing (`@media print`).
+- **Zero-Egress Scanner & Decoder:** Decode barcodes via image drop/paste or live camera stream. Includes built-in GS1 Application Identifier parser and Wi-Fi credential decoder.
+- **Vector & Raster Export:** Infinite-resolution `.svg` and 300 DPI `.png` download, plus direct clipboard image copy.
+
+### 12. Verifiable Privacy Audit (`/privacy-audit`)
 - Transparent documentation and 3-step DevTools guide for verifying zero network requests.
 
 ---

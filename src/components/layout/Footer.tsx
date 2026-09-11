@@ -76,6 +76,11 @@ export function Footer() {
                   Code & Text Diff / Patch Studio
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/qr-studio" className="hover:text-emerald-500 transition-colors">
+                  Offline QR & Barcode Studio
+                </Link>
+              </li>
             </ul>
           </div>
 
