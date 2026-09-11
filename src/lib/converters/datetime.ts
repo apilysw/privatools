@@ -330,13 +330,144 @@ export function addDateDuration(
   return result;
 }
 
-// Standard Key Timezone Cities
-export const KEY_TIMEZONE_CITIES: Array<{
+export interface CompoundDuration {
+  years: number;
+  months: number;
+  weeks: number;
+  days: number;
+  businessDays: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+/**
+ * Parses natural language or shorthand duration strings like:
+ * "4 days 3 hours, 27 min", "2 weeks 4 days", "5 business days 8 hours", "1 yr 2 mo"
+ */
+export function parseDurationString(input: string): CompoundDuration {
+  const duration: CompoundDuration = {
+    years: 0,
+    months: 0,
+    weeks: 0,
+    days: 0,
+    businessDays: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  };
+
+  if (!input || !input.trim()) return duration;
+
+  // Match business days first
+  const bdayMatch = input.match(
+    /(\d+)\s*(?:bd|bday|bdays|business\s*days?|biz\s*days?|working\s*days?)/i
+  );
+  if (bdayMatch) duration.businessDays = parseInt(bdayMatch[1], 10);
+
+  const yrMatch = input.match(/(\d+)\s*(?:y|yr|yrs|year|years)/i);
+  if (yrMatch) duration.years = parseInt(yrMatch[1], 10);
+
+  const moMatch = input.match(/(\d+)\s*(?:mo|mos|month|months)/i);
+  if (moMatch) duration.months = parseInt(moMatch[1], 10);
+
+  const wkMatch = input.match(/(\d+)\s*(?:w|wk|wks|week|weeks)/i);
+  if (wkMatch) duration.weeks = parseInt(wkMatch[1], 10);
+
+  // Clean out business day tokens before matching calendar days
+  const cleanedForDays = input.replace(
+    /(?:bd|bday|bdays|business\s*days?|biz\s*days?|working\s*days?)/gi,
+    ""
+  );
+  const dayMatch = cleanedForDays.match(/(\d+)\s*(?:d|day|days)/i);
+  if (dayMatch) duration.days = parseInt(dayMatch[1], 10);
+
+  const hrMatch = input.match(/(\d+)\s*(?:h|hr|hrs|hour|hours)/i);
+  if (hrMatch) duration.hours = parseInt(hrMatch[1], 10);
+
+  const minMatch = input.match(/(\d+)\s*(?:m|min|mins|minute|minutes)/i);
+  if (minMatch) duration.minutes = parseInt(minMatch[1], 10);
+
+  const secMatch = input.match(/(\d+)\s*(?:s|sec|secs|second|seconds)/i);
+  if (secMatch) duration.seconds = parseInt(secMatch[1], 10);
+
+  return duration;
+}
+
+export function formatCompoundDuration(d: CompoundDuration): string {
+  const parts: string[] = [];
+  if (d.years) parts.push(`${d.years} ${d.years === 1 ? "year" : "years"}`);
+  if (d.months) parts.push(`${d.months} ${d.months === 1 ? "month" : "months"}`);
+  if (d.weeks) parts.push(`${d.weeks} ${d.weeks === 1 ? "week" : "weeks"}`);
+  if (d.businessDays)
+    parts.push(
+      `${d.businessDays} ${d.businessDays === 1 ? "business day" : "business days"}`
+    );
+  if (d.days) parts.push(`${d.days} ${d.days === 1 ? "day" : "days"}`);
+  if (d.hours) parts.push(`${d.hours} ${d.hours === 1 ? "hour" : "hours"}`);
+  if (d.minutes) parts.push(`${d.minutes} ${d.minutes === 1 ? "min" : "mins"}`);
+  if (d.seconds) parts.push(`${d.seconds} ${d.seconds === 1 ? "sec" : "secs"}`);
+  return parts.join(", ") || "0 seconds";
+}
+
+/**
+ * Adds or subtracts multiple compound duration values (years, months, weeks, days, business days, hours, mins, secs)
+ * to a base date.
+ */
+export function addCompoundDuration(
+  startDate: Date,
+  duration: CompoundDuration,
+  operation: "add" | "sub" = "add"
+): Date {
+  const result = new Date(startDate.getTime());
+  const sign = operation === "add" ? 1 : -1;
+
+  if (duration.years) {
+    result.setFullYear(result.getFullYear() + sign * duration.years);
+  }
+  if (duration.months) {
+    result.setMonth(result.getMonth() + sign * duration.months);
+  }
+  if (duration.weeks) {
+    result.setDate(result.getDate() + sign * duration.weeks * 7);
+  }
+  if (duration.days) {
+    result.setDate(result.getDate() + sign * duration.days);
+  }
+  if (duration.businessDays) {
+    let added = 0;
+    const step = sign;
+    const target = duration.businessDays;
+    while (added < target) {
+      result.setDate(result.getDate() + step);
+      const day = result.getDay();
+      if (day !== 0 && day !== 6) {
+        added++;
+      }
+    }
+  }
+  if (duration.hours) {
+    result.setHours(result.getHours() + sign * duration.hours);
+  }
+  if (duration.minutes) {
+    result.setMinutes(result.getMinutes() + sign * duration.minutes);
+  }
+  if (duration.seconds) {
+    result.setSeconds(result.getSeconds() + sign * duration.seconds);
+  }
+
+  return result;
+}
+
+export interface TimezoneCityConfig {
   id: string;
   city: string;
   country: string;
   timeZone: string;
-}> = [
+}
+
+// Standard Key Timezone Cities
+export const KEY_TIMEZONE_CITIES: TimezoneCityConfig[] = [
   { id: "utc", city: "UTC", country: "Universal", timeZone: "UTC" },
   { id: "lon", city: "London", country: "United Kingdom", timeZone: "Europe/London" },
   { id: "par", city: "Paris / Berlin", country: "Europe", timeZone: "Europe/Paris" },
@@ -347,42 +478,121 @@ export const KEY_TIMEZONE_CITIES: Array<{
   { id: "syd", city: "Sydney", country: "Australia", timeZone: "Australia/Sydney" },
 ];
 
+export const POPULAR_IANA_TIMEZONES: Array<{ timeZone: string; label: string }> = [
+  { timeZone: "UTC", label: "UTC (Coordinated Universal Time)" },
+  { timeZone: "America/New_York", label: "America/New_York (US Eastern Time)" },
+  { timeZone: "America/Chicago", label: "America/Chicago (US Central Time)" },
+  { timeZone: "America/Denver", label: "America/Denver (US Mountain Time)" },
+  { timeZone: "America/Los_Angeles", label: "America/Los_Angeles (US Pacific Time)" },
+  { timeZone: "America/Anchorage", label: "America/Anchorage (Alaska)" },
+  { timeZone: "America/Honolulu", label: "America/Honolulu (Hawaii)" },
+  { timeZone: "America/Toronto", label: "America/Toronto (Canada Eastern)" },
+  { timeZone: "America/Vancouver", label: "America/Vancouver (Canada Pacific)" },
+  { timeZone: "America/Sao_Paulo", label: "America/Sao_Paulo (Brazil)" },
+  { timeZone: "America/Buenos_Aires", label: "America/Buenos_Aires (Argentina)" },
+  { timeZone: "America/Mexico_City", label: "America/Mexico_City (Mexico)" },
+  { timeZone: "Europe/London", label: "Europe/London (United Kingdom, GMT/BST)" },
+  { timeZone: "Europe/Dublin", label: "Europe/Dublin (Ireland)" },
+  { timeZone: "Europe/Paris", label: "Europe/Paris (France, CET)" },
+  { timeZone: "Europe/Berlin", label: "Europe/Berlin (Germany, CET)" },
+  { timeZone: "Europe/Amsterdam", label: "Europe/Amsterdam (Netherlands)" },
+  { timeZone: "Europe/Rome", label: "Europe/Rome (Italy)" },
+  { timeZone: "Europe/Madrid", label: "Europe/Madrid (Spain)" },
+  { timeZone: "Europe/Stockholm", label: "Europe/Stockholm (Sweden)" },
+  { timeZone: "Europe/Zurich", label: "Europe/Zurich (Switzerland)" },
+  { timeZone: "Europe/Warsaw", label: "Europe/Warsaw (Poland)" },
+  { timeZone: "Europe/Athens", label: "Europe/Athens (Greece, EET)" },
+  { timeZone: "Europe/Istanbul", label: "Europe/Istanbul (Turkey)" },
+  { timeZone: "Europe/Kyiv", label: "Europe/Kyiv (Ukraine)" },
+  { timeZone: "Europe/Moscow", label: "Europe/Moscow (Russia, MSK)" },
+  { timeZone: "Asia/Dubai", label: "Asia/Dubai (United Arab Emirates, GST)" },
+  { timeZone: "Asia/Riyadh", label: "Asia/Riyadh (Saudi Arabia)" },
+  { timeZone: "Asia/Jerusalem", label: "Asia/Jerusalem (Israel)" },
+  { timeZone: "Asia/Kolkata", label: "Asia/Kolkata (India, IST)" },
+  { timeZone: "Asia/Bangkok", label: "Asia/Bangkok (Thailand, Indochina)" },
+  { timeZone: "Asia/Singapore", label: "Asia/Singapore (Singapore)" },
+  { timeZone: "Asia/Hong_Kong", label: "Asia/Hong_Kong (Hong Kong)" },
+  { timeZone: "Asia/Shanghai", label: "Asia/Shanghai (China Standard Time)" },
+  { timeZone: "Asia/Tokyo", label: "Asia/Tokyo (Japan, JST)" },
+  { timeZone: "Asia/Seoul", label: "Asia/Seoul (South Korea, KST)" },
+  { timeZone: "Asia/Jakarta", label: "Asia/Jakarta (Indonesia)" },
+  { timeZone: "Asia/Manila", label: "Asia/Manila (Philippines)" },
+  { timeZone: "Asia/Taipei", label: "Asia/Taipei (Taiwan)" },
+  { timeZone: "Australia/Sydney", label: "Australia/Sydney (Sydney, AEST)" },
+  { timeZone: "Australia/Melbourne", label: "Australia/Melbourne (Melbourne)" },
+  { timeZone: "Australia/Brisbane", label: "Australia/Brisbane (Brisbane)" },
+  { timeZone: "Australia/Perth", label: "Australia/Perth (Perth, AWST)" },
+  { timeZone: "Pacific/Auckland", label: "Pacific/Auckland (New Zealand)" },
+  { timeZone: "Pacific/Fiji", label: "Pacific/Fiji (Fiji)" },
+  { timeZone: "Africa/Cairo", label: "Africa/Cairo (Egypt)" },
+  { timeZone: "Africa/Johannesburg", label: "Africa/Johannesburg (South Africa)" },
+  { timeZone: "Africa/Lagos", label: "Africa/Lagos (Nigeria)" },
+  { timeZone: "Africa/Nairobi", label: "Africa/Nairobi (Kenya)" },
+];
+
+export function isValidTimezone(tz: string): boolean {
+  if (!tz || typeof tz !== "string") return false;
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: tz.trim() });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Calculates current time and 24-hour status for world timezone cities.
  */
-export function calculateTimezonesMatrix(refDate: Date): TimezoneCity[] {
-  return KEY_TIMEZONE_CITIES.map((c) => {
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone: c.timeZone,
-      hour: "numeric",
-      minute: "numeric",
-      hour12: false,
-      timeZoneName: "short",
-    });
+export function calculateTimezonesMatrix(
+  refDate: Date,
+  cities: TimezoneCityConfig[] = KEY_TIMEZONE_CITIES
+): TimezoneCity[] {
+  return cities.map((c) => {
+    try {
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: c.timeZone,
+        hour: "numeric",
+        minute: "numeric",
+        hour12: false,
+        timeZoneName: "short",
+      });
 
-    const parts = formatter.formatToParts(refDate);
-    const hourVal = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
-    const minVal = parts.find((p) => p.type === "minute")?.value || "00";
-    const tzName = parts.find((p) => p.type === "timeZoneName")?.value || "";
+      const parts = formatter.formatToParts(refDate);
+      const hourVal = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
+      const minVal = parts.find((p) => p.type === "minute")?.value || "00";
+      const tzName = parts.find((p) => p.type === "timeZoneName")?.value || "";
 
-    let status: TimezoneCity["status"] = "night";
-    if (hourVal >= 9 && hourVal < 17) {
-      status = "workday";
-    } else if ((hourVal >= 7 && hourVal < 9) || (hourVal >= 17 && hourVal < 21)) {
-      status = "extended";
+      let status: TimezoneCity["status"] = "night";
+      if (hourVal >= 9 && hourVal < 17) {
+        status = "workday";
+      } else if ((hourVal >= 7 && hourVal < 9) || (hourVal >= 17 && hourVal < 21)) {
+        status = "extended";
+      }
+
+      return {
+        id: c.id,
+        city: c.city,
+        country: c.country,
+        timeZone: c.timeZone,
+        abbr: tzName,
+        utcOffsetStr: tzName,
+        currentLocalTime: `${String(hourVal).padStart(2, "0")}:${minVal}`,
+        hour: hourVal,
+        status,
+      };
+    } catch {
+      return {
+        id: c.id,
+        city: c.city,
+        country: c.country,
+        timeZone: c.timeZone,
+        abbr: "ERR",
+        utcOffsetStr: "Invalid TZ",
+        currentLocalTime: "--:--",
+        hour: 0,
+        status: "night",
+      };
     }
-
-    return {
-      id: c.id,
-      city: c.city,
-      country: c.country,
-      timeZone: c.timeZone,
-      abbr: tzName,
-      utcOffsetStr: tzName,
-      currentLocalTime: `${String(hourVal).padStart(2, "0")}:${minVal}`,
-      hour: hourVal,
-      status,
-    };
   });
 }
 
@@ -530,6 +740,20 @@ export function parseCronExpression(
 // Built-in Presets
 export const DATETIME_PRESETS: DateTimePreset[] = [
   {
+    id: "multi-unit-duration",
+    name: "Multi-Unit Duration (4d 3h 27m)",
+    description: "Add multiple values (days, hours, minutes) simultaneously to calculate target deadlines.",
+    type: "math",
+    value: "4 days 3 hours 27 min",
+  },
+  {
+    id: "business-days",
+    name: "Sprint Deadline Math",
+    description: "Calculate working days excluding weekends between dates.",
+    type: "math",
+    value: "sprint",
+  },
+  {
     id: "live-epoch",
     name: "Current Live Epoch",
     description: "Live UTC timestamp in seconds, milliseconds, microseconds, and nanoseconds.",
@@ -542,13 +766,6 @@ export const DATETIME_PRESETS: DateTimePreset[] = [
     description: "32-bit signed integer epoch overflow boundary (2147483647).",
     type: "epoch",
     value: "2147483647",
-  },
-  {
-    id: "business-days",
-    name: "Sprint Deadline Math",
-    description: "Calculate working days excluding weekends between dates.",
-    type: "math",
-    value: "sprint",
   },
   {
     id: "cron-workdays",
