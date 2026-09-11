@@ -25,6 +25,7 @@ import {
   BookOpen,
   Camera,
   Network,
+  Clock,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -44,6 +45,7 @@ const iconMap: Record<string, React.ElementType> = {
   BookOpen,
   Camera,
   Network,
+  Clock,
 };
 
 export default function HomePage() {

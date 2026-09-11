@@ -101,6 +101,11 @@ export function Footer() {
                   Subnet & CIDR Studio
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/date-time-calculator" className="hover:text-emerald-500 transition-colors">
+                  Date, Time & Epoch Studio
+                </Link>
+              </li>
             </ul>
           </div>
 

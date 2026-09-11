@@ -305,6 +305,38 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     ],
     status: "ready",
   },
+  {
+    id: "date-time-calculator",
+    name: "Date, Time, Epoch & Cron Precision Studio",
+    slug: "/tools/date-time-calculator",
+    category: "Text & Encodings",
+    shortDesc: "High-precision Unix epoch converter (s/ms/µs/ns), date math, timezone matrix, and cron explainer.",
+    description:
+      "Client-side temporal precision workbench. Live running Unix epoch ticker in seconds, milliseconds, microseconds, and nanoseconds. Bi-directional ISO/RFC date conversions, business days duration math, 24-hour visual world meeting matrix, and Cron schedule syntax explainer with next 10 runs calculation in zero-egress local memory.",
+    icon: "Clock",
+    badge: "Zero Egress",
+    supportedFormats: ["Epoch", "ISO-8601", "RFC-2822", "RFC-3339", "Cron", "Timezone"],
+    keywords: [
+      "epoch",
+      "timestamp",
+      "unix",
+      "date",
+      "time",
+      "duration",
+      "business days",
+      "working days",
+      "timezone",
+      "utc",
+      "gmt",
+      "world clock",
+      "meeting",
+      "cron",
+      "scheduler",
+      "y2038",
+      "leap year",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [
