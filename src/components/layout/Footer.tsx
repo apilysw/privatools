@@ -86,6 +86,11 @@ export function Footer() {
                   Regex Workbench & Tester
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/markdown-lab" className="hover:text-emerald-500 transition-colors">
+                  Markdown & Documentation Studio
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -212,6 +212,37 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     ],
     status: "ready",
   },
+  {
+    id: "markdown-lab",
+    name: "Markdown & Technical Documentation Studio",
+    slug: "/tools/markdown-lab",
+    category: "Text & Encodings",
+    shortDesc: "Author, preview, and format Markdown documents with frontmatter, tables, and HTML/PDF export.",
+    description:
+      "Interactive client-side Markdown and technical documentation studio. Real-time GitHub Flavored Markdown (GFM) preview, YAML frontmatter inspector, CSV table converter and formatter, HTML-to-MD compiler, document metrics, and standalone HTML/PDF export with zero data egress.",
+    icon: "BookOpen",
+    badge: "Zero Egress",
+    supportedFormats: ["Markdown", "GFM", "Frontmatter", "HTML", "PDF", "CSV"],
+    keywords: [
+      "markdown",
+      "md",
+      "gfm",
+      "editor",
+      "preview",
+      "frontmatter",
+      "yaml",
+      "documentation",
+      "rfc",
+      "readme",
+      "changelog",
+      "table",
+      "csv",
+      "html",
+      "export",
+      "pdf",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [
