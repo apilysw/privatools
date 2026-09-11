@@ -184,6 +184,7 @@ export default function VideoLabPage() {
   // ==========================================
   const [trimStart, setTrimStart] = useState<number>(0);
   const [trimEnd, setTrimEnd] = useState<number>(3);
+  const [clipDuration, setClipDuration] = useState<number>(3);
   const [isTrimming, setIsTrimming] = useState<boolean>(false);
   const [trimProgress, setTrimProgress] = useState<number>(0);
   const [trimmedBlob, setTrimmedBlob] = useState<Blob | null>(null);
@@ -258,18 +259,35 @@ export default function VideoLabPage() {
     if (isVid) {
       try {
         const meta = await inspectVideoMetadata(file);
+        const dur = meta.duration > 0 ? Number(meta.duration.toFixed(2)) : 3;
         setVideoMeta(meta);
+        setClipDuration(dur);
         setTrimStart(0);
-        setTrimEnd(Number(meta.duration.toFixed(2)) || 3);
+        setTrimEnd(dur);
       } catch {
         setVideoMeta(null);
+        setClipDuration(3);
         setTrimStart(0);
         setTrimEnd(3);
       }
     } else {
       setVideoMeta(null);
-      setTrimStart(0);
-      setTrimEnd(3);
+      try {
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const ctx = new AudioContextClass();
+        const buf = await ctx.decodeAudioData(await file.slice(0).arrayBuffer());
+        const dur = buf.duration > 0 ? Number(buf.duration.toFixed(2)) : 3;
+        ctx.close();
+        setClipDuration(dur);
+        setTrimStart(0);
+        setTrimEnd(dur);
+      } catch {
+        setClipDuration(3);
+        setTrimStart(0);
+        setTrimEnd(3);
+      }
     }
   };
 
@@ -317,6 +335,9 @@ export default function VideoLabPage() {
     setGifUrl(null);
     setTrimmedBlob(null);
     setTrimmedUrl(null);
+    setTrimStart(0);
+    setTrimEnd(3);
+    setClipDuration(3);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -1599,6 +1620,16 @@ export default function VideoLabPage() {
                   ref={trimVideoRef}
                   src={fileUrl}
                   controls
+                  onLoadedMetadata={(e) => {
+                    const dur = (e.target as HTMLVideoElement).duration;
+                    if (dur && dur > 0 && !isNaN(dur)) {
+                      const roundedDur = Number(dur.toFixed(2));
+                      setClipDuration(roundedDur);
+                      setTrimEnd((prev) =>
+                        prev <= 0 || prev > roundedDur || prev === 3 ? roundedDur : prev
+                      );
+                    }
+                  }}
                   onTimeUpdate={(e) => {
                     const cur = (e.target as HTMLVideoElement).currentTime;
                     setPreviewHeadTime(cur);
@@ -1618,40 +1649,56 @@ export default function VideoLabPage() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400">
                     <span>In-Point (Start):</span>
-                    <span className="font-mono">{formatTime(trimStart)}</span>
+                    <span className="font-mono">
+                      {formatTime(trimStart)} / {formatTime(clipDuration)}
+                    </span>
                   </div>
                   <input
                     type="range"
                     min="0"
-                    max={Math.max(0.1, (videoMeta?.duration || 3) - 0.1)}
+                    max={clipDuration}
                     step="0.05"
                     value={trimStart}
                     onChange={(e) => {
                       const val = parseFloat(e.target.value);
-                      if (val < trimEnd) {
+                      if (val <= trimEnd) {
                         setTrimStart(val);
+                        if (trimVideoRef.current) trimVideoRef.current.currentTime = val;
+                      } else {
+                        setTrimStart(val);
+                        setTrimEnd(Math.min(clipDuration, val));
                         if (trimVideoRef.current) trimVideoRef.current.currentTime = val;
                       }
                     }}
                     className="w-full accent-emerald-500"
                   />
-                  <div className="flex gap-1.5">
+                  <div className="flex flex-wrap gap-1.5">
                     <button
-                      onClick={() => setTrimStart(Math.max(0, trimStart - 0.1))}
+                      onClick={() => setTrimStart(Math.max(0, Number((trimStart - 0.1).toFixed(2))))}
                       className="px-2 py-0.5 rounded text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
                     >
                       -0.1s
                     </button>
                     <button
-                      onClick={() => setTrimStart(Math.min(trimEnd - 0.1, trimStart + 0.1))}
+                      onClick={() => setTrimStart(Math.min(trimEnd, Number((trimStart + 0.1).toFixed(2))))}
                       className="px-2 py-0.5 rounded text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
                     >
                       +0.1s
                     </button>
                     <button
                       onClick={() => {
-                        if (trimVideoRef.current && trimVideoRef.current.currentTime < trimEnd) {
-                          setTrimStart(trimVideoRef.current.currentTime);
+                        setTrimStart(0);
+                        if (trimVideoRef.current) trimVideoRef.current.currentTime = 0;
+                      }}
+                      className="px-2 py-0.5 rounded text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
+                    >
+                      Set to 0.0s
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (trimVideoRef.current && trimVideoRef.current.currentTime <= trimEnd) {
+                          const cur = Number(trimVideoRef.current.currentTime.toFixed(2));
+                          setTrimStart(cur);
                         }
                       }}
                       className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium"
@@ -1665,39 +1712,51 @@ export default function VideoLabPage() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400">
                     <span>Out-Point (End):</span>
-                    <span className="font-mono">{formatTime(trimEnd)}</span>
+                    <span className="font-mono">
+                      {formatTime(trimEnd)} / {formatTime(clipDuration)}
+                    </span>
                   </div>
                   <input
                     type="range"
-                    min={trimStart + 0.1}
-                    max={videoMeta?.duration || 3}
+                    min="0"
+                    max={clipDuration}
                     step="0.05"
                     value={trimEnd}
                     onChange={(e) => {
                       const val = parseFloat(e.target.value);
-                      if (val > trimStart) {
+                      if (val >= trimStart) {
                         setTrimEnd(val);
+                      } else {
+                        setTrimEnd(val);
+                        setTrimStart(Math.max(0, val));
                       }
                     }}
                     className="w-full accent-emerald-500"
                   />
-                  <div className="flex gap-1.5">
+                  <div className="flex flex-wrap gap-1.5">
                     <button
-                      onClick={() => setTrimEnd(Math.max(trimStart + 0.1, trimEnd - 0.1))}
+                      onClick={() => setTrimEnd(Math.max(trimStart, Number((trimEnd - 0.1).toFixed(2))))}
                       className="px-2 py-0.5 rounded text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
                     >
                       -0.1s
                     </button>
                     <button
-                      onClick={() => setTrimEnd(Math.min(videoMeta?.duration || 3, trimEnd + 0.1))}
+                      onClick={() => setTrimEnd(Math.min(clipDuration, Number((trimEnd + 0.1).toFixed(2))))}
                       className="px-2 py-0.5 rounded text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
                     >
                       +0.1s
                     </button>
                     <button
+                      onClick={() => setTrimEnd(clipDuration)}
+                      className="px-2 py-0.5 rounded text-[10px] bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
+                    >
+                      Set to End ({formatTime(clipDuration)})
+                    </button>
+                    <button
                       onClick={() => {
-                        if (trimVideoRef.current && trimVideoRef.current.currentTime > trimStart) {
-                          setTrimEnd(trimVideoRef.current.currentTime);
+                        if (trimVideoRef.current && trimVideoRef.current.currentTime >= trimStart) {
+                          const cur = Number(trimVideoRef.current.currentTime.toFixed(2));
+                          setTrimEnd(cur);
                         }
                       }}
                       className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium"
