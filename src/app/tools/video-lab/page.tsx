@@ -26,17 +26,23 @@ import {
   Clock,
   ShieldCheck,
   CheckCircle2,
+  Repeat,
+  Radio,
+  FileCode,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
   stripAudioFromMp4Lossless,
   extractAudioFromVideo,
   encodeWav,
+  encodeMp3,
+  encodeFlac,
   extractWaveformPeaks,
   processAudioData,
   calculateScaledDimensions,
   transcodeVideo,
   convertVideoToGif,
+  convertAudioFile,
   generateSampleVideo,
   generateSampleAudioFile,
   inspectVideoMetadata,
@@ -44,9 +50,10 @@ import {
   ExtractedAudioResult,
   TranscodeOptions,
   GifConvertOptions,
+  AudioConvertOptions,
 } from "@/lib/converters/video";
 
-type StudioTab = "strip" | "extract" | "transcode" | "trim";
+type StudioTab = "strip" | "extract" | "audio-convert" | "transcode" | "trim";
 
 interface VideoLabPreset {
   id: string;
@@ -118,6 +125,7 @@ export default function VideoLabPage() {
   const [strippedBlob, setStrippedBlob] = useState<Blob | null>(null);
   const [strippedUrl, setStrippedUrl] = useState<string | null>(null);
   const [stripMethod, setStripMethod] = useState<"lossless" | "transcode" | null>(null);
+  const [stripProgress, setStripProgress] = useState<number>(0);
   const [strippedSavingsPercent, setStrippedSavingsPercent] = useState<number>(0);
 
   // ==========================================
@@ -126,6 +134,11 @@ export default function VideoLabPage() {
   const [isExtracting, setIsExtracting] = useState<boolean>(false);
   const [extractedAudio, setExtractedAudio] = useState<ExtractedAudioResult | null>(null);
   const [extractedWavUrl, setExtractedWavUrl] = useState<string | null>(null);
+  const [extractedMp3Url, setExtractedMp3Url] = useState<string | null>(null);
+  const [extractedFlacUrl, setExtractedFlacUrl] = useState<string | null>(null);
+  const [extractMp3Bitrate, setExtractMp3Bitrate] = useState<number>(192);
+  const [isEncodingMp3, setIsEncodingMp3] = useState<boolean>(false);
+  const [isEncodingFlac, setIsEncodingFlac] = useState<boolean>(false);
   const [audioGain, setAudioGain] = useState<number>(1.0);
   const [audioNormalize, setAudioNormalize] = useState<boolean>(false);
   const [audioMono, setAudioMono] = useState<boolean>(false);
@@ -135,9 +148,20 @@ export default function VideoLabPage() {
   const waveformCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // ==========================================
-  // TAB 3: TRANSCODE & RESIZE & GIF STATE
+  // TAB 3: AUDIO FORMAT CONVERTER STATE
+  // ==========================================
+  const [audioConvertTarget, setAudioConvertTarget] = useState<"mp3" | "wav" | "flac">("mp3");
+  const [audioConvertBitrate, setAudioConvertBitrate] = useState<number>(192);
+  const [isConvertingAudio, setIsConvertingAudio] = useState<boolean>(false);
+  const [convertedAudioBlob, setConvertedAudioBlob] = useState<Blob | null>(null);
+  const [convertedAudioUrl, setConvertedAudioUrl] = useState<string | null>(null);
+  const [convertedAudioFormat, setConvertedAudioFormat] = useState<string>("mp3");
+
+  // ==========================================
+  // TAB 4: TRANSCODE & RESIZE & GIF STATE
   // ==========================================
   const [transcodeMode, setTranscodeMode] = useState<"video" | "gif">("video");
+  const [targetVideoFormat, setTargetVideoFormat] = useState<"webm" | "mp4">("webm");
   const [resolutionPreset, setResolutionPreset] = useState<"original" | "1080p" | "720p" | "480p" | "360p">("720p");
   const [bitrateMbps, setBitrateMbps] = useState<number>(2.5);
   const [transcodeFps, setTranscodeFps] = useState<number>(30);
@@ -156,7 +180,7 @@ export default function VideoLabPage() {
   const [gifProgress, setGifProgress] = useState<number>(0);
 
   // ==========================================
-  // TAB 4: TRIM & CUT STATE
+  // TAB 5: TRIM & CUT STATE
   // ==========================================
   const [trimStart, setTrimStart] = useState<number>(0);
   const [trimEnd, setTrimEnd] = useState<number>(3);
@@ -172,10 +196,23 @@ export default function VideoLabPage() {
     if (fileUrl) URL.revokeObjectURL(fileUrl);
     if (strippedUrl) URL.revokeObjectURL(strippedUrl);
     if (extractedWavUrl) URL.revokeObjectURL(extractedWavUrl);
+    if (extractedMp3Url) URL.revokeObjectURL(extractedMp3Url);
+    if (extractedFlacUrl) URL.revokeObjectURL(extractedFlacUrl);
+    if (convertedAudioUrl) URL.revokeObjectURL(convertedAudioUrl);
     if (transcodedUrl) URL.revokeObjectURL(transcodedUrl);
     if (gifUrl) URL.revokeObjectURL(gifUrl);
     if (trimmedUrl) URL.revokeObjectURL(trimmedUrl);
-  }, [fileUrl, strippedUrl, extractedWavUrl, transcodedUrl, gifUrl, trimmedUrl]);
+  }, [
+    fileUrl,
+    strippedUrl,
+    extractedWavUrl,
+    extractedMp3Url,
+    extractedFlacUrl,
+    convertedAudioUrl,
+    transcodedUrl,
+    gifUrl,
+    trimmedUrl,
+  ]);
 
   // Load Initial Preset
   useEffect(() => {
@@ -188,7 +225,13 @@ export default function VideoLabPage() {
     setErrorMessage(null);
     revokeAllUrls();
 
-    const isVid = file.type.startsWith("video/") || name.endsWith(".mp4") || name.endsWith(".webm") || name.endsWith(".mov");
+    const isVid =
+      file.type.startsWith("video/") ||
+      name.endsWith(".mp4") ||
+      name.endsWith(".webm") ||
+      name.endsWith(".mov") ||
+      name.endsWith(".mkv");
+
     const newUrl = URL.createObjectURL(file);
 
     setInputFile(file);
@@ -201,6 +244,10 @@ export default function VideoLabPage() {
     setStrippedUrl(null);
     setExtractedAudio(null);
     setExtractedWavUrl(null);
+    setExtractedMp3Url(null);
+    setExtractedFlacUrl(null);
+    setConvertedAudioBlob(null);
+    setConvertedAudioUrl(null);
     setTranscodedBlob(null);
     setTranscodedUrl(null);
     setGifBlob(null);
@@ -260,6 +307,10 @@ export default function VideoLabPage() {
     setStrippedUrl(null);
     setExtractedAudio(null);
     setExtractedWavUrl(null);
+    setExtractedMp3Url(null);
+    setExtractedFlacUrl(null);
+    setConvertedAudioBlob(null);
+    setConvertedAudioUrl(null);
     setTranscodedBlob(null);
     setTranscodedUrl(null);
     setGifBlob(null);
@@ -284,36 +335,44 @@ export default function VideoLabPage() {
   const handleStripAudio = async () => {
     if (!inputFile || !fileUrl) return;
     setIsStripping(true);
+    setStripProgress(0);
     setErrorMessage(null);
 
     try {
       const isMp4 = fileName.toLowerCase().endsWith(".mp4") || inputFile.type === "video/mp4";
       if (isMp4) {
-        // Instant ISOBMFF Lossless Demuxing
-        const buffer = await inputFile.arrayBuffer();
-        const silentBytes = stripAudioFromMp4Lossless(buffer);
-        const outBlob = new Blob([silentBytes as unknown as BlobPart], { type: "video/mp4" });
-        const outUrl = URL.createObjectURL(outBlob);
+        try {
+          // Instant ISOBMFF Lossless Demuxing
+          const buffer = await inputFile.arrayBuffer();
+          const silentBytes = stripAudioFromMp4Lossless(buffer);
+          const outBlob = new Blob([silentBytes as unknown as BlobPart], { type: "video/mp4" });
+          const outUrl = URL.createObjectURL(outBlob);
 
-        setStrippedBlob(outBlob);
-        setStrippedUrl(outUrl);
-        setStripMethod("lossless");
-        const savings = Math.max(0, Math.round(((inputFile.size - outBlob.size) / inputFile.size) * 100));
-        setStrippedSavingsPercent(savings);
-      } else {
-        // Fallback: Silent Canvas Re-recording Transcode
-        setStripMethod("transcode");
-        const res = await transcodeVideo(inputFile, {
-          resolution: "original",
-          includeAudio: false,
-          bitrateMbps: 3.5,
-        });
-        const outUrl = URL.createObjectURL(res.blob);
-        setStrippedBlob(res.blob);
-        setStrippedUrl(outUrl);
-        const savings = Math.max(0, Math.round(((inputFile.size - res.blob.size) / inputFile.size) * 100));
-        setStrippedSavingsPercent(savings);
+          setStrippedBlob(outBlob);
+          setStrippedUrl(outUrl);
+          setStripMethod("lossless");
+          const savings = Math.max(0, Math.round(((inputFile.size - outBlob.size) / inputFile.size) * 100));
+          setStrippedSavingsPercent(savings);
+          setIsStripping(false);
+          return;
+        } catch (losslessErr) {
+          console.warn("Lossless MP4 stripping fell back to transcode:", losslessErr);
+        }
       }
+
+      // Transcode Fallback for WebM, MOV, MKV, or complex MP4
+      setStripMethod("transcode");
+      const res = await transcodeVideo(inputFile, {
+        resolution: "original",
+        includeAudio: false,
+        bitrateMbps: 3.5,
+        onProgress: (p) => setStripProgress(p),
+      });
+      const outUrl = URL.createObjectURL(res.blob);
+      setStrippedBlob(res.blob);
+      setStrippedUrl(outUrl);
+      const savings = Math.max(0, Math.round(((inputFile.size - res.blob.size) / inputFile.size) * 100));
+      setStrippedSavingsPercent(savings);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Failed to strip audio from video container.");
     } finally {
@@ -334,12 +393,73 @@ export default function VideoLabPage() {
       setExtractedAudio(result);
       const url = URL.createObjectURL(result.wavBlob);
       setExtractedWavUrl(url);
+
+      // Pre-encode MP3 in background
+      try {
+        const left = result.channelData[0];
+        const right = result.channelData.length > 1 ? result.channelData[1] : null;
+        const mp3Bytes = encodeMp3(left, right, result.sampleRate, extractMp3Bitrate);
+        const mp3Blob = new Blob([mp3Bytes as unknown as BlobPart], { type: "audio/mp3" });
+        setExtractedMp3Url(URL.createObjectURL(mp3Blob));
+      } catch (mp3Err) {
+        console.warn("Auto MP3 encode failed", mp3Err);
+      }
     } catch (err: unknown) {
       setErrorMessage(
-        err instanceof Error ? err.message : "Failed to decode audio track. Make sure the video contains an audio stream."
+        err instanceof Error ? err.message : "Failed to decode audio track. Make sure the file contains an audio stream."
       );
     } finally {
       setIsExtracting(false);
+    }
+  };
+
+  // Encode Extracted Audio to MP3 with chosen bitrate
+  const handleExportExtractedMp3 = () => {
+    if (!extractedAudio) return;
+    setIsEncodingMp3(true);
+    try {
+      const left = extractedAudio.channelData[0];
+      const right = extractedAudio.channelData.length > 1 ? extractedAudio.channelData[1] : null;
+      const mp3Bytes = encodeMp3(left, right, extractedAudio.sampleRate, extractMp3Bitrate);
+      const mp3Blob = new Blob([mp3Bytes as unknown as BlobPart], { type: "audio/mp3" });
+      if (extractedMp3Url) URL.revokeObjectURL(extractedMp3Url);
+      const url = URL.createObjectURL(mp3Blob);
+      setExtractedMp3Url(url);
+
+      // Trigger instant download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${fileName.replace(/\.[^/.]+$/, "")}_${extractMp3Bitrate}kbps.mp3`;
+      a.click();
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "MP3 encoding failed.");
+    } finally {
+      setIsEncodingMp3(false);
+    }
+  };
+
+  // Encode Extracted Audio to FLAC
+  const handleExportExtractedFlac = () => {
+    if (!extractedAudio) return;
+    setIsEncodingFlac(true);
+    try {
+      const left = extractedAudio.channelData[0];
+      const right = extractedAudio.channelData.length > 1 ? extractedAudio.channelData[1] : null;
+      const flacBytes = encodeFlac(left, right, extractedAudio.sampleRate);
+      const flacBlob = new Blob([flacBytes as unknown as BlobPart], { type: "audio/flac" });
+      if (extractedFlacUrl) URL.revokeObjectURL(extractedFlacUrl);
+      const url = URL.createObjectURL(flacBlob);
+      setExtractedFlacUrl(url);
+
+      // Trigger instant download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${fileName.replace(/\.[^/.]+$/, "")}_lossless.flac`;
+      a.click();
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : "FLAC encoding failed.");
+    } finally {
+      setIsEncodingFlac(false);
     }
   };
 
@@ -366,6 +486,12 @@ export default function VideoLabPage() {
         sizeBytes: processed.processedWav.size,
       });
       setExtractedWavUrl(newUrl);
+
+      // Invalidate existing MP3/FLAC URLs so they re-encode on click with effects applied
+      if (extractedMp3Url) URL.revokeObjectURL(extractedMp3Url);
+      if (extractedFlacUrl) URL.revokeObjectURL(extractedFlacUrl);
+      setExtractedMp3Url(null);
+      setExtractedFlacUrl(null);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Audio processing failed.");
     }
@@ -390,7 +516,6 @@ export default function VideoLabPage() {
       const x = i * barWidth;
       const y = (height - barHeight) / 2;
 
-      // Color based on playback progress
       const progressRatio = extractedAudio.duration > 0 ? audioPlayTime / extractedAudio.duration : 0;
       const barRatio = i / peaks.length;
 
@@ -419,7 +544,41 @@ export default function VideoLabPage() {
   };
 
   // ==========================================
-  // 3. TRANSCODE & GIF ACTIONS
+  // 3. AUDIO FORMAT CONVERTER ACTION
+  // ==========================================
+  const handleConvertAudio = async () => {
+    if (!inputFile) return;
+    setIsConvertingAudio(true);
+    setErrorMessage(null);
+
+    try {
+      const opts: AudioConvertOptions = {
+        format: audioConvertTarget,
+        bitrateKbps: audioConvertBitrate,
+        gain: audioGain,
+        normalize: audioNormalize,
+        mono: audioMono,
+      };
+
+      const result = await convertAudioFile(inputFile, opts);
+      if (convertedAudioUrl) URL.revokeObjectURL(convertedAudioUrl);
+      const url = URL.createObjectURL(result.blob);
+      setConvertedAudioBlob(result.blob);
+      setConvertedAudioUrl(url);
+      setConvertedAudioFormat(result.format);
+    } catch (err: unknown) {
+      setErrorMessage(
+        err instanceof Error
+          ? err.message
+          : "Failed to convert audio file. Ensure the file contains a valid audio stream."
+      );
+    } finally {
+      setIsConvertingAudio(false);
+    }
+  };
+
+  // ==========================================
+  // 4. TRANSCODE & GIF ACTIONS
   // ==========================================
   const handleTranscodeVideo = async () => {
     if (!inputFile) return;
@@ -433,6 +592,7 @@ export default function VideoLabPage() {
         bitrateMbps,
         fps: transcodeFps,
         includeAudio: transcodeIncludeAudio,
+        format: targetVideoFormat,
         onProgress: (p) => setTranscodeProgress(p),
       };
 
@@ -476,7 +636,7 @@ export default function VideoLabPage() {
   };
 
   // ==========================================
-  // 4. TRIM ACTION
+  // 5. TRIM ACTION
   // ==========================================
   const handleTrimMedia = async () => {
     if (!inputFile) return;
@@ -522,7 +682,7 @@ export default function VideoLabPage() {
       <div className="print:hidden">
         <ToolHeader
           title="Video & Audio Transcoder Studio"
-          description="Zero-egress client-side media lab. Lossless MP4 audio stripper, video-to-WAV audio extractor with waveform visualizer, resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer."
+          description="Zero-egress client-side media lab. Lossless MP4 audio stripper, video-to-WAV/MP3/FLAC audio extractor with waveform visualizer, audio format converter, resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer."
           badge="Zero Egress"
         />
       </div>
@@ -596,7 +756,7 @@ export default function VideoLabPage() {
         <input
           ref={fileInputRef}
           type="file"
-          accept="video/*,audio/*,.mp4,.webm,.mov,.mkv,.wav,.mp3,.ogg,.m4a"
+          accept="video/*,audio/*,.mp4,.webm,.mov,.mkv,.wav,.mp3,.flac,.ogg,.m4a"
           onChange={(e) => {
             if (e.target.files && e.target.files[0]) {
               setActivePreset(null);
@@ -651,7 +811,7 @@ export default function VideoLabPage() {
             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
               Drag and drop any video or audio file here, or click to browse
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Supports MP4, WebM, MOV, MKV, WAV, MP3, OGG, M4A</p>
+            <p className="text-xs text-zinc-500 mt-1">Supports MP4, WebM, MOV, MKV, WAV, MP3, FLAC, OGG, M4A</p>
           </label>
         )}
       </div>
@@ -683,6 +843,18 @@ export default function VideoLabPage() {
         </button>
 
         <button
+          onClick={() => setActiveTab("audio-convert")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
+            activeTab === "audio-convert"
+              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/30"
+              : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          }`}
+        >
+          <Repeat className="w-3.5 h-3.5" />
+          <span>Audio Format Converter</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab("transcode")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
             activeTab === "transcode"
@@ -691,7 +863,7 @@ export default function VideoLabPage() {
           }`}
         >
           <Gauge className="w-3.5 h-3.5" />
-          <span>Transcode & GIF</span>
+          <span>Video Transcoder & GIF</span>
         </button>
 
         <button
@@ -737,11 +909,11 @@ export default function VideoLabPage() {
               <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 text-xs text-zinc-600 dark:text-zinc-400 space-y-1">
                 <p className="font-semibold text-zinc-800 dark:text-zinc-200">How Stripping Works:</p>
                 <p>
-                  • <strong>MP4 Files:</strong> ISOBMFF box demuxing unlinks the audio track in &lt;50ms with{" "}
+                  • <strong>MP4 Containers:</strong> ISOBMFF box demuxing unlinks the audio track in &lt;50ms with{" "}
                   <strong>zero video re-encoding</strong> (100% loss-free).
                 </p>
                 <p>
-                  • <strong>WebM / Other:</strong> Re-encodes cleanly into a silent stream without audio tracks.
+                  • <strong>WebM / MOV / MKV:</strong> Re-encodes cleanly into a silent stream without audio tracks.
                 </p>
               </div>
 
@@ -753,15 +925,24 @@ export default function VideoLabPage() {
                 {isStripping ? (
                   <>
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Stripping Audio Track...</span>
+                    <span>Stripping Audio ({stripProgress}%)...</span>
                   </>
                 ) : (
                   <>
                     <VolumeX className="w-3.5 h-3.5" />
-                    <span>Strip Audio Losslessly Now</span>
+                    <span>Strip Audio Now</span>
                   </>
                 )}
               </button>
+
+              {isStripping && stripProgress > 0 && (
+                <div className="w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="bg-emerald-500 h-1.5 transition-all duration-150"
+                    style={{ width: `${stripProgress}%` }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Muted Result Player */}
@@ -785,7 +966,7 @@ export default function VideoLabPage() {
               ) : (
                 <div className="h-48 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 flex flex-col items-center justify-center text-zinc-400 text-center p-4">
                   <VolumeX className="w-8 h-8 mb-2 opacity-50" />
-                  <p className="text-xs">Click &apos;Strip Audio Losslessly Now&apos; to produce silent video</p>
+                  <p className="text-xs">Click &apos;Strip Audio Now&apos; to produce silent video</p>
                 </div>
               )}
 
@@ -830,10 +1011,10 @@ export default function VideoLabPage() {
               <div>
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                   <Music className="w-5 h-5 text-emerald-500" />
-                  Video-to-Audio Studio (16-bit PCM WAV)
+                  Video-to-Audio Studio (WAV, MP3 & FLAC)
                 </h3>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Decodes audio tracks natively using browser Web Audio API into uncompressed master WAV.
+                  Decodes audio streams in local RAM with zero network latency. Export master WAV, compressed MP3, or lossless FLAC.
                 </p>
               </div>
 
@@ -891,7 +1072,7 @@ export default function VideoLabPage() {
                       {isPlayingAudio ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
                     </button>
 
-                    <div className="text-xs text-zinc-400 font-mono">File Size: {formatBytes(extractedAudio.sizeBytes)}</div>
+                    <div className="text-xs text-zinc-400 font-mono">PCM Master Size: {formatBytes(extractedAudio.sizeBytes)}</div>
                   </div>
                 </div>
 
@@ -951,22 +1132,69 @@ export default function VideoLabPage() {
                   </button>
                 </div>
 
-                {/* Download Actions */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <a
-                    href={extractedWavUrl || "#"}
-                    download={`${fileName.replace(/\.[^/.]+$/, "")}_extracted.wav`}
-                    className="py-2.5 px-4 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-2 transition-colors shadow-sm"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download 16-Bit WAV Master</span>
-                  </a>
+                {/* Multiple Format Download Actions */}
+                <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                    Export Audio Track
+                  </h4>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {/* WAV Master */}
+                    <a
+                      href={extractedWavUrl || "#"}
+                      download={`${fileName.replace(/\.[^/.]+$/, "")}_extracted.wav`}
+                      className="py-2.5 px-4 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-2 transition-colors shadow-sm"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download 16-Bit WAV Master</span>
+                    </a>
+
+                    {/* MP3 with Bitrate Selector */}
+                    <div className="flex items-center gap-1.5">
+                      <select
+                        value={extractMp3Bitrate}
+                        onChange={(e) => setExtractMp3Bitrate(parseInt(e.target.value))}
+                        className="px-2.5 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                      >
+                        <option value={128}>128 kbps (Compact)</option>
+                        <option value={192}>192 kbps (Standard)</option>
+                        <option value={256}>256 kbps (High)</option>
+                        <option value={320}>320 kbps (Extreme)</option>
+                      </select>
+
+                      <button
+                        onClick={handleExportExtractedMp3}
+                        disabled={isEncodingMp3}
+                        className="py-2.5 px-4 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 flex items-center gap-2 transition-colors shadow-sm"
+                      >
+                        {isEncodingMp3 ? (
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Download className="w-3.5 h-3.5" />
+                        )}
+                        <span>Download MP3</span>
+                      </button>
+                    </div>
+
+                    {/* FLAC Lossless */}
+                    <button
+                      onClick={handleExportExtractedFlac}
+                      disabled={isEncodingFlac}
+                      className="py-2.5 px-4 rounded-xl text-xs font-semibold border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center gap-2 transition-colors"
+                    >
+                      {isEncodingFlac ? (
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Download className="w-3.5 h-3.5" />
+                      )}
+                      <span>Download Lossless FLAC</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
               <div className="h-44 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 flex flex-col items-center justify-center text-zinc-400 text-center p-4">
                 <Music className="w-8 h-8 mb-2 opacity-50" />
-                <p className="text-xs">Click &apos;Extract Audio Track&apos; to decode sound into uncompressed PCM WAV</p>
+                <p className="text-xs">Click &apos;Extract Audio Track&apos; to decode sound into uncompressed PCM WAV, MP3, or FLAC</p>
               </div>
             )}
           </div>
@@ -974,7 +1202,122 @@ export default function VideoLabPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: TRANSCODE & RESIZE & GIF */}
+      {/* TAB 3: AUDIO FORMAT CONVERTER */}
+      {/* ========================================================================= */}
+      {activeTab === "audio-convert" && (
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                  <Repeat className="w-5 h-5 text-emerald-500" />
+                  Audio Format Transcoder Studio
+                </h3>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Convert between any audio formats (MP3 ↔ FLAC ↔ WAV ↔ OGG ↔ M4A) directly in browser memory.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Target Format */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Target Audio Format</label>
+                <select
+                  value={audioConvertTarget}
+                  onChange={(e) => setAudioConvertTarget(e.target.value as "mp3" | "wav" | "flac")}
+                  className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                >
+                  <option value="mp3">MP3 (MPEG Audio Layer III)</option>
+                  <option value="flac">FLAC (Free Lossless Audio Codec)</option>
+                  <option value="wav">WAV (16-bit PCM Master)</option>
+                </select>
+              </div>
+
+              {/* MP3 Bitrate if MP3 selected */}
+              {audioConvertTarget === "mp3" && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">MP3 Bitrate</label>
+                  <select
+                    value={audioConvertBitrate}
+                    onChange={(e) => setAudioConvertBitrate(parseInt(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                  >
+                    <option value={128}>128 kbps (Compact)</option>
+                    <option value={192}>192 kbps (Standard)</option>
+                    <option value={256}>256 kbps (High Fidelity)</option>
+                    <option value={320}>320 kbps (Maximum Quality)</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Audio Normalization */}
+              <div className="space-y-1.5 flex flex-col justify-end">
+                <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300 pb-2">
+                  <input
+                    type="checkbox"
+                    checked={audioNormalize}
+                    onChange={(e) => setAudioNormalize(e.target.checked)}
+                    className="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <span>Peak Normalize to 0dB</span>
+                </label>
+              </div>
+            </div>
+
+            <button
+              onClick={handleConvertAudio}
+              disabled={!inputFile || isConvertingAudio}
+              className="py-2.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
+            >
+              {isConvertingAudio ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Converting Audio Stream...</span>
+                </>
+              ) : (
+                <>
+                  <Repeat className="w-3.5 h-3.5" />
+                  <span>Convert Audio to {audioConvertTarget.toUpperCase()}</span>
+                </>
+              )}
+            </button>
+
+            {/* Converted Audio Preview */}
+            {convertedAudioUrl && convertedAudioBlob && (
+              <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/30 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                      Converted {convertedAudioFormat.toUpperCase()} Ready ({formatBytes(convertedAudioBlob.size)})
+                    </h4>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">
+                      Original: {formatBytes(inputFile?.size || 0)} → {convertedAudioFormat.toUpperCase()}: {formatBytes(convertedAudioBlob.size)}
+                    </p>
+                  </div>
+
+                  <a
+                    href={convertedAudioUrl}
+                    download={`${fileName.replace(/\.[^/.]+$/, "")}_converted.${convertedAudioFormat}`}
+                    className="py-1.5 px-3 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 transition-colors shadow-sm"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download {convertedAudioFormat.toUpperCase()}</span>
+                  </a>
+                </div>
+
+                <div className="p-3 rounded-xl bg-zinc-950 flex items-center justify-center">
+                  <audio src={convertedAudioUrl} controls className="w-full max-w-lg" />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 4: TRANSCODE & RESIZE & GIF */}
       {/* ========================================================================= */}
       {activeTab === "transcode" && (
         <div className="space-y-6">
@@ -990,7 +1333,7 @@ export default function VideoLabPage() {
                       : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
                   }`}
                 >
-                  Video Transcoder & Downscaler
+                  Video Transcoder & Format Converter
                 </button>
                 <button
                   onClick={() => setTranscodeMode("gif")}
@@ -1009,6 +1352,19 @@ export default function VideoLabPage() {
             {transcodeMode === "video" ? (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Target Video Format */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Target Video Format</label>
+                    <select
+                      value={targetVideoFormat}
+                      onChange={(e) => setTargetVideoFormat(e.target.value as "webm" | "mp4")}
+                      className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                    >
+                      <option value="webm">WebM (VP9 / VP8 Video + Opus Audio)</option>
+                      <option value="mp4">MP4 (H.264 Video + AAC Audio)</option>
+                    </select>
+                  </div>
+
                   {/* Resolution Preset */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Target Resolution</label>
@@ -1059,38 +1415,37 @@ export default function VideoLabPage() {
                       <option value={60}>60 FPS (Smooth)</option>
                     </select>
                   </div>
-
-                  {/* Audio Toggle */}
-                  <div className="space-y-1.5 flex flex-col justify-end">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300 pb-2">
-                      <input
-                        type="checkbox"
-                        checked={transcodeIncludeAudio}
-                        onChange={(e) => setTranscodeIncludeAudio(e.target.checked)}
-                        className="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
-                      />
-                      <span>Include Audio Track</span>
-                    </label>
-                  </div>
                 </div>
 
-                <button
-                  onClick={handleTranscodeVideo}
-                  disabled={!inputFile || isTranscoding || !isVideo}
-                  className="py-2.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
-                >
-                  {isTranscoding ? (
-                    <>
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Transcoding ({transcodeProgress}%)...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Gauge className="w-3.5 h-3.5" />
-                      <span>Start Video Transcode</span>
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
+                    <input
+                      type="checkbox"
+                      checked={transcodeIncludeAudio}
+                      onChange={(e) => setTranscodeIncludeAudio(e.target.checked)}
+                      className="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>Include Decoded Audio Track in Output</span>
+                  </label>
+
+                  <button
+                    onClick={handleTranscodeVideo}
+                    disabled={!inputFile || isTranscoding || !isVideo}
+                    className="py-2.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
+                  >
+                    {isTranscoding ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Transcoding ({transcodeProgress}%)...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Gauge className="w-3.5 h-3.5" />
+                        <span>Start Video Transcode</span>
+                      </>
+                    )}
+                  </button>
+                </div>
 
                 {/* Progress Bar */}
                 {isTranscoding && (
@@ -1112,11 +1467,11 @@ export default function VideoLabPage() {
                       </h4>
                       <a
                         href={transcodedUrl}
-                        download={`transcoded_${fileName.replace(/\.[^/.]+$/, "")}.webm`}
+                        download={`transcoded_${fileName.replace(/\.[^/.]+$/, "")}.${targetVideoFormat}`}
                         className="py-1.5 px-3 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
-                        <span>Download WebM</span>
+                        <span>Download {targetVideoFormat.toUpperCase()}</span>
                       </a>
                     </div>
 
@@ -1216,7 +1571,7 @@ export default function VideoLabPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 4: MEDIA TRIMMER & CUTTER */}
+      {/* TAB 5: MEDIA TRIMMER & CUTTER */}
       {/* ========================================================================= */}
       {activeTab === "trim" && (
         <div className="space-y-6">

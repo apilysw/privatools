@@ -19,6 +19,8 @@ export interface VideoMetadata {
   mimeType: string;
 }
 
+import { Mp3Encoder } from "@breezystack/lamejs";
+
 export interface ExtractedAudioResult {
   audioBuffer: AudioBuffer;
   channelData: Float32Array[];
@@ -35,6 +37,7 @@ export interface TranscodeOptions {
   bitrateMbps?: number; // e.g. 1.0, 2.5, 5.0
   fps?: number; // 24, 30, 60
   includeAudio?: boolean;
+  format?: "webm" | "mp4";
   startTimeSec?: number;
   endTimeSec?: number;
   onProgress?: (progress: number) => void;
@@ -46,6 +49,15 @@ export interface GifConvertOptions {
   startTimeSec?: number;
   endTimeSec?: number;
   onProgress?: (progress: number) => void;
+}
+
+export interface AudioConvertOptions {
+  format: "mp3" | "wav" | "flac";
+  bitrateKbps?: number; // 128, 192, 256, 320 for MP3
+  sampleRate?: number; // 44100, 48000
+  gain?: number;
+  normalize?: boolean;
+  mono?: boolean;
 }
 
 // ==========================================
@@ -325,6 +337,246 @@ export function extractWaveformPeaks(channelData: Float32Array, numBars: number)
   return peaks;
 }
 
+/**
+ * Encodes Float32 audio samples into a standard MP3 binary buffer using LAME.
+ */
+export function encodeMp3(
+  leftSamples: Float32Array,
+  rightSamples: Float32Array | null,
+  sampleRate: number,
+  kbps: number = 192
+): Uint8Array {
+  const numChannels = rightSamples ? 2 : 1;
+  const numSamples = leftSamples.length;
+
+  const leftInt16 = new Int16Array(numSamples);
+  for (let i = 0; i < numSamples; i++) {
+    const s = Math.max(-1, Math.min(1, leftSamples[i]));
+    leftInt16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+  }
+
+  let rightInt16: Int16Array | undefined = undefined;
+  if (rightSamples) {
+    rightInt16 = new Int16Array(numSamples);
+    for (let i = 0; i < numSamples; i++) {
+      const s = Math.max(-1, Math.min(1, rightSamples[i]));
+      rightInt16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+  }
+
+  const encoder = new Mp3Encoder(numChannels, sampleRate, kbps);
+  const mp3Data: Uint8Array[] = [];
+  const blockSize = 1152;
+
+  for (let i = 0; i < numSamples; i += blockSize) {
+    const leftChunk = leftInt16.subarray(i, i + blockSize);
+    const rightChunk = rightInt16 ? rightInt16.subarray(i, i + blockSize) : undefined;
+    const mp3buf = encoder.encodeBuffer(leftChunk, rightChunk);
+    if (mp3buf.length > 0) {
+      mp3Data.push(mp3buf);
+    }
+  }
+
+  const endBuf = encoder.flush();
+  if (endBuf.length > 0) {
+    mp3Data.push(endBuf);
+  }
+
+  let totalLen = 0;
+  for (const chunk of mp3Data) totalLen += chunk.length;
+  const result = new Uint8Array(totalLen);
+  let offset = 0;
+  for (const chunk of mp3Data) {
+    result.set(chunk, offset);
+    offset += chunk.length;
+  }
+
+  return result;
+}
+
+// CRC-8 table for FLAC header (poly 0x07)
+const flacCrc8Table = new Uint8Array(256);
+for (let i = 0; i < 256; i++) {
+  let temp = i;
+  for (let j = 0; j < 8; j++) {
+    temp = temp & 0x80 ? ((temp << 1) ^ 0x07) & 0xff : (temp << 1) & 0xff;
+  }
+  flacCrc8Table[i] = temp;
+}
+function flacCrc8(buf: Uint8Array): number {
+  let c = 0;
+  for (let i = 0; i < buf.length; i++) c = flacCrc8Table[c ^ buf[i]];
+  return c;
+}
+
+// CRC-16 table for FLAC frame (poly 0x8005)
+const flacCrc16Table = new Uint16Array(256);
+for (let i = 0; i < 256; i++) {
+  let temp = i << 8;
+  for (let j = 0; j < 8; j++) {
+    temp = temp & 0x8000 ? ((temp << 1) ^ 0x8005) & 0xffff : (temp << 1) & 0xffff;
+  }
+  flacCrc16Table[i] = temp;
+}
+function flacCrc16(buf: Uint8Array): number {
+  let c = 0;
+  for (let i = 0; i < buf.length; i++) {
+    c = ((c << 8) & 0xffff) ^ flacCrc16Table[((c >> 8) ^ buf[i]) & 0xff];
+  }
+  return c;
+}
+
+/**
+ * Encodes Float32 audio samples into a standard FLAC (Free Lossless Audio Codec) binary buffer.
+ */
+export function encodeFlac(
+  leftSamples: Float32Array,
+  rightSamples: Float32Array | null,
+  sampleRate: number
+): Uint8Array {
+  const numChannels = rightSamples ? 2 : 1;
+  const numSamples = leftSamples.length;
+  const blockSize = 4096;
+
+  const leftInt16 = new Int16Array(numSamples);
+  for (let i = 0; i < numSamples; i++) {
+    const s = Math.max(-1, Math.min(1, leftSamples[i]));
+    leftInt16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+  }
+
+  let rightInt16: Int16Array | null = null;
+  if (rightSamples) {
+    rightInt16 = new Int16Array(numSamples);
+    for (let i = 0; i < numSamples; i++) {
+      const s = Math.max(-1, Math.min(1, rightSamples[i]));
+      rightInt16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+  }
+
+  const bytes: number[] = [];
+  function writeByte(b: number) { bytes.push(b & 0xff); }
+  function writeBytes(arr: number[] | Uint8Array) { for (let i = 0; i < arr.length; i++) bytes.push(arr[i]); }
+  function write16(w: number) { bytes.push((w >> 8) & 0xff, w & 0xff); }
+  function write24(w: number) { bytes.push((w >> 16) & 0xff, (w >> 8) & 0xff, w & 0xff); }
+  function write32(w: number) { bytes.push((w >> 24) & 0xff, (w >> 16) & 0xff, (w >> 8) & 0xff, w & 0xff); }
+
+  // 1. "fLaC" signature
+  writeByte(0x66); writeByte(0x4c); writeByte(0x61); writeByte(0x43);
+
+  // 2. STREAMINFO metadata block (last=1, type=0, len=34)
+  writeByte(0x80);
+  write24(34);
+  write16(blockSize); // min blocksize
+  write16(blockSize); // max blocksize
+  write24(0); // min framesize
+  write24(0); // max framesize
+
+  // 20 bits sampleRate, 3 bits (numChannels-1), 5 bits (bitsPerSample-1 = 15)
+  const b14 = (sampleRate >> 12) & 0xff;
+  const b15 = (sampleRate >> 4) & 0xff;
+  const b16 = ((sampleRate & 0x0f) << 4) | ((numChannels - 1) << 1) | 0;
+  const b17 = (15 << 4) | (Math.floor(numSamples / 0x100000000) & 0x0f);
+  writeByte(b14); writeByte(b15); writeByte(b16); writeByte(b17);
+  write32(numSamples & 0xffffffff);
+
+  // 16 bytes MD5
+  for (let i = 0; i < 16; i++) writeByte(0);
+
+  // 3. Audio Frames
+  const totalFrames = Math.ceil(numSamples / blockSize);
+  for (let frameIdx = 0; frameIdx < totalFrames; frameIdx++) {
+    const curStart = frameIdx * blockSize;
+    const curBlockLen = Math.min(blockSize, numSamples - curStart);
+
+    const headerBytes: number[] = [];
+    headerBytes.push(0xff, 0xf8);
+    headerBytes.push((0x07 << 4) | 0x00);
+    headerBytes.push(((numChannels === 2 ? 1 : 0) << 4) | (4 << 1) | 0);
+
+    if (frameIdx < 0x80) {
+      headerBytes.push(frameIdx);
+    } else if (frameIdx < 0x800) {
+      headerBytes.push(0xc0 | (frameIdx >> 6), 0x80 | (frameIdx & 0x3f));
+    } else {
+      headerBytes.push(0xe0 | (frameIdx >> 12), 0x80 | ((frameIdx >> 6) & 0x3f), 0x80 | (frameIdx & 0x3f));
+    }
+
+    headerBytes.push(((curBlockLen - 1) >> 8) & 0xff, (curBlockLen - 1) & 0xff);
+
+    const headerCrc = flacCrc8(new Uint8Array(headerBytes));
+    headerBytes.push(headerCrc);
+
+    const framePayload = [...headerBytes];
+    for (let ch = 0; ch < numChannels; ch++) {
+      const src = ch === 0 ? leftInt16 : rightInt16!;
+      framePayload.push(0x04); // verbatim subframe
+      for (let s = 0; s < curBlockLen; s++) {
+        const val = src[curStart + s];
+        framePayload.push((val >> 8) & 0xff, val & 0xff);
+      }
+    }
+
+    const frameCrc = flacCrc16(new Uint8Array(framePayload));
+    framePayload.push((frameCrc >> 8) & 0xff, frameCrc & 0xff);
+
+    writeBytes(framePayload);
+  }
+
+  return new Uint8Array(bytes);
+}
+
+/**
+ * Converts any audio file (MP3, WAV, FLAC, OGG, M4A, AAC) to MP3, WAV, or FLAC with optional effects.
+ */
+export async function convertAudioFile(
+  file: File | Blob,
+  options: AudioConvertOptions
+): Promise<{ blob: Blob; sizeBytes: number; duration: number; format: string }> {
+  const arrayBuffer = await file.arrayBuffer();
+  const AudioContextClass =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  const audioCtx = new AudioContextClass();
+  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+  const numChannels = audioBuffer.numberOfChannels;
+  const channelData: Float32Array[] = [];
+  for (let ch = 0; ch < numChannels; ch++) {
+    channelData.push(audioBuffer.getChannelData(ch));
+  }
+
+  const processed = processAudioData(channelData, audioBuffer.sampleRate, {
+    gain: options.gain,
+    normalize: options.normalize,
+    mono: options.mono,
+  });
+
+  const outRate = options.sampleRate || audioBuffer.sampleRate;
+  const left = processed.channelData[0];
+  const right = processed.channelData.length > 1 ? processed.channelData[1] : null;
+
+  let outBlob: Blob;
+  if (options.format === "mp3") {
+    const mp3Bytes = encodeMp3(left, right, outRate, options.bitrateKbps || 192);
+    outBlob = new Blob([mp3Bytes as unknown as BlobPart], { type: "audio/mp3" });
+  } else if (options.format === "flac") {
+    const flacBytes = encodeFlac(left, right, outRate);
+    outBlob = new Blob([flacBytes as unknown as BlobPart], { type: "audio/flac" });
+  } else {
+    const wavBuf = encodeWav(processed.channelData, outRate);
+    outBlob = new Blob([wavBuf], { type: "audio/wav" });
+  }
+
+  audioCtx.close();
+
+  return {
+    blob: outBlob,
+    sizeBytes: outBlob.size,
+    duration: processed.newDuration,
+    format: options.format,
+  };
+}
+
 // ==========================================
 // 3. AUDIO PROCESSING & TRANSCODING
 // ==========================================
@@ -467,20 +719,51 @@ export function calculateScaledDimensions(
 export async function transcodeVideo(
   videoBlob: Blob,
   options: TranscodeOptions = {}
-): Promise<{ blob: Blob; width: number; height: number; duration: number }> {
-  return new Promise((resolve, reject) => {
+): Promise<{ blob: Blob; width: number; height: number; duration: number; format: string }> {
+  return new Promise(async (resolve, reject) => {
+    let resolved = false;
+    let animFrameId: number = 0;
+    let videoUrl = "";
+
+    const cleanup = () => {
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      if (videoUrl) URL.revokeObjectURL(videoUrl);
+      if (audioCtx) {
+        try {
+          audioCtx.close();
+        } catch {}
+      }
+    };
+
+    const fail = (err: Error) => {
+      if (resolved) return;
+      resolved = true;
+      cleanup();
+      reject(err);
+    };
+
+    videoUrl = URL.createObjectURL(videoBlob);
     const video = document.createElement("video");
     video.preload = "auto";
-    video.muted = !options.includeAudio;
+    video.muted = true; // Always muted so browser never blocks video.play()!
     video.playsInline = true;
-
-    const videoUrl = URL.createObjectURL(videoBlob);
     video.src = videoUrl;
 
+    // Attach offscreen to DOM temporarily so browser doesn't throttle decoding
+    video.style.position = "fixed";
+    video.style.top = "-99999px";
+    video.style.left = "-99999px";
+    video.style.opacity = "0";
+    video.style.pointerEvents = "none";
+    document.body.appendChild(video);
+
+    let audioCtx: AudioContext | null = null;
+    let audioSourceNode: AudioBufferSourceNode | null = null;
+
     video.onloadedmetadata = async () => {
-      const origW = video.videoWidth;
-      const origH = video.videoHeight;
-      const origDur = video.duration;
+      const origW = video.videoWidth || 640;
+      const origH = video.videoHeight || 360;
+      const origDur = video.duration || 1;
 
       const { width, height } = calculateScaledDimensions(
         origW,
@@ -493,27 +776,29 @@ export async function transcodeVideo(
       canvas.height = height;
       const ctx = canvas.getContext("2d");
       if (!ctx) {
-        URL.revokeObjectURL(videoUrl);
-        reject(new Error("Could not initialize 2D Canvas rendering context."));
+        if (document.body.contains(video)) document.body.removeChild(video);
+        fail(new Error("Could not initialize 2D Canvas rendering context."));
         return;
       }
 
       const fps = options.fps || 30;
       const canvasStream = canvas.captureStream(fps);
+      let combinedStream = canvasStream;
 
-      // Audio track handling
-      let combinedStream: MediaStream = canvasStream;
-      let audioCtx: AudioContext | null = null;
-
+      // Extract and mix audio if requested
       if (options.includeAudio) {
         try {
           const AudioContextClass =
             window.AudioContext ||
             (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
           audioCtx = new AudioContextClass();
-          const source = audioCtx.createMediaElementSource(video);
+          const arrayBuffer = await videoBlob.arrayBuffer();
+          const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+
+          audioSourceNode = audioCtx.createBufferSource();
+          audioSourceNode.buffer = decoded;
           const dest = audioCtx.createMediaStreamDestination();
-          source.connect(dest);
+          audioSourceNode.connect(dest);
 
           const audioTrack = dest.stream.getAudioTracks()[0];
           if (audioTrack) {
@@ -522,100 +807,163 @@ export async function transcodeVideo(
               audioTrack,
             ]);
           }
-        } catch {
-          combinedStream = canvasStream;
+        } catch (audioErr) {
+          console.warn("Audio extraction for transcode failed, proceeding video-only:", audioErr);
+        }
+      }
+
+      // Format & Codec selection
+      const requestedFormat = options.format || "webm";
+      let selectedMime = "video/webm";
+
+      if (requestedFormat === "mp4") {
+        const mp4Types = [
+          "video/mp4;codecs=avc1,mp4a.40.2",
+          "video/mp4;codecs=avc1",
+          "video/mp4",
+        ];
+        for (const t of mp4Types) {
+          if (MediaRecorder.isTypeSupported(t)) {
+            selectedMime = t;
+            break;
+          }
+        }
+      } else {
+        const webmTypes = [
+          "video/webm;codecs=vp9,opus",
+          "video/webm;codecs=vp8,opus",
+          "video/webm",
+        ];
+        for (const t of webmTypes) {
+          if (MediaRecorder.isTypeSupported(t)) {
+            selectedMime = t;
+            break;
+          }
         }
       }
 
       const bitrate = (options.bitrateMbps || 2.5) * 1_000_000;
-      const mimeTypes = [
-        "video/webm;codecs=vp9,opus",
-        "video/webm;codecs=vp8,opus",
-        "video/webm",
-        "video/mp4",
-      ];
-      let selectedMime = "video/webm";
-      for (const m of mimeTypes) {
-        if (MediaRecorder.isTypeSupported(m)) {
-          selectedMime = m;
-          break;
-        }
+      let recorder: MediaRecorder;
+      try {
+        recorder = new MediaRecorder(combinedStream, {
+          mimeType: selectedMime,
+          videoBitsPerSecond: bitrate,
+        });
+      } catch {
+        recorder = new MediaRecorder(combinedStream);
+        selectedMime = recorder.mimeType || "video/webm";
       }
-
-      const recorder = new MediaRecorder(combinedStream, {
-        mimeType: selectedMime,
-        videoBitsPerSecond: bitrate,
-      });
 
       const chunks: Blob[] = [];
       recorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) {
-          chunks.push(e.data);
-        }
+        if (e.data && e.data.size > 0) chunks.push(e.data);
       };
 
       const startSec = Math.max(0, options.startTimeSec || 0);
-      const endSec = Math.min(origDur, options.endTimeSec !== undefined ? options.endTimeSec : origDur);
+      const endSec = Math.min(
+        origDur,
+        options.endTimeSec !== undefined ? options.endTimeSec : origDur
+      );
       const totalProcessDur = Math.max(0.1, endSec - startSec);
 
-      let animFrameId: number;
-      const drawLoop = () => {
-        if (video.paused || video.ended || video.currentTime >= endSec) {
-          return;
+      let isFinished = false;
+      const finish = () => {
+        if (isFinished) return;
+        isFinished = true;
+        if (recorder.state === "recording") {
+          recorder.stop();
         }
-        ctx.drawImage(video, 0, 0, width, height);
-
-        if (options.onProgress) {
-          const cur = video.currentTime - startSec;
-          const prog = Math.min(100, Math.max(0, Math.round((cur / totalProcessDur) * 100)));
-          options.onProgress(prog);
-        }
-
-        animFrameId = requestAnimationFrame(drawLoop);
       };
 
       recorder.onstop = () => {
-        cancelAnimationFrame(animFrameId);
-        URL.revokeObjectURL(videoUrl);
-        if (audioCtx) audioCtx.close();
+        if (resolved) return;
+        resolved = true;
+        if (document.body.contains(video)) {
+          document.body.removeChild(video);
+        }
+        cleanup();
 
+        const formatExt = selectedMime.includes("mp4") ? "mp4" : "webm";
         const outBlob = new Blob(chunks, { type: selectedMime });
         resolve({
           blob: outBlob,
           width,
           height,
           duration: totalProcessDur,
+          format: formatExt,
         });
       };
 
-      video.currentTime = startSec;
+      const drawLoop = () => {
+        if (isFinished || video.paused || video.ended || video.currentTime >= endSec) {
+          finish();
+          return;
+        }
 
-      video.onseeked = () => {
-        recorder.start(100);
-        video.play();
-        drawLoop();
+        ctx.drawImage(video, 0, 0, width, height);
+
+        if (options.onProgress) {
+          const cur = video.currentTime - startSec;
+          const prog = Math.min(99, Math.max(0, Math.round((cur / totalProcessDur) * 100)));
+          options.onProgress(prog);
+        }
+
+        animFrameId = requestAnimationFrame(drawLoop);
       };
 
-      video.ontimeupdate = () => {
-        if (video.currentTime >= endSec) {
-          video.pause();
-          if (recorder.state === "recording") {
-            recorder.stop();
+      const startPlayback = async () => {
+        try {
+          recorder.start(100);
+          if (audioSourceNode) {
+            audioSourceNode.start(0, startSec);
           }
+          await video.play();
+          drawLoop();
+        } catch (playErr) {
+          if (document.body.contains(video)) document.body.removeChild(video);
+          fail(
+            playErr instanceof Error
+              ? playErr
+              : new Error("Failed to play video during transcoding.")
+          );
         }
       };
 
-      video.onerror = () => {
-        cancelAnimationFrame(animFrameId);
-        URL.revokeObjectURL(videoUrl);
-        if (recorder.state === "recording") recorder.stop();
-        reject(new Error("Video playback error during transcoding."));
+      // Watchdog timeout: video duration + 8 seconds max
+      const maxTimeoutMs = (totalProcessDur + 8) * 1000;
+      const timeoutTimer = setTimeout(() => {
+        if (!isFinished) {
+          finish();
+        }
+      }, maxTimeoutMs);
+
+      video.ontimeupdate = () => {
+        if (video.currentTime >= endSec) {
+          clearTimeout(timeoutTimer);
+          finish();
+        }
       };
+
+      video.onended = () => {
+        clearTimeout(timeoutTimer);
+        finish();
+      };
+
+      // Crucial fix: If already at startSec, start immediately!
+      if (Math.abs(video.currentTime - startSec) < 0.05) {
+        startPlayback();
+      } else {
+        video.currentTime = startSec;
+        video.onseeked = () => {
+          video.onseeked = null;
+          startPlayback();
+        };
+      }
     };
 
     video.onerror = () => {
-      URL.revokeObjectURL(videoUrl);
-      reject(new Error("Failed to load video file for processing."));
+      if (document.body.contains(video)) document.body.removeChild(video);
+      fail(new Error("Failed to load video file for processing."));
     };
   });
 }
@@ -665,6 +1013,19 @@ export async function convertVideoToGif(
       const framesData: ImageData[] = [];
       let currentSeek = startSec;
 
+      const onFrameReady = () => {
+        ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+        framesData.push(ctx.getImageData(0, 0, targetWidth, targetHeight));
+
+        if (options.onProgress) {
+          const prog = Math.round((framesData.length / totalFrames) * 50);
+          options.onProgress(prog);
+        }
+
+        currentSeek += frameInterval;
+        captureNextFrame();
+      };
+
       const captureNextFrame = () => {
         if (currentSeek > endSec || framesData.length >= totalFrames) {
           // All frames captured; encode GIF!
@@ -693,25 +1054,15 @@ export async function convertVideoToGif(
           return;
         }
 
-        video.currentTime = currentSeek;
+        if (Math.abs(video.currentTime - currentSeek) < 0.001) {
+          onFrameReady();
+        } else {
+          video.currentTime = currentSeek;
+        }
       };
 
       video.onseeked = () => {
-        ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
-        framesData.push(ctx.getImageData(0, 0, targetWidth, targetHeight));
-
-        if (options.onProgress) {
-          const prog = Math.round((framesData.length / totalFrames) * 50);
-          options.onProgress(prog);
-        }
-
-        currentSeek += frameInterval;
-        captureNextFrame();
-      };
-
-      video.onerror = () => {
-        URL.revokeObjectURL(videoUrl);
-        reject(new Error("Error while seeking video frames for GIF export."));
+        onFrameReady();
       };
 
       captureNextFrame();
