@@ -24,6 +24,7 @@ import {
   Regex,
   BookOpen,
   Camera,
+  Network,
 } from "lucide-react";
 import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
 
@@ -42,6 +43,7 @@ const iconMap: Record<string, React.ElementType> = {
   Regex,
   BookOpen,
   Camera,
+  Network,
 };
 
 export default function HomePage() {

@@ -274,6 +274,37 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     ],
     status: "ready",
   },
+  {
+    id: "subnet-calculator",
+    name: "Network & Subnet CIDR Studio",
+    slug: "/tools/subnet-calculator",
+    category: "Security & Dev",
+    shortDesc: "IPv4 & IPv6 CIDR subnet calculator, VLSM planner, IP collision detector, and bitmask visualizer.",
+    description:
+      "High-precision client-side IP subnet calculator. Decompose 32-bit IPv4 binary bitmasks, compute Cisco wildcard masks, divide networks with Variable Length Subnet Masking (VLSM), detect cloud VPC routing collisions, and calculate IPv6 addresses with zero data egress.",
+    icon: "Network",
+    badge: "Zero Egress",
+    supportedFormats: ["IPv4", "IPv6", "CIDR", "VLSM", "Binary", "Hex"],
+    keywords: [
+      "subnet",
+      "cidr",
+      "ip",
+      "ipv4",
+      "ipv6",
+      "vlsm",
+      "mask",
+      "wildcard",
+      "network",
+      "broadcast",
+      "cisco",
+      "vpc",
+      "routing",
+      "binary",
+      "bitmask",
+      "rfc1918",
+    ],
+    status: "ready",
+  },
 ];
 
 export const TOOL_CATEGORIES = [

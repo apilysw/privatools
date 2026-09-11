@@ -96,6 +96,11 @@ export function Footer() {
                   Media Privacy & EXIF Studio
                 </Link>
               </li>
+              <li>
+                <Link href="/tools/subnet-calculator" className="hover:text-emerald-500 transition-colors">
+                  Subnet & CIDR Studio
+                </Link>
+              </li>
             </ul>
           </div>
 
