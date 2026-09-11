@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X, ArrowRight, FileSpreadsheet, Image, Binary, ShieldCheck, Code2, Key, FileText, Hash, Database, GitCompare, QrCode, Regex, BookOpen, Camera, Network, Clock, Video, Palette, Dices } from "lucide-react";
-import { TOOLS_REGISTRY, ToolMetadata } from "@/lib/registry";
+import { TOOLS_REGISTRY, ToolMetadata, searchTools } from "@/lib/registry";
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -37,17 +37,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
 
-  // Filter tools
-  const filtered = TOOLS_REGISTRY.filter((tool) => {
-    const q = query.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      tool.name.toLowerCase().includes(q) ||
-      tool.shortDesc.toLowerCase().includes(q) ||
-      tool.keywords.some((k) => k.toLowerCase().includes(q)) ||
-      tool.supportedFormats.some((f) => f.toLowerCase().includes(q))
-    );
-  });
+  // Filter tools with shared robust multi-token search
+  const filtered = useMemo(() => searchTools(query, "All"), [query]);
 
   useEffect(() => {
     setSelectedIndex(0);
@@ -147,6 +138,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                             {tool.badge}
                           </span>
                         )}
+                        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 truncate hidden sm:inline">
+                          [{tool.supportedFormats.slice(0, 3).join(", ")}]
+                        </span>
                       </div>
                       <p className="text-xs text-zinc-400 truncate">{tool.shortDesc}</p>
                     </div>

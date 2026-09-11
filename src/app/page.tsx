@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -30,7 +30,7 @@ import {
   Palette,
   Dices,
 } from "lucide-react";
-import { TOOLS_REGISTRY, TOOL_CATEGORIES } from "@/lib/registry";
+import { TOOLS_REGISTRY, TOOL_CATEGORIES, searchTools } from "@/lib/registry";
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,
@@ -58,19 +58,10 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const filteredTools = TOOLS_REGISTRY.filter((tool) => {
-    const matchesCategory =
-      selectedCategory === "All" || tool.category === selectedCategory;
-    const q = searchQuery.toLowerCase().trim();
-    const matchesQuery =
-      !q ||
-      tool.name.toLowerCase().includes(q) ||
-      tool.shortDesc.toLowerCase().includes(q) ||
-      tool.keywords.some((k) => k.toLowerCase().includes(q)) ||
-      tool.supportedFormats.some((f) => f.toLowerCase().includes(q));
-
-    return matchesCategory && matchesQuery;
-  });
+  const filteredTools = useMemo(
+    () => searchTools(searchQuery, selectedCategory),
+    [searchQuery, selectedCategory]
+  );
 
   return (
     <div className="space-y-16">

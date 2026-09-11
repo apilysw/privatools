@@ -342,12 +342,12 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     name: "Video & Audio Transcoder Studio",
     slug: "/tools/video-lab",
     category: "Media & Images",
-    shortDesc: "Strip audio losslessly from video, extract audio to 16-bit WAV, transcode, and convert to GIF.",
+    shortDesc: "Strip audio losslessly, extract and convert MP3/FLAC/WAV/OGG/AAC, transcode video, and export animated GIFs.",
     description:
-      "Zero-egress client-side media lab. Lossless MP4 audio stripper with ISOBMFF demuxing, video-to-WAV audio extractor with waveform visualizer, resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer.",
+      "Zero-egress client-side media lab. Lossless MP4/WebM audio stripper with ISOBMFF demuxing, video-to-audio extractor (MP3, FLAC, WAV, OGG), bi-directional audio format converter (MP3, WAV, FLAC, OGG, AAC), resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer.",
     icon: "Video",
     badge: "Zero Egress",
-    supportedFormats: ["MP4", "WebM", "MOV", "WAV", "GIF", "PCM", "Audio"],
+    supportedFormats: ["MP4", "WebM", "MOV", "MP3", "FLAC", "WAV", "OGG", "AAC", "GIF", "Audio", "Video"],
     keywords: [
       "video",
       "audio",
@@ -356,9 +356,15 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
       "strip audio",
       "mute video",
       "extract audio",
+      "mp3",
+      "flac",
+      "wav",
+      "ogg",
+      "aac",
+      "m4a",
       "mp4",
       "webm",
-      "wav",
+      "mov",
       "gif",
       "trim",
       "cut",
@@ -366,6 +372,12 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
       "downscale",
       "lossless",
       "isobmff",
+      "sound",
+      "music",
+      "audio converter",
+      "video converter",
+      "transcode",
+      "media",
     ],
     status: "ready",
   },
@@ -379,7 +391,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
       "Comprehensive client-side color studio. Convert between HEX, RGB, HSL, HWB, modern OKLCH (CSS Color 4), and CIE-LAB. Verify WCAG 2.1 AA/AAA and APCA contrast with an intelligent auto-fixer, simulate 8 color blindness profiles, explore interactive harmonies on an SVG color wheel, and generate Tailwind 11-step design token shade scales in 100% private local memory.",
     icon: "Palette",
     badge: "Zero Egress",
-    supportedFormats: ["HEX", "RGB", "HSL", "OKLCH", "HWB", "LAB", "CMYK", "Tailwind"],
+    supportedFormats: ["HEX", "RGB", "HSL", "OKLCH", "HWB", "LAB", "CMYK", "Tailwind", "CSS"],
     keywords: [
       "color",
       "colour",
@@ -411,6 +423,8 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
       "tailwind",
       "generator",
       "picker",
+      "eyedropper",
+      "wheel",
     ],
     status: "ready",
   },
@@ -449,6 +463,8 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
       "entropy",
       "csprng",
       "hmac",
+      "lottery",
+      "d&d",
     ],
     status: "ready",
   },
@@ -461,3 +477,112 @@ export const TOOL_CATEGORIES = [
   "Text & Encodings",
   "Security & Dev",
 ] as const;
+
+/**
+ * Intelligent relevance-scored search matcher across all tool metadata:
+ * name, slug, shortDesc, description, category, supportedFormats, and keywords.
+ * - Handles slashed expressions ('mp3/flac', 'json/yaml'), commas, and pluses as OR queries.
+ * - Handles multi-word queries ('qr code', 'sqlite export') with exact-match precedence.
+ * - Strips leading file extension dots ('.mp3' -> 'mp3').
+ * - Ranks results by match quality and relevance.
+ */
+export function searchTools(query: string, category: string = "All"): ToolMetadata[] {
+  const raw = query.toLowerCase().trim();
+  const pool =
+    category === "All"
+      ? TOOLS_REGISTRY
+      : TOOLS_REGISTRY.filter((t) => t.category === category);
+
+  if (!raw) return pool;
+
+  const isOrSearch = raw.includes("/") || raw.includes("|") || raw.includes(",");
+  const terms = raw
+    .split(/[\s/|+,]+/)
+    .map((t) => t.replace(/^\./, "").trim())
+    .filter(Boolean);
+
+  if (terms.length === 0) return pool;
+
+  interface ScoredTool {
+    tool: ToolMetadata;
+    score: number;
+    matchedTermsCount: number;
+  }
+
+  const scored: ScoredTool[] = [];
+
+  for (const tool of pool) {
+    const name = tool.name.toLowerCase();
+    const shortDesc = tool.shortDesc.toLowerCase();
+    const desc = tool.description.toLowerCase();
+    const cat = tool.category.toLowerCase();
+    const formats = tool.supportedFormats.map((f) => f.toLowerCase());
+    const keywords = tool.keywords.map((k) => k.toLowerCase());
+    const allFields = [name, shortDesc, desc, cat, ...formats, ...keywords];
+
+    let score = 0;
+    let matchedTermsCount = 0;
+
+    // 1. Full phrase match bonus
+    if (name.includes(raw)) score += 100;
+    else if (keywords.some((k) => k === raw)) score += 85;
+    else if (formats.some((f) => f === raw)) score += 80;
+    else if (shortDesc.includes(raw)) score += 60;
+    else if (desc.includes(raw)) score += 40;
+    else if (allFields.some((f) => f.includes(raw))) score += 30;
+
+    // 2. Term-by-term match scoring
+    for (const term of terms) {
+      let termMatched = false;
+      if (name.includes(term)) {
+        score += 25;
+        termMatched = true;
+      }
+      if (formats.some((f) => f === term)) {
+        score += 25;
+        termMatched = true;
+      } else if (formats.some((f) => f.includes(term))) {
+        score += 12;
+        termMatched = true;
+      }
+
+      if (keywords.some((k) => k === term)) {
+        score += 20;
+        termMatched = true;
+      } else if (keywords.some((k) => k.includes(term))) {
+        score += 10;
+        termMatched = true;
+      }
+
+      if (shortDesc.includes(term)) {
+        score += 8;
+        termMatched = true;
+      }
+      if (desc.includes(term)) {
+        score += 4;
+        termMatched = true;
+      }
+
+      if (termMatched) matchedTermsCount++;
+    }
+
+    if (score > 0) {
+      scored.push({ tool, score, matchedTermsCount });
+    }
+  }
+
+  if (scored.length === 0) return [];
+
+  // For multi-word queries without explicit OR operators, prioritize tools matching all terms
+  if (!isOrSearch && terms.length > 1) {
+    const allTermsMatches = scored.filter((s) => s.matchedTermsCount === terms.length);
+    if (allTermsMatches.length > 0) {
+      allTermsMatches.sort((a, b) => b.score - a.score);
+      return allTermsMatches.map((s) => s.tool);
+    }
+  }
+
+  // Sort descending by score, then number of matched terms
+  scored.sort((a, b) => b.score - a.score || b.matchedTermsCount - a.matchedTermsCount);
+  return scored.map((s) => s.tool);
+}
