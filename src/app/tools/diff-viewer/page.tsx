@@ -139,30 +139,40 @@ export default function DiffViewerPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <ToolHeader
-          title="Code & Text Diff / Patch Studio"
-          description="Compare code, configuration files, and text documents side-by-side or inline with word-level highlight differences. 100% zero data egress."
-          badge="Zero Egress"
-        />
+      <ToolHeader
+        title="Code & Text Diff / Patch Studio"
+        description="Compare code, configuration files, and text documents side-by-side or inline with word-level highlight differences. 100% zero data egress."
+        badge="Zero Egress"
+      />
 
-        {/* Quick Presets */}
-        <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
-          <span className="text-xs text-zinc-400 mr-1">Presets:</span>
+      {/* Sample Diffs & Clear Block */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mr-1">
+            Sample Diffs:
+          </span>
           {DIFF_PRESETS.map((p) => (
             <button
               key={p.id}
               onClick={() => handleSelectPreset(p.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors shadow-xs ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
                 activePreset === p.id
-                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                  : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-semibold"
+                  : "border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300"
               }`}
             >
               {p.name}
             </button>
           ))}
         </div>
+
+        <button
+          onClick={handleClear}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-zinc-500 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Clear Input</span>
+        </button>
       </div>
 
       {/* Editor Collapse / Toolbar */}
@@ -240,14 +250,6 @@ export default function DiffViewerPage() {
           >
             <Edit3 className="w-3.5 h-3.5" />
             <span>{showEditor ? "Hide Editors" : "Edit Text"}</span>
-          </button>
-
-          <button
-            onClick={handleClear}
-            className="p-1.5 rounded-xl hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-colors"
-            title="Clear All Text"
-          >
-            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       </div>
