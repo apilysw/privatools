@@ -754,13 +754,13 @@ export default function RandomStudioPage() {
                   How Provably Fair Verification Works (Cryptographic Guarantee)
                 </h4>
                 <p className="text-zinc-600 dark:text-zinc-400">
-                  1. <strong>Pre-Commitment:</strong> The server generates a 256-bit secret seed and publishes its <code>SHA-256</code> hash before you roll. This commits the seed without revealing it.
+                  1. <strong>Pre-Commitment:</strong> Privatools generates a 256-bit secret and publishes its <code>SHA-256</code> hash before you roll. This commits the seed without revealing it.
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-400">
-                  2. <strong>Client Input:</strong> You provide your own client seed and an incrementing nonce. The server cannot predict or alter your roll because the outcome is derived from <code>HMAC-SHA256(ServerSeed, ClientSeed:Nonce)</code>.
+                  2. <strong>Client Input:</strong> You provide your own client seed and an incrementing nonce. Privatools cannot predict or alter your roll because the outcome is derived from <code>HMAC-SHA256(ServerSeed, ClientSeed:Nonce)</code>.
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-400">
-                  3. <strong>Post-Roll Audit:</strong> Reveal the server seed at any time to verify that the pre-commitment hash was never changed and that every roll was mathematically deterministic.
+                  3. <strong>Post-Roll Audit:</strong> Reveal the secret seed at any time to verify that the pre-commitment hash was never changed and that every roll was mathematically deterministic.
                 </p>
               </div>
             </div>
