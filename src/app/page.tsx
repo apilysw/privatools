@@ -124,7 +124,13 @@ export default function HomePage() {
     }
   };
 
-  const showPwaBanner = !isLicensed && !isInstalled && !isBannerDismissed;
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
+  const showPwaBanner = isMounted && !isLicensed && !isInstalled && !isBannerDismissed;
 
   // Dynamically include Pinned filter if user has pinned tools
   const categories = useMemo(() => {
@@ -422,7 +428,7 @@ export default function HomePage() {
       {showPwaBanner && (
         <section
           suppressHydrationWarning
-          className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-emerald-500/10 dark:from-emerald-500/10 dark:via-zinc-900/80 dark:to-teal-500/10 p-6 sm:p-8 shadow-xs"
+          className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-emerald-500/10 dark:from-emerald-500/10 dark:via-zinc-900/80 dark:to-teal-500/10 p-6 sm:p-8 shadow-xs animate-in fade-in duration-300"
         >
           {/* Dismiss button */}
           <button
