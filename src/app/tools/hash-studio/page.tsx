@@ -304,7 +304,14 @@ export default function HashStudioPage() {
       {/* ========================================================================= */}
       {activeMode === "file" && (
         <div className="space-y-6">
-          {!selectedFile ? (
+          {isFileComputing ? (
+            <div className="flex flex-col items-center justify-center p-12 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
+              <RefreshCw className="w-6 h-6 text-emerald-500 animate-spin" />
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Computing cryptographic checksums in browser RAM...
+              </p>
+            </div>
+          ) : !selectedFile ? (
             <div
               onClick={() => fileInputRef.current?.click()}
               className="flex flex-col items-center justify-center p-10 rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-800 hover:border-emerald-500/50 bg-white dark:bg-zinc-900/60 cursor-pointer transition-all group"

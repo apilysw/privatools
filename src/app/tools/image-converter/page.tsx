@@ -188,6 +188,7 @@ export default function ImageConverterPage() {
               </div>
               <div className="p-4 flex items-center justify-center bg-zinc-100/50 dark:bg-zinc-950/40 min-h-[300px]">
                 {previewUrl && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={previewUrl}
                     alt="Original Preview"
@@ -228,6 +229,7 @@ export default function ImageConverterPage() {
                     <span>Converting locally...</span>
                   </div>
                 ) : result?.url ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={result.url}
                     alt="Converted Preview"

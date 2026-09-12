@@ -57,6 +57,7 @@ export default function MediaLabPage() {
 
   // Single Image Mode State
   const [singleFile, setSingleFile] = useState<File | Blob | null>(null);
+  const [singleFileName, setSingleFileName] = useState<string | null>(null);
   const [singlePreviewUrl, setSinglePreviewUrl] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<ParsedMediaMetadata | null>(null);
   const [riskReport, setRiskReport] = useState<PrivacyRiskReport | null>(null);
@@ -94,6 +95,7 @@ export default function MediaLabPage() {
     if (singlePreviewUrl) URL.revokeObjectURL(singlePreviewUrl);
     if (audioUrl) URL.revokeObjectURL(audioUrl);
     setSingleFile(null);
+    setSingleFileName(null);
     setSinglePreviewUrl(null);
     setMetadata(null);
     setRiskReport(null);
@@ -114,6 +116,7 @@ export default function MediaLabPage() {
 
     const url = URL.createObjectURL(file);
     setSingleFile(file);
+    setSingleFileName(name || (file instanceof File ? file.name : "image.jpg"));
     setSinglePreviewUrl(url);
 
     try {
@@ -309,7 +312,6 @@ export default function MediaLabPage() {
     const sampleRate = audioBuffer.sampleRate;
     const startSample = Math.floor(trimStart * sampleRate);
     const endSample = Math.floor(trimEnd * sampleRate);
-    const trimmedLength = Math.max(1, endSample - startSample);
 
     const channels: Float32Array[] = [];
     for (let c = 0; c < audioBuffer.numberOfChannels; c++) {
@@ -531,16 +533,21 @@ export default function MediaLabPage() {
               <div className="lg:col-span-4 space-y-6">
                 {/* Visual Preview */}
                 <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                      Original Image
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 truncate" title={singleFileName || undefined}>
+                      {singleFileName || "Original Image"}
                     </span>
-                    <span className="text-xs font-mono text-zinc-400">
+                    <span className="text-xs font-mono text-zinc-400 shrink-0">
                       {(singleFile.size / 1024).toFixed(1)} KB
                     </span>
                   </div>
 
-                  {singlePreviewUrl && (
+                  {isAnalyzing ? (
+                    <div className="relative rounded-xl overflow-hidden bg-zinc-950 aspect-video flex flex-col items-center justify-center border border-zinc-800 gap-2 text-xs text-zinc-400">
+                      <span className="animate-spin rounded-full h-6 w-6 border-2 border-emerald-500 border-t-transparent" />
+                      <span>Analyzing EXIF & GPS metadata...</span>
+                    </div>
+                  ) : singlePreviewUrl && (
                     <div className="relative rounded-xl overflow-hidden bg-zinc-950 aspect-video flex items-center justify-center border border-zinc-800">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -651,7 +658,7 @@ export default function MediaLabPage() {
                           const url = URL.createObjectURL(scrubbedResult.blob);
                           const a = document.createElement("a");
                           a.href = url;
-                          const fileName = singleFile instanceof File ? singleFile.name : "image.jpg";
+                          const fileName = singleFileName || (singleFile instanceof File ? singleFile.name : "image.jpg");
                           a.download = `scrubbed_${fileName}`;
                           a.click();
                           URL.revokeObjectURL(url);

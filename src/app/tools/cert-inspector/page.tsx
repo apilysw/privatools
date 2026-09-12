@@ -172,7 +172,7 @@ export default function CertificateInspectorPage() {
           <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/40 text-xs text-zinc-500">
               <span className="font-semibold text-zinc-700 dark:text-zinc-300">
-                Paste PEM or Base64 Encoded Certificate
+                {selectedFileName ? `Loaded: ${selectedFileName}` : "Paste PEM or Base64 Encoded Certificate"}
               </span>
               <span>{inputPEM.length} characters</span>
             </div>
@@ -180,6 +180,7 @@ export default function CertificateInspectorPage() {
               value={inputPEM}
               onChange={(e) => {
                 setBinaryDER(null);
+                setSelectedFileName(null);
                 setInputPEM(e.target.value);
               }}
               placeholder="-----BEGIN CERTIFICATE-----&#10;MIID...&#10;-----END CERTIFICATE-----"
@@ -192,7 +193,7 @@ export default function CertificateInspectorPage() {
         {binaryDER && (
           <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center justify-between text-xs">
             <span className="text-zinc-600 dark:text-zinc-400">
-              Loaded binary DER file ({binaryDER.byteLength} bytes).
+              Loaded binary DER file {selectedFileName ? `(${selectedFileName}, ${binaryDER.byteLength} bytes)` : `(${binaryDER.byteLength} bytes)`}.
             </span>
             <button
               onClick={() => {

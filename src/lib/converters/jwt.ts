@@ -233,7 +233,7 @@ export function decodeJwt(raw: string): DecodedJwt {
 export async function verifyJwtSignature(
   token: string,
   keyInput: string,
-  _keyType: "secret" | "public-pem" = "secret"
+  keyType: "secret" | "public-pem" = "secret"
 ): Promise<{ valid: boolean; message: string }> {
   const parts = token.trim().split(".");
   if (parts.length !== 3) {
@@ -256,6 +256,14 @@ export async function verifyJwtSignature(
 
   if (alg === "NONE") {
     return { valid: signatureB64 === "", message: "Algorithm is 'none' (unsigned)" };
+  }
+
+  if (keyType === "secret" && !alg.startsWith("HS")) {
+    return { valid: false, message: `Algorithm ${alg} requires a public key PEM, but a symmetric secret was provided.` };
+  }
+
+  if (keyType === "public-pem" && alg.startsWith("HS")) {
+    return { valid: false, message: `Algorithm ${alg} requires a symmetric secret key, but a public key was provided.` };
   }
 
   // HMAC algorithms (HS256, HS384, HS512)
