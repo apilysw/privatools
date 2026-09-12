@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -65,6 +65,31 @@ const iconMap: Record<string, React.ElementType> = {
   Dices,
 };
 
+const BANNER_STORAGE_KEY = "privatools_pwa_banner_dismissed";
+const BANNER_EVENT = "privatools:banner-dismissed";
+
+function subscribeBanner(callback: () => void) {
+  window.addEventListener(BANNER_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener(BANNER_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getBannerSnapshot(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return sessionStorage.getItem(BANNER_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function getBannerServerSnapshot(): boolean {
+  return false;
+}
+
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -84,20 +109,16 @@ export default function HomePage() {
   } = useToolPreferences();
 
   const { isLicensed, isInstalled, showLicenseGate } = usePwa();
-  const [isBannerDismissed, setIsBannerDismissed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      localStorage.removeItem("privatools_pwa_banner_dismissed");
-      return sessionStorage.getItem("privatools_pwa_banner_dismissed") === "true";
-    } catch {
-      return false;
-    }
-  });
+  const isBannerDismissed = useSyncExternalStore(
+    subscribeBanner,
+    getBannerSnapshot,
+    getBannerServerSnapshot
+  );
 
   const handleDismissBanner = () => {
-    setIsBannerDismissed(true);
     try {
-      sessionStorage.setItem("privatools_pwa_banner_dismissed", "true");
+      sessionStorage.setItem(BANNER_STORAGE_KEY, "true");
+      window.dispatchEvent(new Event(BANNER_EVENT));
     } catch {
       // ignore
     }
@@ -399,7 +420,10 @@ export default function HomePage() {
 
       {/* Prominent Offline PWA Promotion Banner */}
       {showPwaBanner && (
-        <section className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-emerald-500/10 dark:from-emerald-500/10 dark:via-zinc-900/80 dark:to-teal-500/10 p-6 sm:p-8 shadow-xs">
+        <section
+          suppressHydrationWarning
+          className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-emerald-500/10 dark:from-emerald-500/10 dark:via-zinc-900/80 dark:to-teal-500/10 p-6 sm:p-8 shadow-xs"
+        >
           {/* Dismiss button */}
           <button
             type="button"
