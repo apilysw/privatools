@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   Database as DatabaseIcon,
   Play,
@@ -14,17 +14,12 @@ import {
   FileText,
   Search,
   Plus,
-  Trash2,
-  RefreshCw,
-  UploadCloud,
   X,
   AlertCircle,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
   Layers,
-  Key,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import { formatBytes } from "@/lib/converters/image";
@@ -41,7 +36,6 @@ import {
   generateSampleDatabase,
   DatabaseOverview,
   QueryResult,
-  TableSummary,
 } from "@/lib/converters/sqlite";
 import type { Database } from "sql.js";
 

@@ -13,8 +13,6 @@ import {
   Trash2,
   Play,
   Pause,
-  RotateCcw,
-  Check,
   Sliders,
   FileVideo,
   FileAudio,
@@ -22,19 +20,14 @@ import {
   RefreshCw,
   Gauge,
   Sparkles,
-  Layers,
-  Clock,
   ShieldCheck,
   CheckCircle2,
   Repeat,
-  Radio,
-  FileCode,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
   stripAudioFromMp4Lossless,
   extractAudioFromVideo,
-  encodeWav,
   encodeMp3,
   encodeFlac,
   processAudioData,

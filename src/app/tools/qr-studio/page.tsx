@@ -2,25 +2,20 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
-  QrCode,
   Layers,
   Scan,
-  Camera,
   Upload,
   Download,
   Copy,
   Check,
   Printer,
-  RotateCw,
   ShieldCheck,
   Trash2,
-  ExternalLink,
   AlertCircle,
   Wifi,
   Package,
   Boxes,
   Barcode as BarcodeIcon,
-  Tag,
   Eye,
   Settings2,
 } from "lucide-react";

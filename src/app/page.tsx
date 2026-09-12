@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   Search,
   ArrowRight,
-  Sparkles,
   Lock,
   Cpu,
   Zap,
@@ -30,7 +29,7 @@ import {
   Palette,
   Dices,
 } from "lucide-react";
-import { TOOLS_REGISTRY, TOOL_CATEGORIES, searchTools } from "@/lib/registry";
+import { TOOL_CATEGORIES, searchTools } from "@/lib/registry";
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,

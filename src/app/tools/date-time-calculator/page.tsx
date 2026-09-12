@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Clock,
   Copy,
@@ -8,11 +8,9 @@ import {
   Trash2,
   Calendar,
   Globe,
-  Sliders,
   Play,
   Pause,
   ArrowRight,
-  ArrowRightLeft,
   Plus,
   Minus,
   Sparkles,
@@ -23,7 +21,6 @@ import {
   CalendarDays,
   CalendarCheck,
   Timer,
-  Info,
   RotateCcw,
   X,
   MapPin,
@@ -41,7 +38,6 @@ import {
   calculateTimezonesMatrix,
   KEY_TIMEZONE_CITIES,
   TimezoneCityConfig,
-  POPULAR_IANA_TIMEZONES,
   isValidTimezone,
   getAllAvailableTimezones,
   TimezoneOption,

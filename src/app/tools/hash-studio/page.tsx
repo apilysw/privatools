@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Hash,
   FileCheck,
-  FileText,
   KeyRound,
   ShieldCheck,
   Copy,

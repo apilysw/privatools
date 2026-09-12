@@ -1,24 +1,18 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
-  GitCompare,
   ArrowLeftRight,
   Copy,
   Check,
   Download,
-  Sparkles,
   Trash2,
   UploadCloud,
   Columns,
   AlignJustify,
-  FileText,
   FileCode,
-  CheckCircle2,
   ShieldCheck,
   Edit3,
-  Eye,
-  SlidersHorizontal,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {

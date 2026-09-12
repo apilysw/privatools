@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Dices,
   Shuffle,
   KeyRound,
-  Binary,
   Activity,
   ShieldCheck,
   Copy,
@@ -21,21 +20,16 @@ import {
   CheckCircle2,
   XCircle,
   BarChart3,
-  HelpCircle,
-  ArrowRight,
   Download,
   Trash2,
   Sliders,
   Hash,
   Lock,
-  Percent,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
   getRandomBytes,
   bytesToHex,
-  getRandomInt,
-  getRandomFloat,
   generateSecretServerSeed,
   computeCommitmentHash,
   computeRollHmac,
@@ -47,16 +41,13 @@ import {
   DiceRollResult,
   PolyhedralDie,
   generateRandomNumberBatch,
-  RangeOptions,
   generateNormalDistribution,
   GaussianResult,
   shuffleList,
   pickWinners,
   splitIntoGroups,
   generateDicewarePassphrase,
-  DicewareOptions,
   generateCryptographicPassword,
-  PasswordOptions,
   generateUuidV4,
   generateUuidV7,
   generateNanoId,

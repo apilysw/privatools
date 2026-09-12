@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   Camera,
   ShieldCheck,
@@ -16,16 +16,11 @@ import {
   Music,
   Play,
   Pause,
-  RotateCcw,
   ExternalLink,
-  Volume2,
-  Sparkles,
-  Sliders,
   Scissors,
   Check,
   Search,
   Crosshair,
-  Maximize2,
   RefreshCw,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";

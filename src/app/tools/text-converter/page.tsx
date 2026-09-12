@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import {
   Copy,
   Check,
   Download,
-  Trash2,
   Binary,
   Clock,
   Sparkles,

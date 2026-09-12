@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Download,
-  Trash2,
-  Sliders,
   Sparkles,
-  ArrowRight,
   Check,
   ImageIcon,
 } from "lucide-react";

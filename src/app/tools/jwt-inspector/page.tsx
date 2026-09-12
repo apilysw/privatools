@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useTransition, useMemo } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import {
   ShieldCheck,
   ShieldAlert,
-  Clock,
   Key,
   Download,
   Copy,
   Check,
   Trash2,
-  Sparkles,
-  FileCode,
   Eye,
   EyeOff,
   RefreshCw,

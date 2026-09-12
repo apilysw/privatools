@@ -1,9 +1,7 @@
-import React from "react";
 import Link from "next/link";
 import {
   ShieldCheck,
   Terminal,
-  Lock,
   Cpu,
   WifiOff,
   EyeOff,

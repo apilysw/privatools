@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useTransition, useMemo } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import {
-  FileText,
   Download,
   Copy,
   Check,
   Trash2,
-  Sparkles,
   Search,
   ChevronDown,
   ChevronRight,
   Code2,
-  Layers,
-  ArrowRight,
   FileCode,
   SlidersHorizontal,
 } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import {
   ShieldCheck,
   ShieldAlert,
@@ -10,14 +10,9 @@ import {
   Copy,
   Check,
   Trash2,
-  Sparkles,
-  Calendar,
   Globe,
   FileCode,
-  Layers,
   Fingerprint,
-  FileText,
-  AlertTriangle,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import { FileDropzone } from "@/components/shared/FileDropzone";

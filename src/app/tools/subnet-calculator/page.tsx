@@ -1,24 +1,20 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Network,
   Copy,
   Check,
   Trash2,
-  Layers,
   ArrowRightLeft,
   CheckCircle2,
   AlertTriangle,
-  Info,
-  Sliders,
   Split,
   Plus,
   X,
   Globe,
   Binary,
   ShieldCheck,
-  Hash,
   Share2,
   Crosshair,
 } from "lucide-react";

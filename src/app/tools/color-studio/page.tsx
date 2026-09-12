@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   Palette,
   Pipette,
@@ -16,19 +16,13 @@ import {
   Sparkles,
   Layers,
   Code2,
-  FileCode,
   ArrowRightLeft,
-  Info,
   ShieldCheck,
   Wand2,
-  Maximize2,
-  RefreshCw,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
   RgbColor,
-  HslColor,
-  OklchColor,
   parseColor,
   getColorFormats,
   calculateContrast,
@@ -44,7 +38,6 @@ import {
   rgbToHsl,
   hslToRgb,
   rgbToOklch,
-  oklchToRgb,
   HarmonyType,
 } from "@/lib/converters/color";
 

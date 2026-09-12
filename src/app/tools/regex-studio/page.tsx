@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   Regex,
-  Layers,
   Code2,
   BookOpen,
   Copy,
@@ -14,13 +13,9 @@ import {
   Sparkles,
   ShieldCheck,
   ArrowRightLeft,
-  FileText,
   Upload,
   Hash,
   Eye,
-  Info,
-  ChevronRight,
-  Filter,
 } from "lucide-react";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
@@ -29,8 +24,6 @@ import {
   executeRegex,
   generateCodeSnippets,
   RegexPreset,
-  RegexMatch,
-  CaptureGroup,
 } from "@/lib/converters/regex";
 
 type StudioTab = "match" | "replace" | "codegen" | "cheatsheet";
