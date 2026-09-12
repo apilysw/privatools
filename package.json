@@ -19,6 +19,7 @@
     "test:all": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts && tsx scripts/test-smoke.ts && tsx scripts/test-offline.ts",
     "build": "next build && tsx scripts/generate-markdown-pages.ts && tsx scripts/generate-sw-manifest.ts",
     "postbuild": "tsx scripts/test-smoke.ts && tsx scripts/test-offline.ts",
+    "generate:favicon": "tsx scripts/generate-favicon.ts",
     "start": "next start",
     "lint": "eslint"
   },

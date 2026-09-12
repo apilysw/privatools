@@ -65,6 +65,7 @@ function runSmokeTests() {
     "robots.txt",
     "sitemap.xml",
     "og-image.png",
+    "favicon.ico",
   ];
 
   for (const file of requiredFiles) {
