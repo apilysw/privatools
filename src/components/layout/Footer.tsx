@@ -3,7 +3,21 @@
 import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Lock, Cpu, Globe, WifiOff } from "lucide-react";
-import { PwaInstallButton, usePwa } from "@/components/pwa/PwaManager";
+
+// Conditionally import PWA components — falls back to stubs when
+// src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
+let PwaInstallButton: React.ComponentType<{ className?: string }>;
+let usePwa: () => { isOnline: boolean; canInstall: boolean; isInstalled: boolean; isLicensed: boolean; installApp: () => Promise<void> };
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pwa = require("@/components/pwa/PwaManager");
+  PwaInstallButton = pwa.PwaInstallButton;
+  usePwa = pwa.usePwa;
+} catch {
+  function PwaInstallButtonFallback() { return null; }
+  PwaInstallButton = PwaInstallButtonFallback;
+  usePwa = () => ({ isOnline: true, canInstall: false, isInstalled: false, isLicensed: false, installApp: async () => {} });
+}
 
 export function Footer() {
   const { isOnline } = usePwa();

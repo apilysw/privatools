@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PWA (gated feature — not published to GitHub)
+public/sw.js
+public/manifest.json
+src/components/pwa/
