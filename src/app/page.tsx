@@ -34,9 +34,39 @@ import {
   ChevronUp,
   ChevronDown,
   RotateCcw,
+  Smartphone,
+  KeyRound,
+  ExternalLink,
+  X,
 } from "lucide-react";
 import { TOOL_CATEGORIES, searchTools, ToolMetadata } from "@/lib/registry";
 import { useToolPreferences, orderToolsByCustomOrder } from "@/lib/useToolPreferences";
+
+// Conditionally import PWA context & buy link — falls back safely when
+// src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
+let usePwa: () => {
+  isLicensed: boolean;
+  isInstalled: boolean;
+  installApp: () => Promise<void>;
+  showLicenseGate: () => void;
+};
+let GUMROAD_BUY_URL = "https://privatools.gumroad.com/l/pwa";
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pwa = require("@/components/pwa/PwaManager");
+  usePwa = pwa.usePwa;
+  if (pwa.GUMROAD_BUY_URL) {
+    GUMROAD_BUY_URL = pwa.GUMROAD_BUY_URL;
+  }
+} catch {
+  usePwa = () => ({
+    isLicensed: false,
+    isInstalled: false,
+    installApp: async () => {},
+    showLicenseGate: () => {},
+  });
+}
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,
@@ -77,6 +107,27 @@ export default function HomePage() {
     reorderTools,
     resetToDefault,
   } = useToolPreferences();
+
+  const { isLicensed, isInstalled, showLicenseGate } = usePwa();
+  const [isBannerDismissed, setIsBannerDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem("privatools_pwa_banner_dismissed") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleDismissBanner = () => {
+    setIsBannerDismissed(true);
+    try {
+      localStorage.setItem("privatools_pwa_banner_dismissed", "true");
+    } catch {
+      // ignore
+    }
+  };
+
+  const showPwaBanner = !isLicensed && !isInstalled && !isBannerDismissed;
 
   // Dynamically include Pinned filter if user has pinned tools
   const categories = useMemo(() => {
@@ -369,6 +420,81 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Prominent Offline PWA Promotion Banner */}
+      {showPwaBanner && (
+        <section className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-emerald-500/10 dark:from-emerald-500/10 dark:via-zinc-900/80 dark:to-teal-500/10 p-6 sm:p-8 shadow-xs">
+          {/* Dismiss button */}
+          <button
+            type="button"
+            onClick={handleDismissBanner}
+            className="absolute top-4 right-4 p-1.5 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/80 transition-colors z-10"
+            title="Dismiss banner"
+            aria-label="Dismiss banner"
+          >
+            <X className="w-4 h-4" />
+          </button>
+
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pr-8 lg:pr-0">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">
+                <Smartphone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Desktop & Mobile Offline App</span>
+              </div>
+
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                Take Privatools Offline. Zero Internet Required.
+              </h2>
+
+              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Install all 20+ zero-knowledge converters and cryptographic studios directly to your home screen or dock. 100% ad-free, instant cached launches on flights and trains, with one-time ownership.
+              </p>
+
+              {/* Feature checklist */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-600 dark:text-zinc-400 pt-1 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  Instant Cache & Offline
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  100% Ad-Free Forever
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  Dock / Home Screen App
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  One-Time Purchase (~£3)
+                </span>
+              </div>
+            </div>
+
+            {/* Call to action buttons */}
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 min-w-[200px]">
+              <button
+                type="button"
+                onClick={showLicenseGate}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors shadow-sm"
+              >
+                <KeyRound className="w-4 h-4" />
+                <span>Get Offline App</span>
+              </button>
+
+              <a
+                href={GUMROAD_BUY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl border border-zinc-300 dark:border-zinc-700 hover:border-emerald-500/50 hover:bg-emerald-500/5 text-zinc-700 dark:text-zinc-300 font-semibold text-xs transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Buy License (~£3)</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Filter and Search Bar */}
       <section className="space-y-6">

@@ -6,6 +6,18 @@ import { Shield, Search } from "lucide-react";
 import { PrivacyBadge } from "../shared/PrivacyBadge";
 import { GithubIcon } from "../shared/GithubIcon";
 
+// Conditionally import PWA install button — falls back to null when
+// src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
+let PwaInstallButton: React.ComponentType<{ className?: string }>;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pwa = require("@/components/pwa/PwaManager");
+  PwaInstallButton = pwa.PwaInstallButton;
+} catch {
+  function PwaInstallButtonFallback() { return null; }
+  PwaInstallButton = PwaInstallButtonFallback;
+}
+
 interface NavbarProps {
   onOpenCommandPalette?: () => void;
 }
@@ -49,7 +61,7 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
         </button>
 
         {/* Right navigation */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           <button
             onClick={onOpenCommandPalette}
             className="md:hidden p-2 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -57,12 +69,12 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
           >
             <Search className="w-4 h-4" />
           </button>
-          <div className="hidden sm:block">
+          <div className="hidden lg:block">
             <PrivacyBadge />
           </div>
           <Link
             href="/privacy-audit"
-            className="text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-2.5 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="hidden sm:inline-block text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             Proof & Audit
           </Link>
@@ -70,13 +82,14 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
             href="https://github.com/apilysw/privatools"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             title="View Source on GitHub"
             aria-label="View Source on GitHub"
           >
             <GithubIcon className="w-4 h-4" />
             <span className="hidden sm:inline">GitHub</span>
           </a>
+          <PwaInstallButton />
         </div>
       </div>
     </header>
