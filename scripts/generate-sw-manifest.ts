@@ -24,12 +24,42 @@ function walkDir(dir: string): string[] {
   return results;
 }
 
+/**
+ * Creates physical route aliases in out/ so static servers and browsers can
+ * access both /path.txt and /path/index.txt, as well as /path.html and /path/index.html.
+ */
+function createRouteAliases(dir: string) {
+  if (!fs.existsSync(dir)) return;
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name !== "_next" && entry.name !== "icons") {
+        const indexTxt = path.join(fullPath, "index.txt");
+        const targetTxt = `${fullPath}.txt`;
+        if (fs.existsSync(indexTxt) && !fs.existsSync(targetTxt)) {
+          fs.copyFileSync(indexTxt, targetTxt);
+        }
+        const indexHtml = path.join(fullPath, "index.html");
+        const targetHtml = `${fullPath}.html`;
+        if (fs.existsSync(indexHtml) && !fs.existsSync(targetHtml)) {
+          fs.copyFileSync(indexHtml, targetHtml);
+        }
+        createRouteAliases(fullPath);
+      }
+    }
+  }
+}
+
 function generateSwManifest() {
   const outDir = path.join(process.cwd(), "out");
   if (!fs.existsSync(outDir)) {
     console.error("❌ Error: out/ directory does not exist. Run 'npm run build' first.");
     process.exit(1);
   }
+
+  // Create physical .txt and .html aliases in out/ before scanning
+  createRouteAliases(outDir);
 
   console.log("\n📦 Scanning out/ directory to generate complete PWA precache manifest...");
 
@@ -79,12 +109,14 @@ function generateSwManifest() {
     });
   }
 
-  // Explicitly ensure canonical tool URLs and root are present
+  // Explicitly ensure canonical tool URLs and root are present with and without trailing slash
   const requiredRoutes = [
     "/",
     "/privacy-audit/",
+    "/privacy-audit",
     "/about/",
-    ...TOOLS_REGISTRY.map((t) => `${t.slug}/`),
+    "/about",
+    ...TOOLS_REGISTRY.flatMap((t) => [`${t.slug}/`, t.slug]),
     "/404.html",
   ];
 
@@ -106,6 +138,31 @@ function generateSwManifest() {
           });
           break;
         }
+      }
+    }
+  }
+
+  // Explicitly ensure all RSC flight payload files (.txt) are in precache
+  const requiredTxtRoutes = [
+    "/index.txt",
+    "/privacy-audit/index.txt",
+    "/privacy-audit.txt",
+    "/about/index.txt",
+    "/about.txt",
+    ...TOOLS_REGISTRY.flatMap((t) => [`${t.slug}/index.txt`, `${t.slug}.txt`]),
+  ];
+
+  for (const txtRoute of requiredTxtRoutes) {
+    if (!assetMap.has(txtRoute)) {
+      const clean = txtRoute.replace(/^\//, "");
+      const fullPath = path.join(outDir, clean);
+      if (fs.existsSync(fullPath)) {
+        const buf = fs.readFileSync(fullPath);
+        assetMap.set(txtRoute, {
+          url: txtRoute,
+          size: buf.length,
+          hash: crypto.createHash("sha256").update(buf).digest("hex").slice(0, 12),
+        });
       }
     }
   }
@@ -161,6 +218,30 @@ const CACHE_NAME = "${cacheName}";
 // Comprehensive precache manifest generated at build time (${assetList.length} assets, ${(totalBytes / (1024 * 1024)).toFixed(2)} MB)
 const PRECACHE_ASSETS = ${JSON.stringify(precacheUrls, null, 2)};
 
+// Fallback offline HTML notice
+const OFFLINE_FALLBACK_HTML = \`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Privatools — Offline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #09090b; color: #f4f4f5; text-align: center; padding: 1.5rem; }
+    .card { max-width: 480px; padding: 2rem; border-radius: 1.5rem; border: 1px solid #27272a; background: #18181b; }
+    h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #34d399; }
+    p { font-size: 0.875rem; color: #a1a1aa; line-height: 1.5; margin-bottom: 1.5rem; }
+    a { display: inline-block; padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; color: #09090b; background: #10b981; border-radius: 0.75rem; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Page Not Cached Offline</h1>
+    <p>This page was not found in local offline storage. Connect to the internet once to cache all 19 tools.</p>
+    <a href="/">Go to Home</a>
+  </div>
+</body>
+</html>\`;
+
 // Helper to broadcast progress messages to all open browser windows
 async function broadcast(message) {
   const clients = await self.clients.matchAll({ includeUncontrolled: true });
@@ -185,8 +266,25 @@ async function precacheAllAssets() {
         try {
           const res = await fetch(url, { cache: "reload" });
           if (res && res.status === 200) {
-            await cache.put(url, res);
+            await cache.put(url, res.clone());
             loaded++;
+
+            // Alias route variations into cache for instantaneous lookups
+            if (url.endsWith("/index.txt")) {
+              const txtAlias = url.replace(/\\/index\\.txt$/, ".txt");
+              await cache.put(txtAlias, res.clone());
+            } else if (url.endsWith(".txt") && !url.endsWith("/index.txt")) {
+              const indexTxtAlias = url.replace(/\\.txt$/, "/index.txt");
+              await cache.put(indexTxtAlias, res.clone());
+            }
+
+            if (url.endsWith("/") && url !== "/") {
+              const noSlashAlias = url.slice(0, -1);
+              await cache.put(noSlashAlias, res.clone());
+            } else if (!url.endsWith("/") && !url.includes(".")) {
+              const slashAlias = url + "/";
+              await cache.put(slashAlias, res.clone());
+            }
           } else {
             console.warn("[Privatools SW] Precache non-200 for " + url + ": " + (res ? res.status : "null"));
           }
@@ -293,75 +391,110 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // 1. Navigation requests (HTML pages)
+  // 1. Navigation requests (HTML document loads)
   if (request.mode === "navigate") {
     event.respondWith(
       (async () => {
-        // Try network first if online to receive latest updates
-        try {
-          const networkResponse = await fetch(request);
-          if (networkResponse && networkResponse.status === 200) {
-            const copy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-            return networkResponse;
+        if (navigator.onLine) {
+          try {
+            const networkResponse = await fetch(request);
+            if (networkResponse && networkResponse.status === 200) {
+              const copy = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+              return networkResponse;
+            }
+          } catch {
+            // Network failed — proceed to offline cache lookup
           }
-        } catch {
-          // Network failed — proceed to offline cache lookup
         }
 
-        // Cache lookup: try exact URL, then normalized trailing-slash
         const cache = await caches.open(CACHE_NAME);
-        const cachedExact = await cache.match(request);
-        if (cachedExact) return cachedExact;
-
         const pathWithSlash = url.pathname.endsWith("/") ? url.pathname : url.pathname + "/";
-        const cachedSlash = await cache.match(pathWithSlash);
-        if (cachedSlash) return cachedSlash;
-
         const pathWithoutSlash = url.pathname.replace(/\\/+$/, "");
-        if (pathWithoutSlash) {
-          const cachedNoSlash = await cache.match(pathWithoutSlash);
-          if (cachedNoSlash) return cachedNoSlash;
+
+        const candidates = [
+          request,
+          url.origin + pathWithSlash,
+          url.origin + pathWithoutSlash,
+          pathWithSlash,
+          pathWithoutSlash,
+          pathWithSlash + "index.html",
+        ];
+
+        for (const cand of candidates) {
+          const matched = await cache.match(cand, { ignoreSearch: true });
+          if (matched) return matched;
         }
 
-        if (url.pathname.endsWith("/index.html")) {
-          const pathTrimmed = url.pathname.slice(0, -"/index.html".length) + "/";
-          const cachedTrimmed = await cache.match(pathTrimmed);
-          if (cachedTrimmed) return cachedTrimmed;
-        }
-
-        // Return offline fallback notice
-        return new Response(
-          \`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Privatools — Offline</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #09090b; color: #f4f4f5; text-align: center; padding: 1.5rem; }
-    .card { max-width: 480px; padding: 2rem; border-radius: 1.5rem; border: 1px solid #27272a; background: #18181b; }
-    h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #34d399; }
-    p { font-size: 0.875rem; color: #a1a1aa; line-height: 1.5; margin-bottom: 1.5rem; }
-    a { display: inline-block; padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; color: #09090b; background: #10b981; border-radius: 0.75rem; text-decoration: none; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>Page Not Cached Offline</h1>
-    <p>This page was not found in local offline storage. Connect to the internet once to cache all 19 tools.</p>
-    <a href="/">Go to Home</a>
-  </div>
-</body>
-</html>\`,
-          { headers: { "Content-Type": "text/html; charset=utf-8" } }
-        );
+        return new Response(OFFLINE_FALLBACK_HTML, {
+          headers: { "Content-Type": "text/html; charset=utf-8" },
+        });
       })()
     );
     return;
   }
 
-  // 2. Static Assets: JS chunks, CSS, Fonts, Images, SQLite WASM, Next.js RSC Flight data (.txt)
+  // 2. Next.js RSC Flight Requests (Client-Side Navigation and Prefetching)
+  const isRsc =
+    request.headers.get("RSC") === "1" ||
+    url.searchParams.has("_rsc") ||
+    url.pathname.endsWith(".txt");
+
+  if (isRsc) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cleanPathname = url.pathname;
+        const pathWithSlash = cleanPathname.endsWith("/") ? cleanPathname : cleanPathname + "/";
+        const pathWithoutSlash = cleanPathname.replace(/\\/+$/, "");
+
+        const rscCandidates = [
+          request,
+          url.origin + cleanPathname,
+          cleanPathname,
+        ];
+
+        if (cleanPathname.endsWith(".txt")) {
+          const base = cleanPathname.slice(0, -".txt".length);
+          const baseWithSlash = base.endsWith("/") ? base : base + "/";
+          rscCandidates.push(baseWithSlash + "index.txt");
+          rscCandidates.push(url.origin + baseWithSlash + "index.txt");
+          rscCandidates.push(baseWithSlash + "__next._full.txt");
+          rscCandidates.push(url.origin + baseWithSlash + "__next._full.txt");
+        } else {
+          rscCandidates.push(pathWithSlash + "index.txt");
+          rscCandidates.push(url.origin + pathWithSlash + "index.txt");
+          rscCandidates.push(pathWithoutSlash + ".txt");
+          rscCandidates.push(url.origin + pathWithoutSlash + ".txt");
+          rscCandidates.push(pathWithSlash + "__next._full.txt");
+          rscCandidates.push(url.origin + pathWithSlash + "__next._full.txt");
+        }
+
+        for (const cand of rscCandidates) {
+          const matched = await cache.match(cand, { ignoreSearch: true });
+          if (matched) return matched;
+        }
+
+        if (navigator.onLine) {
+          try {
+            const networkResponse = await fetch(request);
+            if (networkResponse && networkResponse.status === 200) {
+              const copy = networkResponse.clone();
+              cache.put(request, copy);
+              return networkResponse;
+            }
+          } catch {
+            // Fall through
+          }
+        }
+
+        return new Response(null, { status: 404, statusText: "Offline RSC Miss" });
+      })()
+    );
+    return;
+  }
+
+  // 3. Static Assets: JS chunks, CSS, Fonts, Images, SQLite WASM, Manifest
   const isStaticAsset =
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/icons/") ||
@@ -372,39 +505,41 @@ self.addEventListener("fetch", (event) => {
     url.pathname.endsWith(".png") ||
     url.pathname.endsWith(".ico") ||
     url.pathname.endsWith(".woff2") ||
-    url.pathname.endsWith(".txt") ||
     url.pathname.endsWith(".json");
 
   if (isStaticAsset) {
     event.respondWith(
-      caches.match(request).then(async (cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
+      caches.match(request, { ignoreSearch: true }).then(async (cachedResponse) => {
+        if (cachedResponse) return cachedResponse;
+
+        const cleanUrl = url.origin + url.pathname;
+        const cleanCached = await caches.match(cleanUrl, { ignoreSearch: true });
+        if (cleanCached) return cleanCached;
+
+        if (navigator.onLine) {
+          try {
+            const networkResponse = await fetch(request);
+            if (networkResponse && networkResponse.status === 200) {
+              const copy = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+              return networkResponse;
+            }
+          } catch {
+            // Fall through
+          }
         }
 
-        // Not in cache: fetch from network and store in cache
-        try {
-          const networkResponse = await fetch(request);
-          if (networkResponse && networkResponse.status === 200) {
-            const copy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return networkResponse;
-        } catch {
-          // If offline and request failed, attempt matching without query params
-          const cleanUrl = url.origin + url.pathname;
-          const cleanCached = await caches.match(cleanUrl);
-          if (cleanCached) return cleanCached;
-          throw new Error("Asset not in offline cache: " + url.pathname);
-        }
+        return new Response(null, { status: 404, statusText: "Offline Asset Miss" });
       })
     );
     return;
   }
 
-  // 3. Default Stale-While-Revalidate
+  // 4. Default Stale-While-Revalidate
   event.respondWith(
-    caches.match(request).then((cached) => {
+    caches.match(request, { ignoreSearch: true }).then((cached) => {
+      if (!navigator.onLine && cached) return cached;
+
       const fetchPromise = fetch(request)
         .then((network) => {
           if (network && network.status === 200) {
@@ -413,7 +548,7 @@ self.addEventListener("fetch", (event) => {
           }
           return network;
         })
-        .catch(() => cached);
+        .catch(() => cached || new Response(null, { status: 404 }));
 
       return cached || fetchPromise;
     })

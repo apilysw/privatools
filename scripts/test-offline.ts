@@ -47,17 +47,30 @@ function runOfflineAcceptanceTest() {
   }
 
   // 2. Validate Physical Disk Assets in out/
+  function resolveAssetPath(url: string): string {
+    const localRel = url.replace(/^\//, "");
+    const localPath = path.join(outDir, localRel);
+    if (localRel === "" || localRel.endsWith("/")) {
+      return path.join(localPath, "index.html");
+    }
+    if (fs.existsSync(localPath) && fs.statSync(localPath).isDirectory()) {
+      return path.join(localPath, "index.html");
+    }
+    if (!fs.existsSync(localPath)) {
+      if (fs.existsSync(`${localPath}.html`)) return `${localPath}.html`;
+      if (fs.existsSync(`${localPath}.txt`)) return `${localPath}.txt`;
+      if (fs.existsSync(path.join(localPath, "index.html"))) return path.join(localPath, "index.html");
+      if (fs.existsSync(path.join(localPath, "index.txt"))) return path.join(localPath, "index.txt");
+    }
+    return localPath;
+  }
+
+  // 2. Validate Physical Disk Assets in out/
   console.log("\n🔍 Step 1: Validating all precache assets exist on disk in out/...");
   let missingFiles = 0;
   for (const asset of manifest.assets) {
-    // Map URL back to file path in out/
-    let localRel = asset.url.replace(/^\//, "");
-    if (localRel === "" || localRel.endsWith("/")) {
-      localRel = path.join(localRel, "index.html");
-    }
-
-    const localPath = path.join(outDir, localRel);
-    if (!fs.existsSync(localPath)) {
+    const localPath = resolveAssetPath(asset.url);
+    if (!fs.existsSync(localPath) || fs.statSync(localPath).isDirectory()) {
       console.error(`  ❌ Missing file for URL ${asset.url}: ${localPath}`);
       missingFiles++;
     }
@@ -86,19 +99,15 @@ function runOfflineAcceptanceTest() {
   const mockCache = new Map<string, { body: Buffer; contentType: string }>();
 
   for (const asset of manifest.assets) {
-    let localRel = asset.url.replace(/^\//, "");
-    if (localRel === "" || localRel.endsWith("/")) {
-      localRel = path.join(localRel, "index.html");
-    }
-    const localPath = path.join(outDir, localRel);
+    const localPath = resolveAssetPath(asset.url);
     const body = fs.readFileSync(localPath);
     let contentType = "application/octet-stream";
-    if (localRel.endsWith(".html")) contentType = "text/html";
-    else if (localRel.endsWith(".js")) contentType = "application/javascript";
-    else if (localRel.endsWith(".css")) contentType = "text/css";
-    else if (localRel.endsWith(".json") || localRel.endsWith(".txt")) contentType = "application/json";
-    else if (localRel.endsWith(".wasm")) contentType = "application/wasm";
-    else if (localRel.endsWith(".woff2")) contentType = "font/woff2";
+    if (localPath.endsWith(".html")) contentType = "text/html";
+    else if (localPath.endsWith(".js")) contentType = "application/javascript";
+    else if (localPath.endsWith(".css")) contentType = "text/css";
+    else if (localPath.endsWith(".json") || localPath.endsWith(".txt")) contentType = "application/json";
+    else if (localPath.endsWith(".wasm")) contentType = "application/wasm";
+    else if (localPath.endsWith(".woff2")) contentType = "font/woff2";
 
     mockCache.set(asset.url, { body, contentType });
   }
@@ -106,37 +115,61 @@ function runOfflineAcceptanceTest() {
   console.log(`  ✅ Loaded ${mockCache.size} entries into simulated offline CacheStorage.`);
 
   // Offline Service Worker Fetch Simulation
-  function simulateSwFetch(reqUrl: string, mode: "navigate" | "no-cors" = "no-cors"): { status: number; body?: Buffer; contentType?: string } {
+  function simulateSwFetch(
+    reqUrl: string,
+    mode: "navigate" | "rsc" | "no-cors" = "no-cors"
+  ): { status: number; body?: Buffer; contentType?: string } {
     const url = new URL(reqUrl, "https://privatools.dev");
 
     if (mode === "navigate") {
-      // 1. Exact match
-      if (mockCache.has(url.pathname)) {
-        const item = mockCache.get(url.pathname)!;
-        return { status: 200, body: item.body, contentType: item.contentType };
-      }
-      // 2. Trailing slash match
-      const slashPath = url.pathname.endsWith("/") ? url.pathname : url.pathname + "/";
-      if (mockCache.has(slashPath)) {
-        const item = mockCache.get(slashPath)!;
-        return { status: 200, body: item.body, contentType: item.contentType };
-      }
-      // 3. Non-trailing slash match
-      const noSlash = url.pathname.replace(/\/+$/, "");
-      if (noSlash && mockCache.has(noSlash)) {
-        const item = mockCache.get(noSlash)!;
-        return { status: 200, body: item.body, contentType: item.contentType };
-      }
-      // 4. index.html trimmed match
-      if (url.pathname.endsWith("/index.html")) {
-        const trimmed = url.pathname.slice(0, -"/index.html".length) + "/";
-        if (mockCache.has(trimmed)) {
-          const item = mockCache.get(trimmed)!;
+      const pathWithSlash = url.pathname.endsWith("/") ? url.pathname : url.pathname + "/";
+      const pathWithoutSlash = url.pathname.replace(/\/+$/, "");
+
+      const candidates = [
+        url.pathname,
+        pathWithSlash,
+        pathWithoutSlash,
+        pathWithSlash + "index.html",
+      ];
+
+      for (const cand of candidates) {
+        if (mockCache.has(cand)) {
+          const item = mockCache.get(cand)!;
           return { status: 200, body: item.body, contentType: item.contentType };
         }
       }
+
       // Return offline fallback notice
       return { status: 200, contentType: "text/html" };
+    }
+
+    // Next.js RSC Flight Requests
+    if (mode === "rsc" || url.pathname.endsWith(".txt") || url.searchParams.has("_rsc")) {
+      const cleanPathname = url.pathname;
+      const pathWithSlash = cleanPathname.endsWith("/") ? cleanPathname : cleanPathname + "/";
+      const pathWithoutSlash = cleanPathname.replace(/\/+$/, "");
+
+      const rscCandidates: string[] = [cleanPathname];
+
+      if (cleanPathname.endsWith(".txt")) {
+        const base = cleanPathname.slice(0, -".txt".length);
+        const baseWithSlash = base.endsWith("/") ? base : base + "/";
+        rscCandidates.push(baseWithSlash + "index.txt");
+        rscCandidates.push(baseWithSlash + "__next._full.txt");
+      } else {
+        rscCandidates.push(pathWithSlash + "index.txt");
+        rscCandidates.push(pathWithoutSlash + ".txt");
+        rscCandidates.push(pathWithSlash + "__next._full.txt");
+      }
+
+      for (const cand of rscCandidates) {
+        if (mockCache.has(cand)) {
+          const item = mockCache.get(cand)!;
+          return { status: 200, body: item.body, contentType: item.contentType };
+        }
+      }
+
+      return { status: 404 };
     }
 
     // Static asset match
@@ -148,8 +181,8 @@ function runOfflineAcceptanceTest() {
     return { status: 404 };
   }
 
-  // 5. Test Offline Route Loading and Chunk Integrity for All 19 Tools
-  console.log("\n🔍 Step 4: Simulating offline navigation and chunk resolution for all 19 tools...\n");
+  // 5. Test Offline Route Loading, RSC Resolution and Chunk Integrity for All 19 Tools
+  console.log("\n🔍 Step 4: Simulating offline navigation, RSC Flight resolution, and chunk integrity for all tools...\n");
 
   const routesToTest = [
     { name: "Home Directory", slug: "/" },
@@ -218,7 +251,38 @@ function runOfflineAcceptanceTest() {
       }
     }
 
-    // Check Next.js RSC flight data for the route if not root
+    // B. Verify Next.js Client-Side RSC Flight navigation works offline
+    if (route.slug !== "/") {
+      // 1. Flight payload via .txt request (e.g. /tools/data-converter.txt)
+      const rscTxt = simulateSwFetch(`${route.slug}.txt`, "rsc");
+      if (rscTxt.status !== 200 || !rscTxt.body || rscTxt.body.length === 0) {
+        console.error(`  ❌ Failed offline RSC .txt fetch for ${route.slug}.txt`);
+        routeChunksOk = false;
+      }
+
+      // 2. Flight payload via /index.txt (e.g. /tools/data-converter/index.txt)
+      const rscIndexTxt = simulateSwFetch(`${route.slug}/index.txt`, "rsc");
+      if (rscIndexTxt.status !== 200 || !rscIndexTxt.body || rscIndexTxt.body.length === 0) {
+        console.error(`  ❌ Failed offline RSC index.txt fetch for ${route.slug}/index.txt`);
+        routeChunksOk = false;
+      }
+
+      // 3. Client navigation with ?_rsc query string
+      const rscQuery = simulateSwFetch(`${route.slug}?_rsc=test123`, "rsc");
+      if (rscQuery.status !== 200 || !rscQuery.body || rscQuery.body.length === 0) {
+        console.error(`  ❌ Failed offline RSC query fetch for ${route.slug}?_rsc=test123`);
+        routeChunksOk = false;
+      }
+
+      // 4. Client navigation with /?_rsc query string
+      const rscSlashQuery = simulateSwFetch(`${route.slug}/?_rsc=test123`, "rsc");
+      if (rscSlashQuery.status !== 200 || !rscSlashQuery.body || rscSlashQuery.body.length === 0) {
+        console.error(`  ❌ Failed offline RSC query fetch for ${route.slug}/?_rsc=test123`);
+        routeChunksOk = false;
+      }
+    }
+
+    // Check Next.js RSC flight data files for the route if not root
     if (route.slug !== "/" && route.slug.startsWith("/tools/")) {
       const toolId = route.slug.replace("/tools/", "").replace(/\/$/, "");
       const requiredFlightFiles = [
@@ -236,7 +300,7 @@ function runOfflineAcceptanceTest() {
 
     if (routeChunksOk) {
       passedRoutes++;
-      console.log(`  ✅ [${route.name}] (${route.slug}) -> HTML OK, ${scripts.length} JS chunks OK, ${stylesheets.length} CSS OK`);
+      console.log(`  ✅ [${route.name}] (${route.slug}) -> HTML OK, RSC Flight OK, ${scripts.length} JS chunks OK, ${stylesheets.length} CSS OK`);
     } else {
       console.error(`  ❌ [${route.name}] (${route.slug}) FAILED offline check.`);
       process.exit(1);
