@@ -14,8 +14,8 @@ under the same terms as the rest of the project. On the Change Date (September
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd "Utility Websites"
+git clone https://github.com/apilysw/privatools.git
+cd privatools
 
 # Install dependencies
 npm install
@@ -48,7 +48,7 @@ npm run dev
 
 ## Reporting Issues
 
-Please use GitHub Issues to report bugs or request features. Include:
+Please use [GitHub Issues](https://github.com/apilysw/privatools/issues) to report bugs or request features. Include:
 
 - Browser and OS version
 - Steps to reproduce (for bugs)

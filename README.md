@@ -112,8 +112,8 @@ Privatools is a source-available, high-performance suite of utility converters b
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd "Utility Websites"
+git clone https://github.com/apilysw/privatools.git
+cd privatools
 
 # Install dependencies
 npm install

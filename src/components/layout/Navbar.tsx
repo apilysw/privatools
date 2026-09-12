@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Shield, Search } from "lucide-react";
 import { PrivacyBadge } from "../shared/PrivacyBadge";
+import { GithubIcon } from "../shared/GithubIcon";
 
 interface NavbarProps {
   onOpenCommandPalette?: () => void;
@@ -65,6 +66,17 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
           >
             Proof & Audit
           </Link>
+          <a
+            href="https://github.com/apilysw/privatools"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            title="View Source on GitHub"
+            aria-label="View Source on GitHub"
+          >
+            <GithubIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">GitHub</span>
+          </a>
         </div>
       </div>
     </header>

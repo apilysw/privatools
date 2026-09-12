@@ -6,6 +6,7 @@ Privatools is an open-source suite of confidential web utilities designed to pro
 - **Technologies:** In-browser WebAssembly (SQLite, FFmpeg, Image codecs), Web Crypto API (SHA-256, HMAC, PBKDF2), Canvas APIs, and Web Workers.
 - **Offline Capable:** Registered Progressive Web App (PWA) with full service worker pre-caching.
 - **Canonical Domain:** https://privatools.dev
+- **Source Repository:** https://github.com/apilysw/privatools
 
 ---
 

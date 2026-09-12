@@ -808,7 +808,7 @@ Derives a hardware-isolated symmetric key using PBKDF2 with SHA-512 and salt.
 Clone and run the development server locally:
 
 \`\`\`bash
-git clone https://github.com/privatools/privatools.git
+git clone https://github.com/apilysw/privatools.git
 cd privatools
 npm install
 npm run dev

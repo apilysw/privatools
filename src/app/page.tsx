@@ -559,8 +559,16 @@ export default function HomePage() {
               Verifiable Privacy Proof
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
-              Inspect our open-source code or check your browser’s DevTools Network
-              tab. Zero HTTP POST requests, zero telemetry, zero analytics tracking.
+              Inspect our{" "}
+              <a
+                href="https://github.com/apilysw/privatools"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald-600 dark:text-emerald-400 underline hover:text-emerald-500 transition-colors"
+              >
+                open-source code on GitHub
+              </a>{" "}
+              or check your browser’s DevTools Network tab. Zero HTTP POST requests, zero telemetry, zero analytics tracking.
             </p>
           </div>
         </div>

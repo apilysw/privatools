@@ -7,7 +7,9 @@ import {
   EyeOff,
   FileCheck,
   ArrowLeft,
+  ExternalLink,
 } from "lucide-react";
+import { GithubIcon } from "@/components/shared/GithubIcon";
 
 export default function PrivacyAuditPage() {
   return (
@@ -118,6 +120,32 @@ export default function PrivacyAuditPage() {
             messages are emitted.
           </li>
         </ol>
+      </section>
+
+      {/* Source Code Verification Card */}
+      <section className="p-6 sm:p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-xl">
+          <div className="flex items-center gap-2">
+            <GithubIcon className="w-5 h-5 text-zinc-900 dark:text-zinc-100" />
+            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+              Audit the Source Code on GitHub
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            Privatools is completely transparent. You can clone the repository, inspect the WebAssembly & Canvas conversion algorithms, or build and run the static export locally on your own machine.
+          </p>
+        </div>
+
+        <a
+          href="https://github.com/apilysw/privatools"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-xs transition-colors shadow-sm shrink-0"
+        >
+          <GithubIcon className="w-4 h-4" />
+          <span>View on GitHub</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
       </section>
     </div>
   );

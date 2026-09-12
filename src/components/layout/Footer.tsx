@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Lock, Cpu, Globe, WifiOff } from "lucide-react";
+import { GithubIcon } from "../shared/GithubIcon";
 
 // Conditionally import PWA components — falls back to stubs when
 // src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
@@ -208,6 +209,17 @@ export function Footer() {
                   <span>Client-Side Audit Proof</span>
                 </Link>
               </li>
+              <li>
+                <a
+                  href="https://github.com/apilysw/privatools"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
+                >
+                  <GithubIcon className="w-3.5 h-3.5" />
+                  <span>GitHub Repository</span>
+                </a>
+              </li>
               <li className="text-[11px] text-zinc-400">
                 PWA Offline Service Worker (Cache-First)
               </li>
@@ -217,7 +229,19 @@ export function Footer() {
 
         {/* Bottom Metadata & Copyright */}
         <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
-          <p>© {new Date().getFullYear()} Privatools. Designed for privacy, speed, and zero friction.</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p>© {new Date().getFullYear()} Privatools. Designed for privacy, speed, and zero friction.</p>
+            <span>•</span>
+            <a
+              href="https://github.com/apilysw/privatools"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 hover:text-emerald-500 transition-colors"
+            >
+              <GithubIcon className="w-3.5 h-3.5" />
+              <span>apilysw/privatools</span>
+            </a>
+          </div>
           <div className="flex flex-wrap items-center gap-3 text-[11px]">
             <span>Static Export</span>
             <span>•</span>
