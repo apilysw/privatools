@@ -115,6 +115,8 @@ export default function TextConverterPage() {
           </div>
 
           <textarea
+            id="text-input"
+            aria-label="Input text string"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Type or paste input string here..."
@@ -136,6 +138,8 @@ export default function TextConverterPage() {
                 onClick={handleCopy}
                 disabled={!result.output || !!result.error}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 disabled:opacity-40 transition-colors"
+                title="Copy to clipboard"
+                aria-label="Copy output to clipboard"
               >
                 {copied ? (
                   <>
@@ -154,6 +158,8 @@ export default function TextConverterPage() {
                 onClick={handleDownload}
                 disabled={!result.output || !!result.error}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white disabled:opacity-40 transition-colors"
+                title="Download file"
+                aria-label="Download converted file"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Save</span>
@@ -171,6 +177,8 @@ export default function TextConverterPage() {
             </div>
           ) : (
             <textarea
+              id="text-output"
+              aria-label="Converted text output"
               readOnly
               value={result.output}
               placeholder="Output will appear here..."

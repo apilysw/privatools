@@ -953,6 +953,7 @@ export default function RandomStudioPage() {
               <div className="flex items-center justify-between pt-1">
                 <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
                   <input
+                    aria-label="Generate Floating Point"
                     type="checkbox"
                     checked={provableIsFloat}
                     onChange={(e) => setProvableIsFloat(e.target.checked)}

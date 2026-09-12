@@ -6,7 +6,10 @@ let sqlPromise: Promise<SqlJsStatic> | null = null;
 export async function getSqlJs(): Promise<SqlJsStatic> {
   if (!sqlPromise) {
     sqlPromise = initSqlJs({
-      locateFile: (file) => `/${file}`,
+      locateFile: (file) =>
+        typeof window === "undefined"
+          ? `${process.cwd()}/public/${file}`
+          : `/${file}`,
     }).catch((err) => {
       sqlPromise = null;
       throw err;

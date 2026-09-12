@@ -590,6 +590,8 @@ export default function PdfLabPage() {
             <input
               ref={mergeInputRef}
               type="file"
+              aria-label="Choose PDF files to merge"
+              tabIndex={-1}
               accept=".pdf,application/pdf"
               multiple
               onChange={(e) => handleMergeFilesUpload(e.target.files)}
@@ -695,10 +697,12 @@ export default function PdfLabPage() {
               {/* Output Configuration & Merge Button */}
               <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="w-full sm:w-72">
-                  <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label htmlFor="merge-output-filename" className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                     Output Filename
                   </label>
                   <input
+                    id="merge-output-filename"
+                    aria-label="Output Filename"
                     type="text"
                     value={mergeOutputName}
                     onChange={(e) => setMergeOutputName(e.target.value)}
@@ -738,6 +742,8 @@ export default function PdfLabPage() {
               <input
                 ref={splitInputRef}
                 type="file"
+                aria-label="Choose PDF file to split"
+                tabIndex={-1}
                 accept=".pdf,application/pdf"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
@@ -784,6 +790,8 @@ export default function PdfLabPage() {
                   <input
                     ref={splitInputRef}
                     type="file"
+                    aria-label="Change PDF file to split"
+                    tabIndex={-1}
                     accept=".pdf,application/pdf"
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -809,7 +817,7 @@ export default function PdfLabPage() {
               <div className="space-y-3 bg-zinc-50 dark:bg-zinc-950/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800/80">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                    <label htmlFor="split-page-range-input" className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                       Page Selection Range
                     </label>
                     <p className="text-[11px] text-zinc-500">
@@ -848,6 +856,8 @@ export default function PdfLabPage() {
 
                 <div className="flex items-center gap-3">
                   <input
+                    id="split-page-range-input"
+                    aria-label="Page Selection Range"
                     type="text"
                     value={pageRangeInput}
                     onChange={(e) => handlePageRangeChange(e.target.value)}
@@ -923,10 +933,12 @@ export default function PdfLabPage() {
               {/* Download Bar */}
               <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="w-full sm:w-72">
-                  <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label htmlFor="split-output-filename" className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                     Output Filename
                   </label>
                   <input
+                    id="split-output-filename"
+                    aria-label="Split Output Filename"
                     type="text"
                     value={splitOutputName}
                     onChange={(e) => setSplitOutputName(e.target.value)}
@@ -966,6 +978,8 @@ export default function PdfLabPage() {
               <input
                 ref={organizeInputRef}
                 type="file"
+                aria-label="Choose PDF file to organize"
+                tabIndex={-1}
                 accept=".pdf,application/pdf"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
@@ -1012,6 +1026,8 @@ export default function PdfLabPage() {
                   <input
                     ref={organizeInputRef}
                     type="file"
+                    aria-label="Change PDF file to organize"
+                    tabIndex={-1}
                     accept=".pdf,application/pdf"
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -1170,10 +1186,12 @@ export default function PdfLabPage() {
               {/* Download Bar */}
               <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="w-full sm:w-72">
-                  <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                  <label htmlFor="organize-output-filename" className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                     Output Filename
                   </label>
                   <input
+                    id="organize-output-filename"
+                    aria-label="Organize Output Filename"
                     type="text"
                     value={organizeOutputName}
                     onChange={(e) => setOrganizeOutputName(e.target.value)}

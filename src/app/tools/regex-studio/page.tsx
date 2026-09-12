@@ -251,6 +251,8 @@ export default function RegexStudioPage() {
             /
           </span>
           <input
+            id="regex-pattern-input"
+            aria-label="Regular expression pattern"
             type="text"
             value={pattern}
             onChange={(e) => {
@@ -363,12 +365,16 @@ export default function RegexStudioPage() {
                     accept=".txt,.log,.json,.csv,.xml,.edi,.env,text/*"
                     onChange={handleFileUpload}
                     className="hidden"
+                    aria-label="Upload test text file"
+                    tabIndex={-1}
                   />
                 </div>
               </div>
 
               {/* Editable Textarea */}
               <textarea
+                id="regex-test-text"
+                aria-label="Test text to match against"
                 value={testText}
                 onChange={(e) => {
                   setTestText(e.target.value);
@@ -496,7 +502,7 @@ export default function RegexStudioPage() {
           <div className="lg:col-span-6 space-y-4">
             <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="replacement-pattern" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Replacement Pattern
                 </label>
                 <span className="text-xs text-zinc-400 font-mono">
@@ -505,6 +511,8 @@ export default function RegexStudioPage() {
               </div>
 
               <textarea
+                id="replacement-pattern"
+                aria-label="Replacement pattern"
                 value={substitutionPattern}
                 onChange={(e) => setSubstitutionPattern(e.target.value)}
                 rows={4}

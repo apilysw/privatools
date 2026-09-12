@@ -256,13 +256,15 @@ export default function SubnetCalculatorPage() {
           <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               <div className="md:col-span-6 space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center justify-between">
+                <label htmlFor="ipv4-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center justify-between">
                   <span>IP Address or CIDR Notation</span>
                   <span className="text-[11px] font-normal text-zinc-400">
                     e.g. 192.168.1.100 or 10.0.0.1/16
                   </span>
                 </label>
                 <input
+                  id="ipv4-input"
+                  aria-label="IP Address or CIDR Notation"
                   type="text"
                   value={ipv4Input}
                   onChange={(e) => {
@@ -275,10 +277,12 @@ export default function SubnetCalculatorPage() {
               </div>
 
               <div className="md:col-span-3 space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="ipv4-prefix-select" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Subnet Mask
                 </label>
                 <select
+                  id="ipv4-prefix-select"
+                  aria-label="Subnet Mask prefix length"
                   value={ipv4Prefix}
                   onChange={(e) => setIpv4Prefix(parseInt(e.target.value, 10))}
                   className="w-full p-3 font-mono text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
@@ -326,6 +330,8 @@ export default function SubnetCalculatorPage() {
                 <span>/32 (Host)</span>
               </div>
               <input
+                id="ipv4-prefix-slider"
+                aria-label="Subnet mask prefix length slider"
                 type="range"
                 min={0}
                 max={32}
@@ -611,10 +617,12 @@ export default function SubnetCalculatorPage() {
             <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label htmlFor="divider-parent" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     Parent CIDR Network
                   </label>
                   <input
+                    id="divider-parent"
+                    aria-label="Parent CIDR Network"
                     type="text"
                     value={dividerParent}
                     onChange={(e) => setDividerParent(e.target.value)}
@@ -624,10 +632,12 @@ export default function SubnetCalculatorPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label htmlFor="divider-target-prefix" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     Divide Into Target Prefix
                   </label>
                   <select
+                    id="divider-target-prefix"
+                    aria-label="Divide Into Target Prefix"
                     value={dividerTargetPrefix}
                     onChange={(e) => setDividerTargetPrefix(parseInt(e.target.value, 10))}
                     className="w-full p-3 font-mono text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
@@ -693,10 +703,12 @@ export default function SubnetCalculatorPage() {
           {vlsmMode === "vlsm" && (
             <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="vlsm-parent" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Parent IP Block to Subnet
                 </label>
                 <input
+                  id="vlsm-parent"
+                  aria-label="Parent IP Block to Subnet"
                   type="text"
                   value={vlsmParent}
                   onChange={(e) => setVlsmParent(e.target.value)}
@@ -735,6 +747,7 @@ export default function SubnetCalculatorPage() {
                         {idx + 1}
                       </span>
                       <input
+                        aria-label={`Subnet ${idx + 1} Name`}
                         type="text"
                         value={req.name}
                         onChange={(e) => {
@@ -747,6 +760,7 @@ export default function SubnetCalculatorPage() {
                       />
                       <div className="flex items-center gap-1.5">
                         <input
+                          aria-label={`Subnet ${idx + 1} Required Hosts`}
                           type="number"
                           min={1}
                           max={65534}
@@ -841,8 +855,10 @@ export default function SubnetCalculatorPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Target IP Address</label>
+                <label htmlFor="target-ip-address" className="text-xs text-zinc-400">Target IP Address</label>
                 <input
+                  id="target-ip-address"
+                  aria-label="Target IP Address"
                   type="text"
                   value={testIp}
                   onChange={(e) => setTestIp(e.target.value)}
@@ -852,8 +868,10 @@ export default function SubnetCalculatorPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Target Subnet CIDR</label>
+                <label htmlFor="target-subnet-cidr" className="text-xs text-zinc-400">Target Subnet CIDR</label>
                 <input
+                  id="target-subnet-cidr"
+                  aria-label="Target Subnet CIDR"
                   type="text"
                   value={testSubnet}
                   onChange={(e) => setTestSubnet(e.target.value)}
@@ -899,8 +917,10 @@ export default function SubnetCalculatorPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Network Block A (e.g. AWS VPC)</label>
+                <label htmlFor="network-block-a" className="text-xs text-zinc-400">Network Block A (e.g. AWS VPC)</label>
                 <input
+                  id="network-block-a"
+                  aria-label="Network Block A (e.g. AWS VPC)"
                   type="text"
                   value={overlapCidrA}
                   onChange={(e) => setOverlapCidrA(e.target.value)}
@@ -910,8 +930,10 @@ export default function SubnetCalculatorPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Network Block B (e.g. GCP VPC)</label>
+                <label htmlFor="network-block-b" className="text-xs text-zinc-400">Network Block B (e.g. GCP VPC)</label>
                 <input
+                  id="network-block-b"
+                  aria-label="Network Block B (e.g. GCP VPC)"
                   type="text"
                   value={overlapCidrB}
                   onChange={(e) => setOverlapCidrB(e.target.value)}
@@ -950,10 +972,12 @@ export default function SubnetCalculatorPage() {
         <div className="space-y-6">
           <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              <label htmlFor="ipv6-input-address" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                 IPv6 Address / Prefix
               </label>
               <input
+                id="ipv6-input-address"
+                aria-label="IPv6 Address / Prefix"
                 type="text"
                 value={ipv6Input}
                 onChange={(e) => setIpv6Input(e.target.value)}

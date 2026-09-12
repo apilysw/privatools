@@ -192,8 +192,10 @@ export default function EdiViewerPage() {
         {showDelimOverrides && doc && (
           <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs animate-in fade-in">
             <div>
-              <label className="text-zinc-500 font-medium block mb-1">Segment Terminator</label>
+              <label htmlFor="delim-segment" className="text-zinc-500 font-medium block mb-1">Segment Terminator</label>
               <input
+                id="delim-segment"
+                aria-label="Segment Terminator delimiter"
                 type="text"
                 value={customDelims.segment ?? doc.delimiters.segment}
                 onChange={(e) =>
@@ -203,8 +205,10 @@ export default function EdiViewerPage() {
               />
             </div>
             <div>
-              <label className="text-zinc-500 font-medium block mb-1">Element Separator</label>
+              <label htmlFor="delim-element" className="text-zinc-500 font-medium block mb-1">Element Separator</label>
               <input
+                id="delim-element"
+                aria-label="Element Separator delimiter"
                 type="text"
                 value={customDelims.element ?? doc.delimiters.element}
                 onChange={(e) =>
@@ -214,8 +218,10 @@ export default function EdiViewerPage() {
               />
             </div>
             <div>
-              <label className="text-zinc-500 font-medium block mb-1">Component Separator</label>
+              <label htmlFor="delim-component" className="text-zinc-500 font-medium block mb-1">Component Separator</label>
               <input
+                id="delim-component"
+                aria-label="Component Separator delimiter"
                 type="text"
                 value={customDelims.component ?? doc.delimiters.component}
                 onChange={(e) =>
@@ -252,6 +258,8 @@ export default function EdiViewerPage() {
             <span>{inputText.length} characters</span>
           </div>
           <textarea
+            id="raw-edi-input"
+            aria-label="Raw EDI document input"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="ISA*00* ... or UNA:+.? ' ..."
@@ -476,6 +484,8 @@ export default function EdiViewerPage() {
                 <div className="relative w-full sm:w-80">
                   <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
+                    id="segment-search-input"
+                    aria-label="Search segments"
                     type="text"
                     placeholder="Search segments (e.g. N1, BIG, PO1, Dallas)..."
                     value={segmentQuery}
@@ -653,6 +663,8 @@ export default function EdiViewerPage() {
                 </button>
               </div>
               <textarea
+                id="formatted-edi-output"
+                aria-label="Formatted EDI document output"
                 readOnly
                 value={formattedEdiOutput}
                 className="w-full h-96 p-4 font-mono text-xs bg-transparent text-zinc-800 dark:text-zinc-200 focus:outline-none resize-y"
@@ -684,6 +696,8 @@ export default function EdiViewerPage() {
                 </button>
               </div>
               <textarea
+                id="json-edi-output"
+                aria-label="Structured JSON output"
                 readOnly
                 value={jsonOutput}
                 className="w-full h-96 p-4 font-mono text-xs bg-transparent text-zinc-800 dark:text-zinc-200 focus:outline-none resize-y"
@@ -715,6 +729,8 @@ export default function EdiViewerPage() {
                 </button>
               </div>
               <textarea
+                id="xml-edi-output"
+                aria-label="Semantic XML output"
                 readOnly
                 value={xmlOutput}
                 className="w-full h-96 p-4 font-mono text-xs bg-transparent text-zinc-800 dark:text-zinc-200 focus:outline-none resize-y"

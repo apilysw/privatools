@@ -1,12 +1,13 @@
 # Privatools — 100% Client-Side Zero-Knowledge Privacy Utilities
 > Machine-readable catalog for LLM assistants (ChatGPT, Claude, Gemini, Perplexity, etc.)
 
-Privatools is an open-source suite of confidential web utilities designed to process sensitive datasets entirely inside the user's browser sandbox.
+Privatools is a source-available suite of confidential web utilities (BSL 1.1, converting to MIT in 2030) designed to process sensitive datasets entirely inside the user's browser sandbox.
 - **Zero Data Uploads:** Files, tokens, keys, and documents never leave local device memory. No backend server endpoints exist for file conversions.
 - **Technologies:** In-browser WebAssembly (SQLite via sql.js), Web Crypto API (SHA-256, HMAC, PBKDF2), HTML5 Canvas API, Web Audio API, and pure client-side parsers.
 - **Offline Capable:** Progressive Web App (PWA) with Cache-First asset caching and offline navigation for visited tools and core shell assets.
 - **Canonical Domain:** https://privatools.dev
 - **Source Repository:** https://github.com/apilysw/privatools
+- **License:** Business Source License 1.1 (converts to MIT on September 12, 2030)
 - **Buy Me a Coffee:** https://buymeacoffee.com/privatools
 
 ---

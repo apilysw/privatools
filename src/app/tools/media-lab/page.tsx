@@ -503,6 +503,8 @@ export default function MediaLabPage() {
             <input
               ref={singleInputRef}
               type="file"
+              aria-label="Choose image to inspect and scrub"
+              tabIndex={-1}
               accept="image/jpeg,image/png,image/webp,image/tiff,image/heic,image/avif"
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -975,6 +977,7 @@ export default function MediaLabPage() {
                         <Search className="w-4 h-4 absolute left-3 top-2.5 text-zinc-400" />
                         <input
                           type="text"
+                          aria-label="Search metadata keys and values"
                           placeholder="Search metadata keys and values..."
                           value={tagSearchQuery}
                           onChange={(e) => setTagSearchQuery(e.target.value)}
@@ -1028,6 +1031,8 @@ export default function MediaLabPage() {
             <input
               ref={batchInputRef}
               type="file"
+              aria-label="Choose multiple images for batch scrubbing"
+              tabIndex={-1}
               multiple
               accept="image/*"
               onChange={(e) => {
@@ -1166,6 +1171,8 @@ export default function MediaLabPage() {
             <input
               ref={audioInputRef}
               type="file"
+              aria-label="Choose audio recording to trim"
+              tabIndex={-1}
               accept="audio/*"
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -1247,12 +1254,14 @@ export default function MediaLabPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-800/40">
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold text-zinc-600 dark:text-zinc-300">Start Time:</span>
+                    <label htmlFor="audio-trim-start-range" className="font-semibold text-zinc-600 dark:text-zinc-300">Start Time:</label>
                     <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
                       {trimStart.toFixed(2)}s
                     </span>
                   </div>
                   <input
+                    id="audio-trim-start-range"
+                    aria-label="Audio Trim Start Time"
                     type="range"
                     min={0}
                     max={audioDuration}
@@ -1268,12 +1277,14 @@ export default function MediaLabPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold text-zinc-600 dark:text-zinc-300">End Time:</span>
+                    <label htmlFor="audio-trim-end-range" className="font-semibold text-zinc-600 dark:text-zinc-300">End Time:</label>
                     <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
                       {trimEnd.toFixed(2)}s
                     </span>
                   </div>
                   <input
+                    id="audio-trim-end-range"
+                    aria-label="Audio Trim End Time"
                     type="range"
                     min={0}
                     max={audioDuration}

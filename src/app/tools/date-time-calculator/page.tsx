@@ -1127,10 +1127,12 @@ export default function DateTimeCalculatorPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="epoch-resolution-mode" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Resolution Mode
                 </label>
                 <select
+                  id="epoch-resolution-mode"
+                  aria-label="Resolution Mode"
                   value={epochResolution}
                   onChange={(e) =>
                     setEpochResolution(

@@ -329,6 +329,8 @@ ORDER BY total_spent DESC;`
             <input
               ref={fileInputRef}
               type="file"
+              aria-label="Choose SQLite database file"
+              tabIndex={-1}
               accept=".sqlite,.db,.sqlite3,.db3,application/x-sqlite3,application/vnd.sqlite3"
               onChange={(e) => {
                 if (e.target.files && e.target.files[0]) {
@@ -397,6 +399,7 @@ ORDER BY total_spent DESC;`
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <input
+                    aria-label="Database Filename"
                     type="text"
                     value={dbName}
                     onChange={(e) => setDbName(e.target.value)}
@@ -422,13 +425,15 @@ ORDER BY total_spent DESC;`
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
               >
                 Change File
               </button>
               <input
                 ref={fileInputRef}
                 type="file"
+                aria-label="Change SQLite database file"
+                tabIndex={-1}
                 accept=".sqlite,.db,.sqlite3,.db3"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
@@ -629,6 +634,7 @@ ORDER BY total_spent DESC;`
                         <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                           type="text"
+                          aria-label="Search records in table"
                           value={tableSearchQuery}
                           onChange={(e) => {
                             setTableSearchQuery(e.target.value);
@@ -699,6 +705,7 @@ ORDER BY total_spent DESC;`
                       <div className="flex items-center gap-2">
                         <span>Rows per page:</span>
                         <select
+                          aria-label="Rows per page"
                           value={pageSize}
                           onChange={(e) => setPageSize(Number(e.target.value))}
                           className="px-2 py-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none"
@@ -797,6 +804,8 @@ ORDER BY total_spent DESC;`
               {/* SQL Textarea */}
               <div className="relative">
                 <textarea
+                  id="sql-query-editor"
+                  aria-label="SQL Query Statement"
                   rows={6}
                   value={sqlQuery}
                   onChange={(e) => setSqlQuery(e.target.value)}

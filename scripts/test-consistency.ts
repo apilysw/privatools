@@ -3,6 +3,8 @@ import path from "path";
 import { TOOLS_REGISTRY } from "../src/lib/registry";
 import { TOOLS_CONTENT } from "../src/lib/tool-content";
 import { SITE_URL, GUMROAD_BUY_URL, BUY_ME_A_COFFEE_URL } from "../src/lib/config";
+import { generateToolMetadata } from "../src/lib/seo";
+import sitemap from "../src/app/sitemap";
 
 interface TestFailure {
   category: string;
@@ -11,16 +13,17 @@ interface TestFailure {
 
 const failures: TestFailure[] = [];
 
-function assert(condition: boolean, category: string, message: string) {
+function assert(condition: boolean, category: string, message: string, failMessage?: string) {
   if (!condition) {
-    failures.push({ category, message });
-    console.error(`  ❌ [${category}] ${message}`);
+    const err = failMessage || message;
+    failures.push({ category, message: err });
+    console.error(`  ❌ [${category}] ${err}`);
   } else {
     console.log(`  ✅ [${category}] ${message}`);
   }
 }
 
-function runTests() {
+async function runTests() {
   console.log("\n🧪 Running Privatools Consistency & Integrity Test Suite...\n");
 
   // 1. Config Invariants
@@ -28,25 +31,29 @@ function runTests() {
   assert(
     SITE_URL === "https://privatools.dev",
     "Config",
+    `SITE_URL is https://privatools.dev`,
     `SITE_URL must be https://privatools.dev (actual: ${SITE_URL})`
   );
   assert(
     GUMROAD_BUY_URL === "https://privatools.gumroad.com/l/pwa",
     "Config",
+    `GUMROAD_BUY_URL is https://privatools.gumroad.com/l/pwa`,
     `GUMROAD_BUY_URL must be https://privatools.gumroad.com/l/pwa (actual: ${GUMROAD_BUY_URL})`
   );
   assert(
     BUY_ME_A_COFFEE_URL === "https://buymeacoffee.com/privatools",
     "Config",
+    `BUY_ME_A_COFFEE_URL is https://buymeacoffee.com/privatools`,
     `BUY_ME_A_COFFEE_URL must be https://buymeacoffee.com/privatools (actual: ${BUY_ME_A_COFFEE_URL})`
   );
 
   // 2. Tool Registry Invariants
   console.log("\n--- 2. Tool Registry Catalog ---");
   assert(
-    TOOLS_REGISTRY.length >= 19,
+    TOOLS_REGISTRY.length === 19,
     "Registry",
-    `TOOLS_REGISTRY must have at least 19 tools (found: ${TOOLS_REGISTRY.length})`
+    `TOOLS_REGISTRY has exactly 19 tools (found: ${TOOLS_REGISTRY.length})`,
+    `TOOLS_REGISTRY must have exactly 19 tools (found: ${TOOLS_REGISTRY.length})`
   );
 
   const seenIds = new Set<string>();
@@ -62,19 +69,20 @@ function runTests() {
     assert(
       tool.slug === `/tools/${tool.id}`,
       "Registry",
+      `Tool "${tool.id}" slug matches "/tools/${tool.id}"`,
       `Tool "${tool.id}" slug must match "/tools/${tool.id}" (actual: "${tool.slug}")`
     );
 
     assert(
       tool.supportedFormats.length > 0,
       "Registry",
-      `Tool "${tool.id}" must specify supportedFormats`
+      `Tool "${tool.id}" specifies supportedFormats (${tool.supportedFormats.length} formats)`
     );
 
     assert(
       tool.keywords.length >= 3,
       "Registry",
-      `Tool "${tool.id}" must specify at least 3 keywords`
+      `Tool "${tool.id}" specifies keywords (${tool.keywords.length} keywords)`
     );
   }
 
@@ -89,12 +97,14 @@ function runTests() {
     assert(
       fs.existsSync(pagePath),
       "Routes",
+      `Page exists for tool "${tool.id}" at src/app/tools/${tool.id}/page.tsx`,
       `Missing page.tsx for tool "${tool.id}" at src/app/tools/${tool.id}/page.tsx`
     );
 
     assert(
       fs.existsSync(layoutPath),
       "Routes",
+      `Layout exists for tool "${tool.id}" at src/app/tools/${tool.id}/layout.tsx`,
       `Missing layout.tsx for tool "${tool.id}" at src/app/tools/${tool.id}/layout.tsx`
     );
 
@@ -103,49 +113,60 @@ function runTests() {
       assert(
         pageContent.includes(`toolId="${tool.id}"`),
         "Routes",
-        `Tool page ${tool.id}/page.tsx must pass toolId="${tool.id}" to ToolHeader`
+        `Tool page ${tool.id}/page.tsx passes toolId="${tool.id}" to ToolHeader`
       );
     }
   }
 
   // 4. Rich Landing Content & SEO Catalog
-  console.log("\n--- 4. Rich Landing Content (SEO) ---");
+  console.log("\n--- 4. Rich Landing Content & Meta Descriptions ---");
   for (const tool of TOOLS_REGISTRY) {
     const content = TOOLS_CONTENT[tool.id];
     assert(
       Boolean(content),
       "SEO Content",
-      `TOOLS_CONTENT must have an entry for tool "${tool.id}"`
+      `TOOLS_CONTENT has entry for tool "${tool.id}"`
     );
 
     if (content) {
       assert(
         content.headline.length > 10,
         "SEO Content",
-        `Tool "${tool.id}" headline must be descriptive`
+        `Tool "${tool.id}" headline is descriptive: "${content.headline.slice(0, 40)}..."`
       );
       assert(
         content.techStack.length >= 2,
         "SEO Content",
-        `Tool "${tool.id}" must list at least 2 technologies in techStack`
+        `Tool "${tool.id}" lists at least 2 technologies in techStack`
       );
       assert(
         content.useCases.length >= 2,
         "SEO Content",
-        `Tool "${tool.id}" must list at least 2 useCases`
+        `Tool "${tool.id}" lists at least 2 useCases`
       );
       assert(
         content.faqs.length >= 2,
         "SEO Content",
-        `Tool "${tool.id}" must list at least 2 FAQs`
+        `Tool "${tool.id}" lists at least 2 FAQs`
       );
     }
+
+    // Check meta description length (strictly 140 - 155 chars)
+    const meta = generateToolMetadata(tool.id);
+    const desc = meta.description || "";
+    const len = desc.length;
+    assert(
+      len >= 140 && len <= 155,
+      "SEO Description",
+      `Tool "${tool.id}" meta description length is ${len} chars (140-155 range)`,
+      `Tool "${tool.id}" meta description length is ${len} chars (expected 140-155). Description: "${desc}"`
+    );
   }
 
-  // 5. public/tools.json Verification
-  console.log("\n--- 5. Public tools.json Catalog ---");
+  // 5. public/tools.json Verification & Deep Compare
+  console.log("\n--- 5. Public tools.json Deep Catalog Verification ---");
   const toolsJsonPath = path.join(process.cwd(), "public", "tools.json");
-  assert(fs.existsSync(toolsJsonPath), "tools.json", "public/tools.json must exist on disk");
+  assert(fs.existsSync(toolsJsonPath), "tools.json", "public/tools.json exists on disk");
 
   if (fs.existsSync(toolsJsonPath)) {
     try {
@@ -155,28 +176,57 @@ function runTests() {
       assert(
         data.canonicalBase === "https://privatools.dev",
         "tools.json",
-        `canonicalBase must be https://privatools.dev (actual: ${data.canonicalBase})`
+        `canonicalBase is https://privatools.dev`
       );
 
       assert(
         data.toolCount === TOOLS_REGISTRY.length,
         "tools.json",
-        `toolCount (${data.toolCount}) must match TOOLS_REGISTRY.length (${TOOLS_REGISTRY.length})`
+        `toolCount (${data.toolCount}) matches TOOLS_REGISTRY.length (${TOOLS_REGISTRY.length})`
       );
 
       assert(
         Array.isArray(data.tools) && data.tools.length === TOOLS_REGISTRY.length,
         "tools.json",
-        "data.tools array length must match TOOLS_REGISTRY"
+        "data.tools array length matches TOOLS_REGISTRY"
       );
 
-      const jsonToolIds = new Set((data.tools || []).map((t: { id: string }) => t.id));
-      for (const tool of TOOLS_REGISTRY) {
-        assert(
-          jsonToolIds.has(tool.id),
-          "tools.json",
-          `Tool "${tool.id}" is present in tools.json`
-        );
+      for (const registryTool of TOOLS_REGISTRY) {
+        const jsonTool = (data.tools || []).find((t: { id: string }) => t.id === registryTool.id);
+        assert(Boolean(jsonTool), "tools.json", `Tool "${registryTool.id}" found in tools.json`);
+
+        if (jsonTool) {
+          assert(
+            jsonTool.name === registryTool.name,
+            "tools.json",
+            `Tool "${registryTool.id}" name matches ("${jsonTool.name}")`
+          );
+          assert(
+            jsonTool.slug === registryTool.slug,
+            "tools.json",
+            `Tool "${registryTool.id}" slug matches ("${jsonTool.slug}")`
+          );
+          assert(
+            jsonTool.category === registryTool.category,
+            "tools.json",
+            `Tool "${registryTool.id}" category matches ("${jsonTool.category}")`
+          );
+          assert(
+            jsonTool.shortDesc === registryTool.shortDesc,
+            "tools.json",
+            `Tool "${registryTool.id}" shortDesc matches`
+          );
+          assert(
+            JSON.stringify(jsonTool.supportedFormats) === JSON.stringify(registryTool.supportedFormats),
+            "tools.json",
+            `Tool "${registryTool.id}" supportedFormats match`
+          );
+          assert(
+            JSON.stringify(jsonTool.keywords) === JSON.stringify(registryTool.keywords),
+            "tools.json",
+            `Tool "${registryTool.id}" keywords match`
+          );
+        }
       }
     } catch (err) {
       assert(false, "tools.json", `Failed to parse public/tools.json: ${err}`);
@@ -186,14 +236,26 @@ function runTests() {
   // 6. public/llms.txt Verification
   console.log("\n--- 6. Public llms.txt Discovery Document ---");
   const llmsPath = path.join(process.cwd(), "public", "llms.txt");
-  assert(fs.existsSync(llmsPath), "llms.txt", "public/llms.txt must exist on disk");
+  assert(fs.existsSync(llmsPath), "llms.txt", "public/llms.txt exists on disk");
 
   if (fs.existsSync(llmsPath)) {
     const llmsContent = fs.readFileSync(llmsPath, "utf8");
     assert(
       llmsContent.includes("https://privatools.dev"),
       "llms.txt",
-      "llms.txt must contain canonical domain https://privatools.dev"
+      "llms.txt contains canonical domain https://privatools.dev"
+    );
+
+    assert(
+      llmsContent.includes("BUSL-1.1") || llmsContent.includes("BSL 1.1"),
+      "llms.txt",
+      "llms.txt references BSL 1.1 / BUSL-1.1 license"
+    );
+
+    assert(
+      llmsContent.includes("September 12, 2030"),
+      "llms.txt",
+      "llms.txt documents the September 12, 2030 MIT change date"
     );
 
     for (const tool of TOOLS_REGISTRY) {
@@ -201,13 +263,81 @@ function runTests() {
       assert(
         llmsContent.includes(canonicalUrl),
         "llms.txt",
-        `llms.txt must contain canonical URL for tool: "${canonicalUrl}"`
+        `llms.txt contains canonical URL for tool: "${canonicalUrl}"`
       );
     }
   }
 
-  // 7. Workspace-wide Domain & Placeholder Scanning
-  console.log("\n--- 7. Domain & Placeholder Sanity Scan ---");
+  // 7. Sitemap & Canonical URL Integrity
+  console.log("\n--- 7. Sitemap & Canonical URLs ---");
+  try {
+    const sitemapEntries = sitemap();
+    assert(
+      Array.isArray(sitemapEntries) && sitemapEntries.length === TOOLS_REGISTRY.length + 2,
+      "Sitemap",
+      `Sitemap has ${TOOLS_REGISTRY.length + 2} entries (root, privacy-audit, and 19 tools)`
+    );
+
+    const sitemapUrls = new Set<string>();
+    for (const entry of sitemapEntries) {
+      assert(!sitemapUrls.has(entry.url), "Sitemap", `Sitemap URL is unique: ${entry.url}`);
+      sitemapUrls.add(entry.url);
+      assert(
+        entry.url.startsWith("https://privatools.dev"),
+        "Sitemap",
+        `Sitemap URL has correct base: ${entry.url}`
+      );
+    }
+  } catch (err) {
+    assert(false, "Sitemap", `Failed to generate sitemap: ${err}`);
+  }
+
+  // 8. Security Headers Verification (public/_headers)
+  console.log("\n--- 8. Cloudflare Production Security Headers ---");
+  const headersPath = path.join(process.cwd(), "public", "_headers");
+  assert(fs.existsSync(headersPath), "Headers", "public/_headers exists on disk");
+
+  if (fs.existsSync(headersPath)) {
+    const headersContent = fs.readFileSync(headersPath, "utf8");
+    assert(
+      headersContent.includes("Content-Security-Policy"),
+      "Headers",
+      "Includes Content-Security-Policy header"
+    );
+    assert(
+      headersContent.includes("X-Content-Type-Options: nosniff"),
+      "Headers",
+      "Includes X-Content-Type-Options: nosniff"
+    );
+    assert(
+      headersContent.includes("Referrer-Policy: strict-origin-when-cross-origin"),
+      "Headers",
+      "Includes Referrer-Policy: strict-origin-when-cross-origin"
+    );
+    assert(
+      headersContent.includes("Permissions-Policy: camera=(self)"),
+      "Headers",
+      "Includes Permissions-Policy with camera=(self) for QR scanner"
+    );
+    assert(
+      headersContent.includes("frame-ancestors 'self'"),
+      "Headers",
+      "Includes frame-ancestors 'self' for clickjacking protection"
+    );
+    assert(
+      headersContent.includes("/_next/static/*") && headersContent.includes("immutable"),
+      "Headers",
+      "Includes immutable caching for /_next/static/*"
+    );
+    assert(
+      headersContent.includes("/sw.js") && headersContent.includes("no-cache"),
+      "Headers",
+      "Includes no-cache revalidation for /sw.js"
+    );
+  }
+
+  // 9. Workspace-wide Domain & Placeholder Scanning
+  console.log("\n--- 9. Domain & Placeholder Sanity Scan ---");
   const scanDirs = ["src", "public", "scripts"];
   const badPatterns = [
     { regex: /privatools\.com/i, label: "privatools.com (use .dev instead)" },
@@ -225,8 +355,8 @@ function runTests() {
           scanDir(fullPath);
         }
       } else if (/\.(ts|tsx|js|jsx|json|txt|md|css|html)$/.test(file)) {
-        // Skip this test script itself for the regex pattern check
-        if (fullPath.endsWith("test-consistency.ts")) continue;
+        // Skip test scripts themselves for the regex pattern check
+        if (fullPath.endsWith("test-consistency.ts") || fullPath.endsWith("test-smoke.ts")) continue;
 
         const content = fs.readFileSync(fullPath, "utf8");
         for (const { regex, label } of badPatterns) {
@@ -234,6 +364,7 @@ function runTests() {
             assert(
               false,
               "Sanity Scan",
+              `Check passed for ${path.relative(process.cwd(), fullPath)}`,
               `Found forbidden pattern "${label}" in ${path.relative(process.cwd(), fullPath)}`
             );
           }

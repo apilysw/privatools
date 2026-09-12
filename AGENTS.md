@@ -47,7 +47,7 @@ Privatools is a suite of **100% Client-Side Web Utilities**. Your data, files, c
 │   │   ├── privacy-audit/page.tsx  # Verifiable DevTools audit proof & GitHub source verification card
 │   │   ├── sitemap.ts              # Static XML sitemap generator
 │   │   ├── robots.ts               # Robots.txt generator
-│   │   └── tools/                  # 20+ standalone tool routes
+│   │   └── tools/                  # 19 standalone tool routes
 │   │       └── [tool-name]/
 │   │           ├── page.tsx        # Client component with tool interface
 │   │           └── layout.tsx      # Server layout with generateMetadata() & ToolLandingContent

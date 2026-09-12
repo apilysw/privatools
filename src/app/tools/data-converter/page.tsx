@@ -128,10 +128,12 @@ export default function DataConverterPage() {
         {/* Format Selectors */}
         <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+            <label htmlFor="from-format" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
               From:
-            </span>
+            </label>
             <select
+              id="from-format"
+              aria-label="Source format"
               value={fromFormat}
               onChange={(e) => setFromFormat(e.target.value as DataFormat)}
               className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -148,15 +150,18 @@ export default function DataConverterPage() {
             onClick={handleSwap}
             className="p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
             title="Swap source and target formats"
+            aria-label="Swap source and target formats"
           >
             <ArrowLeftRight className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+            <label htmlFor="to-format" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
               To:
-            </span>
+            </label>
             <select
+              id="to-format"
+              aria-label="Target format"
               value={toFormat}
               onChange={(e) => setToFormat(e.target.value as DataFormat)}
               className="px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -221,6 +226,8 @@ export default function DataConverterPage() {
           </div>
 
           <textarea
+            id="source-data-input"
+            aria-label="Source data input"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Paste your ${formatLabels[fromFormat]} data here...`}
@@ -247,6 +254,7 @@ export default function DataConverterPage() {
                 disabled={!result.output || !!result.error}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 disabled:opacity-40 transition-colors"
                 title="Copy to clipboard"
+                aria-label="Copy output to clipboard"
               >
                 {copied ? (
                   <>
@@ -266,6 +274,7 @@ export default function DataConverterPage() {
                 disabled={!result.output || !!result.error}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white disabled:opacity-40 transition-colors"
                 title="Download file"
+                aria-label="Download converted file"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Save</span>
@@ -283,6 +292,8 @@ export default function DataConverterPage() {
             </div>
           ) : (
             <textarea
+              id="converted-data-output"
+              aria-label="Converted data output"
               readOnly
               value={result.output}
               placeholder={`Converted ${formatLabels[toFormat]} output will appear here...`}

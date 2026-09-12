@@ -109,10 +109,12 @@ export default function ImageConverterPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
             {/* Format Selection */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              <label htmlFor="target-image-format" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                 Target Format
               </label>
               <select
+                id="target-image-format"
+                aria-label="Target Format"
                 value={targetFormat}
                 onChange={(e) => setTargetFormat(e.target.value as ImageFormat)}
                 className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -126,7 +128,7 @@ export default function ImageConverterPage() {
             {/* Quality Slider (for WebP and JPEG) */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="image-quality-slider" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Quality
                 </label>
                 <span className="text-xs font-mono font-bold text-emerald-500">
@@ -134,6 +136,8 @@ export default function ImageConverterPage() {
                 </span>
               </div>
               <input
+                id="image-quality-slider"
+                aria-label="Quality"
                 type="range"
                 min="0.1"
                 max="1.0"
@@ -153,7 +157,7 @@ export default function ImageConverterPage() {
             {/* Max Width Resize */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="max-width-limit-select" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Max Width Limit
                 </label>
                 <span className="text-xs font-mono text-zinc-500">
@@ -161,6 +165,8 @@ export default function ImageConverterPage() {
                 </span>
               </div>
               <select
+                id="max-width-limit-select"
+                aria-label="Max Width Limit"
                 value={maxWidth}
                 onChange={(e) => setMaxWidth(parseInt(e.target.value, 10))}
                 className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"

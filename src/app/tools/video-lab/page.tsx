@@ -790,6 +790,8 @@ export default function VideoLabPage() {
         <input
           ref={fileInputRef}
           type="file"
+          aria-label="Choose media file to convert or edit"
+          tabIndex={-1}
           accept="video/*,audio/*,.mp4,.webm,.mov,.mkv,.wav,.mp3,.flac,.ogg,.m4a"
           onChange={(e) => {
             if (e.target.files && e.target.files[0]) {
@@ -1125,6 +1127,7 @@ export default function VideoLabPage() {
                         <span className="font-mono">{audioGain.toFixed(1)}x</span>
                       </div>
                       <input
+                        aria-label="Volume Gain"
                         type="range"
                         min="0.2"
                         max="3.0"
@@ -1138,6 +1141,7 @@ export default function VideoLabPage() {
                     {/* Normalize Toggle */}
                     <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
                       <input
+                        aria-label="Peak Normalization (0dB)"
                         type="checkbox"
                         checked={audioNormalize}
                         onChange={(e) => setAudioNormalize(e.target.checked)}
@@ -1149,6 +1153,7 @@ export default function VideoLabPage() {
                     {/* Mono Downmix Toggle */}
                     <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
                       <input
+                        aria-label="Downmix to Single Mono Track"
                         type="checkbox"
                         checked={audioMono}
                         onChange={(e) => setAudioMono(e.target.checked)}
@@ -1185,6 +1190,7 @@ export default function VideoLabPage() {
                     {/* MP3 with Bitrate Selector */}
                     <div className="flex items-center gap-1.5">
                       <select
+                        aria-label="MP3 Bitrate"
                         value={extractMp3Bitrate}
                         onChange={(e) => setExtractMp3Bitrate(parseInt(e.target.value))}
                         className="px-2.5 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1258,6 +1264,7 @@ export default function VideoLabPage() {
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Target Audio Format</label>
                 <select
+                  aria-label="Target Audio Format"
                   value={audioConvertTarget}
                   onChange={(e) => setAudioConvertTarget(e.target.value as "mp3" | "wav" | "flac")}
                   className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1273,6 +1280,7 @@ export default function VideoLabPage() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">MP3 Bitrate</label>
                   <select
+                    aria-label="MP3 Bitrate"
                     value={audioConvertBitrate}
                     onChange={(e) => setAudioConvertBitrate(parseInt(e.target.value))}
                     className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1289,6 +1297,7 @@ export default function VideoLabPage() {
               <div className="space-y-1.5 flex flex-col justify-end">
                 <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300 pb-2">
                   <input
+                    aria-label="Peak Normalize to 0dB"
                     type="checkbox"
                     checked={audioNormalize}
                     onChange={(e) => setAudioNormalize(e.target.checked)}
@@ -1390,6 +1399,7 @@ export default function VideoLabPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Target Video Format</label>
                     <select
+                      aria-label="Target Video Format"
                       value={targetVideoFormat}
                       onChange={(e) => setTargetVideoFormat(e.target.value as "webm" | "mp4")}
                       className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1403,6 +1413,7 @@ export default function VideoLabPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Target Resolution</label>
                     <select
+                      aria-label="Target Resolution"
                       value={resolutionPreset}
                       onChange={(e) =>
                         setResolutionPreset(
@@ -1426,6 +1437,7 @@ export default function VideoLabPage() {
                       <span className="font-mono">{bitrateMbps} Mbps</span>
                     </div>
                     <input
+                      aria-label="Target Bitrate"
                       type="range"
                       min="0.5"
                       max="8.0"
@@ -1440,6 +1452,7 @@ export default function VideoLabPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Framerate (FPS)</label>
                     <select
+                      aria-label="Framerate (FPS)"
                       value={transcodeFps}
                       onChange={(e) => setTranscodeFps(parseInt(e.target.value))}
                       className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1454,6 +1467,7 @@ export default function VideoLabPage() {
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
                     <input
+                      aria-label="Include Decoded Audio Track in Output"
                       type="checkbox"
                       checked={transcodeIncludeAudio}
                       onChange={(e) => setTranscodeIncludeAudio(e.target.checked)}
@@ -1522,6 +1536,7 @@ export default function VideoLabPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">GIF Width (pixels)</label>
                     <select
+                      aria-label="GIF Width (pixels)"
                       value={gifWidth}
                       onChange={(e) => setGifWidth(parseInt(e.target.value))}
                       className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1535,6 +1550,7 @@ export default function VideoLabPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">GIF Framerate (FPS)</label>
                     <select
+                      aria-label="GIF Framerate (FPS)"
                       value={gifFps}
                       onChange={(e) => setGifFps(parseInt(e.target.value))}
                       className="w-full px-3 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
@@ -1676,6 +1692,7 @@ export default function VideoLabPage() {
                     </span>
                   </div>
                   <input
+                    aria-label="In-Point (Start)"
                     type="range"
                     min="0"
                     max={isFinite(clipDuration) && clipDuration > 0 ? clipDuration : 3}
@@ -1766,6 +1783,7 @@ export default function VideoLabPage() {
                     </span>
                   </div>
                   <input
+                    aria-label="Out-Point (End)"
                     type="range"
                     min="0"
                     max={isFinite(clipDuration) && clipDuration > 0 ? clipDuration : 3}

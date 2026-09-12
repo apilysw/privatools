@@ -11,8 +11,13 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "tsx scripts/generate-tools-json.ts",
-    "test": "tsx scripts/test-consistency.ts",
+    "test": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts",
+    "test:consistency": "tsx scripts/test-consistency.ts",
+    "test:functional": "tsx scripts/test-functional.ts",
+    "test:smoke": "tsx scripts/test-smoke.ts",
+    "test:all": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts && tsx scripts/test-smoke.ts",
     "build": "next build",
+    "postbuild": "tsx scripts/test-smoke.ts",
     "start": "next start",
     "lint": "eslint"
   },

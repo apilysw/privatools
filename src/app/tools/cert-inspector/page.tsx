@@ -178,6 +178,8 @@ export default function CertificateInspectorPage() {
               <span>{inputPEM.length} characters</span>
             </div>
             <textarea
+              id="cert-pem-input"
+              aria-label="Paste PEM or Base64 encoded certificate"
               value={inputPEM}
               onChange={(e) => {
                 setBinaryDER(null);
@@ -792,6 +794,8 @@ export default function CertificateInspectorPage() {
                   </button>
                 </div>
                 <textarea
+                  id="cert-clean-pem"
+                  aria-label="Clean normalized PEM certificate output"
                   readOnly
                   value={inspection.rawPEM}
                   className="w-full h-80 p-4 font-mono text-xs bg-transparent text-zinc-800 dark:text-zinc-200 focus:outline-none resize-none"
@@ -821,6 +825,8 @@ export default function CertificateInspectorPage() {
                   </button>
                 </div>
                 <textarea
+                  id="cert-public-key"
+                  aria-label="Extracted Public Key SPKI PEM output"
                   readOnly
                   value={inspection.publicKey.pem}
                   className="w-full h-80 p-4 font-mono text-xs bg-transparent text-zinc-800 dark:text-zinc-200 focus:outline-none resize-none"

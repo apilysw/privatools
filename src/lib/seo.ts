@@ -21,7 +21,9 @@ export function generateToolMetadata(toolIdOrSlug: string): Metadata {
 
   const title = tool.seoTitle || `${tool.name} | ${SITE_NAME}`;
   const url = getCanonicalUrl(tool.slug);
-  const description = `${tool.shortDesc} Executed 100% client-side in browser memory with zero data uploads.`;
+  const description =
+    tool.metaDescription ||
+    `${tool.shortDesc} Executed 100% client-side in browser memory with zero data uploads.`;
 
   return {
     title,
@@ -39,7 +41,7 @@ export function generateToolMetadata(toolIdOrSlug: string): Metadata {
     },
     openGraph: {
       title,
-      description: tool.description,
+      description,
       url,
       siteName: SITE_NAME,
       type: "website",

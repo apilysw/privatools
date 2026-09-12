@@ -5,6 +5,7 @@ export interface ToolMetadata {
   slug: string;
   category: "Data & Config" | "Media & Images" | "Text & Encodings" | "Security & Dev";
   shortDesc: string;
+  metaDescription?: string;
   description: string;
   icon: string;
   badge?: string;
@@ -21,6 +22,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/data-converter",
     category: "Data & Config",
     shortDesc: "Convert between JSON, YAML, CSV, and XML instantly with live preview.",
+    metaDescription: "Convert JSON, YAML, CSV, and XML with instant live preview. Process sensitive structured files 100% client-side in browser memory with zero data uploads.",
     description:
       "Bi-directional, zero-latency converter supporting JSON, YAML, CSV, and XML. Formats and validates structures client-side with zero data egress.",
     icon: "FileSpreadsheet",
@@ -36,6 +38,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/image-converter",
     category: "Media & Images",
     shortDesc: "Transcode WebP, PNG, JPEG with quality compression and zero uploads.",
+    metaDescription: "Convert and compress WebP, PNG, and JPEG images locally. Fast client-side image processing in browser Canvas memory with zero file uploads or tracking.",
     description:
       "Fast, private image converter using browser Canvas & Blob APIs. Import WebP, PNG, JPEG, AVIF, SVG, or BMP and export optimized WebP, PNG, and JPEG files, scale dimensions, and inspect file size savings in local memory.",
     icon: "Image",
@@ -66,6 +69,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/text-converter",
     category: "Text & Encodings",
     shortDesc: "Encode/decode Base64, Hex, URL encoding, HTML entities, and Markdown.",
+    metaDescription: "Encode and decode Base64, Hex, URL encoding, HTML entities, and Markdown. Fast text transformations 100% client-side in browser memory with zero uploads.",
     description:
       "Essential text and string transformation utilities including Base64 encode/decode, Hex, URL percent-encoding, HTML entity escaping, and Markdown-to-HTML preview.",
     icon: "Binary",
@@ -81,6 +85,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/cert-inspector",
     category: "Security & Dev",
     shortDesc: "Inspect SSL/TLS certificates and convert between PEM, DER, and Public Key formats.",
+    metaDescription: "Inspect SSL/TLS certificates and convert between PEM, DER, and Public Key formats. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Decode and validate X.509 certificates client-side. Inspect SANs, validity timelines, fingerprints, and export or convert between PEM, binary DER, Public Key SPKI, and JSON reports.",
     icon: "ShieldCheck",
@@ -96,6 +101,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/edi-viewer",
     category: "Security & Dev",
     shortDesc: "Inspect ANSI X12 and EDIFACT documents and convert between EDI, JSON, and XML.",
+    metaDescription: "Inspect ANSI X12 and EDIFACT documents and convert between EDI, JSON, and XML. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Humanize cryptic EDI documents with dictionary definitions for segments and elements. Translate ANSI X12 (850, 810, 856) and UN/EDIFACT into interactive trees, formatted EDI, structured JSON, and XML with zero data egress.",
     icon: "Code2",
@@ -111,6 +117,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/jwt-inspector",
     category: "Security & Dev",
     shortDesc: "Decode, verify Web Crypto signatures, and inspect OAuth tokens client-side.",
+    metaDescription: "Decode, verify Web Crypto signatures, and inspect OAuth tokens client-side. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Inspect JSON Web Tokens client-side. Live expiration countdown, RFC 7519 claim humanizer, and Web Crypto signature verification for HS256/384/512 and RS256 with zero data egress.",
     icon: "Key",
@@ -126,6 +133,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/pdf-lab",
     category: "Data & Config",
     shortDesc: "Merge, split, extract, rotate, and organize PDF documents with zero server uploads.",
+    metaDescription: "Merge, split, extract, rotate, and organize PDF documents with zero server uploads. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Perform confidential PDF transformations directly in your browser. Combine multiple PDF documents, extract page ranges with an interactive picker, rotate orientations, and purge unwanted pages with 100% in-memory privacy.",
     icon: "FileText",
@@ -141,6 +149,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/hash-studio",
     category: "Security & Dev",
     shortDesc: "Compute and verify SHA-256, SHA-512, MD5, CRC32, HMACs, and PBKDF2 keys.",
+    metaDescription: "Compute and verify SHA-256, SHA-512, MD5, HMAC, and PBKDF2 checksums. Executed 100% client-side in browser memory with zero file or data uploads.",
     description:
       "Hardware-accelerated cryptographic hash calculation and file checksum verification. Compute SHA-256, SHA-512, MD5, CRC32, generate keyed HMACs, and derive PBKDF2 keys in local memory with zero data egress.",
     icon: "Hash",
@@ -156,6 +165,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/sqlite-lab",
     category: "Data & Config",
     shortDesc: "Open, query, browse tables, and export SQLite databases via in-browser WebAssembly.",
+    metaDescription: "Open, query, browse tables, and export SQLite databases via in-browser WebAssembly. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Run the official SQLite engine compiled to WebAssembly locally in your browser. Inspect table schemas, browse paginated records, run arbitrary SQL queries, and export tables to CSV or JSON with zero data egress.",
     icon: "Database",
@@ -171,6 +181,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/diff-viewer",
     category: "Data & Config",
     shortDesc: "Compare code and text side-by-side with word-level highlighting and patch export.",
+    metaDescription: "Compare code and text side-by-side with word-level highlighting and patch export. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Perform private code, configuration, and text comparisons. View synchronized side-by-side or unified diffs, inspect intra-line word replacements, generate standard GNU/Git .patch files, and compare revisions with zero data egress.",
     icon: "GitCompare",
@@ -186,6 +197,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/qr-studio",
     category: "Media & Images",
     shortDesc: "Generate, batch print, and decode 1D/2D barcodes and QR codes client-side.",
+    metaDescription: "Generate, customize, and scan QR codes and barcodes with live camera support. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Generate, customize, batch print, and decode 1D and 2D barcodes for warehousing, distribution, retail, and logistics. Supports Code 128, GS1-128 (SSCC), ITF-14, Data Matrix, QR Code, PDF417, EAN-13, and UPC-A with zero data egress.",
     icon: "QrCode",
@@ -219,6 +231,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/regex-studio",
     category: "Security & Dev",
     shortDesc: "Test regular expressions with real-time match highlighting, group extraction, and substitution.",
+    metaDescription: "Test regular expressions with real-time match highlighting and substitution. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Interactive client-side regular expression workbench. Real-time visual match highlighting, named capturing group breakdown, string substitution sandbox, multi-language code generators, and regex cheat sheet with zero data egress.",
     icon: "Regex",
@@ -247,6 +260,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/markdown-lab",
     category: "Text & Encodings",
     shortDesc: "Author, preview, and format Markdown documents with frontmatter, tables, and HTML/PDF export.",
+    metaDescription: "Preview, edit, and export GitHub-flavored Markdown to clean HTML and PDF. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Interactive client-side Markdown and technical documentation studio. Real-time GitHub Flavored Markdown (GFM) preview, YAML frontmatter inspector, CSV table converter and formatter, HTML-to-MD compiler, document metrics, and standalone HTML/PDF export with zero data egress.",
     icon: "BookOpen",
@@ -279,6 +293,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/media-lab",
     category: "Media & Images",
     shortDesc: "Inspect & strip EXIF/GPS metadata from photos losslessly and trim audio waveforms.",
+    metaDescription: "Inspect & strip EXIF/GPS metadata from photos losslessly and trim audio waveforms. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Client-side media privacy studio. Audit embedded GPS coordinates, camera serials, and device fingerprints. Strip metadata losslessly from JPEG/PNG images with zero recompression, batch scrub photo albums, and visually trim audio files with the Web Audio API in local RAM with zero data egress.",
     icon: "Camera",
@@ -311,6 +326,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/subnet-calculator",
     category: "Security & Dev",
     shortDesc: "IPv4 & IPv6 CIDR subnet calculator, VLSM planner, IP collision detector, and bitmask visualizer.",
+    metaDescription: "Calculate IPv4 and IPv6 CIDR subnets, plan VLSM, and check VPC collisions. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "High-precision client-side IP subnet calculator. Decompose 32-bit IPv4 binary bitmasks, compute Cisco wildcard masks, divide networks with Variable Length Subnet Masking (VLSM), detect cloud VPC routing collisions, and calculate IPv6 addresses with zero data egress.",
     icon: "Network",
@@ -343,6 +359,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/date-time-calculator",
     category: "Text & Encodings",
     shortDesc: "High-precision Unix epoch converter (s/ms/µs/ns), date math, timezone matrix, and cron explainer.",
+    metaDescription: "Convert Unix timestamps (s/ms/µs/ns), calculate date offsets, and parse crons. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Client-side temporal precision workbench. Live running Unix epoch ticker in seconds, milliseconds, microseconds, and nanoseconds. Bi-directional ISO/RFC date conversions, business days duration math, 24-hour visual world meeting matrix, and Cron schedule syntax explainer with next 10 runs calculation in zero-egress local memory.",
     icon: "Clock",
@@ -376,6 +393,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/video-lab",
     category: "Media & Images",
     shortDesc: "Strip audio losslessly, extract and convert MP3/FLAC/WAV/OGG/AAC, transcode video, and export animated GIFs.",
+    metaDescription: "Convert video formats, extract MP3 audio, create animated GIFs, and trim clips. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Zero-egress client-side media lab. Lossless MP4/WebM audio stripper with ISOBMFF demuxing, video-to-audio extractor (MP3, FLAC, WAV, OGG), bi-directional audio format converter (MP3, WAV, FLAC, OGG, AAC), resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer.",
     icon: "Video",
@@ -421,6 +439,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/color-studio",
     category: "Media & Images",
     shortDesc: "Bi-directional HEX/RGB/HSL/OKLCH conversions, WCAG & APCA contrast checker, color blindness simulator, and harmonies.",
+    metaDescription: "Convert HEX, RGB, HSL, and OKLCH colors, audit WCAG contrast, and test blindness. Executed 100% client-side in memory with zero data uploads.",
     description:
       "Comprehensive client-side color studio. Convert between HEX, RGB, HSL, HWB, modern OKLCH (CSS Color 4), and CIE-LAB. Verify WCAG 2.1 AA/AAA and APCA contrast with an intelligent auto-fixer, simulate 8 color blindness profiles, explore interactive harmonies on an SVG color wheel, and generate Tailwind 11-step design token shade scales in 100% private local memory.",
     icon: "Palette",
@@ -469,6 +488,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     slug: "/tools/random-studio",
     category: "Security & Dev",
     shortDesc: "Provably fair commit-reveal, polyhedral dice, Gaussian normal distribution, and Diceware.",
+    metaDescription: "Generate provably fair random seeds, dice rolls, and Diceware passphrases. Executed 100% client-side in browser memory with zero data uploads.",
     description:
       "Zero-egress randomness studio featuring SHA-256/HMAC-SHA256 provably fair commit-reveal verification, tabletop polyhedral dice roller (d4–d100), Box-Muller Gaussian normal distribution, Fisher-Yates shuffler, EFF Diceware passphrases, UUID v4/v7, and Chi-Square statistical audit.",
     icon: "Dices",

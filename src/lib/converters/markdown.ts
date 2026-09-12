@@ -46,7 +46,7 @@ export function sanitizeHtml(rawHtml: string): string {
   const DOMPurify = require("dompurify");
   const purify = typeof DOMPurify.sanitize === "function" ? DOMPurify : DOMPurify(window);
   return purify.sanitize(rawHtml, {
-    ADD_ATTR: ["target", "rel", "class", "id", "checked", "disabled", "type"],
+    ADD_ATTR: ["target", "rel", "class", "id", "checked", "disabled", "type", "aria-label", "aria-hidden", "role"],
     ADD_TAGS: ["input"],
   });
 }
@@ -94,6 +94,17 @@ export function parseMarkdown(source: string): MarkdownParseResult {
       const alertType = type.toUpperCase();
       const alertClass = `alert-${alertType.toLowerCase()}`;
       return `<div class="markdown-alert ${alertClass}"><div class="markdown-alert-header"><span class="markdown-alert-type">${alertType}</span></div><div class="markdown-alert-content"><p>${content.trim()}</div></div>`;
+    }
+  );
+
+  // Ensure GFM task-list checkboxes have accessible labels
+  html = html.replace(
+    /<input\s+([^>]*type=["']checkbox["'][^>]*)>/gi,
+    (_match, attrs) => {
+      if (!attrs.includes("aria-label")) {
+        return `<input ${attrs} aria-label="Task item">`;
+      }
+      return _match;
     }
   );
 

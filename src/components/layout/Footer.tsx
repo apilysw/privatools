@@ -26,7 +26,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-              Privatools processes files and data strictly in local browser memory with 0 bytes uploaded to remote servers. Install the standalone desktop or mobile PWA to run all 20+ utilities anywhere with zero internet connection.
+              Privatools processes files and data strictly in local browser memory with 0 bytes uploaded to remote servers. Install the standalone desktop or mobile PWA to run all 19 privacy tools with zero internet connection once cached.
             </p>
           </div>
 
@@ -264,6 +264,8 @@ export function Footer() {
             <span>100% Client-Side</span>
             <span>•</span>
             <span>PWA Offline Capable</span>
+            <span>•</span>
+            <span>Source-Available (BSL 1.1)</span>
             <span>•</span>
             <span>Zero Tracking</span>
           </div>

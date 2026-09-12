@@ -265,6 +265,8 @@ export default function JwtInspectorPage() {
 
             {/* Encoded Textarea */}
             <textarea
+              id="encoded-jwt-input"
+              aria-label="Encoded JWT token string"
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
               placeholder="Paste Bearer or JWT token here..."
@@ -453,6 +455,8 @@ export default function JwtInspectorPage() {
                   </button>
                 </div>
                 <textarea
+                  id="decoded-header-json"
+                  aria-label="Decoded header JSON"
                   readOnly={!isEditingPayload}
                   value={headerEditText}
                   onChange={(e) => setHeaderEditText(e.target.value)}
@@ -484,6 +488,8 @@ export default function JwtInspectorPage() {
                 </div>
 
                 <textarea
+                  id="decoded-payload-json"
+                  aria-label="Decoded payload JSON"
                   readOnly={!isEditingPayload}
                   value={payloadEditText}
                   onChange={(e) => setPayloadEditText(e.target.value)}
@@ -543,12 +549,14 @@ export default function JwtInspectorPage() {
                 {/* Secret Key Input (HMAC) */}
                 {decoded.algorithm.startsWith("HS") && (
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-zinc-500 flex items-center justify-between">
+                    <label htmlFor="hmac-secret-key" className="text-xs font-medium text-zinc-500 flex items-center justify-between">
                       <span>Shared Secret Key ({decoded.algorithm})</span>
                       <span className="text-[11px] text-zinc-400">100% In-Browser Web Crypto</span>
                     </label>
                     <div className="relative">
                       <input
+                        id="hmac-secret-key"
+                        aria-label={`Shared Secret Key (${decoded.algorithm})`}
                         type={showSecret ? "text" : "password"}
                         value={secretInput}
                         onChange={(e) => setSecretInput(e.target.value)}
@@ -559,6 +567,7 @@ export default function JwtInspectorPage() {
                         type="button"
                         onClick={() => setShowSecret((prev) => !prev)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                        aria-label={showSecret ? "Hide secret key" : "Show secret key"}
                       >
                         {showSecret ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
@@ -569,11 +578,13 @@ export default function JwtInspectorPage() {
                 {/* Public Key PEM Input (RSA) */}
                 {decoded.algorithm.startsWith("RS") && (
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-zinc-500 flex items-center justify-between">
+                    <label htmlFor="rsa-public-key" className="text-xs font-medium text-zinc-500 flex items-center justify-between">
                       <span>RSA Public Key (SPKI PEM)</span>
                       <span className="text-[11px] text-zinc-400">Verifies {decoded.algorithm}</span>
                     </label>
                     <textarea
+                      id="rsa-public-key"
+                      aria-label="RSA Public Key (SPKI PEM)"
                       value={publicKeyPem}
                       onChange={(e) => setPublicKeyPem(e.target.value)}
                       placeholder="-----BEGIN PUBLIC KEY-----&#10;MIIBIjANBgkqhki...&#10;-----END PUBLIC KEY-----"

@@ -133,6 +133,13 @@ npm run build
 
 The resulting `out/` directory contains standard static HTML/CSS/JS ready for deployment to any static hosting provider.
 
+### Clearing Development Caches & Service Workers
+
+Service workers are automatically guarded and disabled during development (`npm run dev`). If you previously registered a production worker in your browser profile:
+- **Chrome / Edge / Brave:** DevTools (`F12`) → **Application** tab → **Storage** → Click **Clear site data**, or under **Service Workers** click **Unregister**.
+- **Firefox:** DevTools → **Application** → **Service Workers** → **Unregister**.
+- **Safari:** Develop menu → **Empty Caches**.
+
 ---
 
 ## 📁 Project Architecture
@@ -173,7 +180,7 @@ The resulting `out/` directory contains standard static HTML/CSS/JS ready for de
 
 ## 📱 Privatools PWA — Offline & Ad-Free
 
-Love Privatools? Get the **installable offline app** — all 20+ tools on your home screen, no internet required, no ads. One-time purchase, no subscription.
+Love Privatools? Get the **installable offline app** — all 19 privacy tools on your home screen, no internet required once cached, no ads. One-time purchase, no subscription.
 
 👉 **[Get it on Gumroad](https://privatools.gumroad.com/l/pwa)** — ~£3 / ~$4
 

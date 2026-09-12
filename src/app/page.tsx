@@ -493,7 +493,7 @@ export default function HomePage() {
               </h2>
 
               <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Install all 20+ zero-knowledge converters and cryptographic studios directly to your home screen or dock. 100% ad-free, instant cached launches on flights and trains, with one-time ownership.
+                Install all 19 privacy tools and converters directly to your home screen or dock. 100% ad-free, instant cached launches on flights and trains, with one-time ownership.
               </p>
 
               {/* Feature checklist */}
@@ -743,7 +743,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 className="text-emerald-600 dark:text-emerald-400 underline hover:text-emerald-500 transition-colors"
               >
-                open-source code on GitHub
+                source-available code on GitHub
               </a>{" "}
               or check your browser’s DevTools Network tab. Tool processing makes zero data-upload requests. Zero telemetry, zero analytics tracking.
             </p>

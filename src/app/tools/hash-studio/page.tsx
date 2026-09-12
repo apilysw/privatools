@@ -320,6 +320,8 @@ export default function HashStudioPage() {
               <input
                 ref={fileInputRef}
                 type="file"
+                aria-label="Choose file to hash"
+                tabIndex={-1}
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
                     handleProcessFile(e.target.files[0]);
@@ -365,6 +367,8 @@ export default function HashStudioPage() {
                   <input
                     ref={fileInputRef}
                     type="file"
+                    aria-label="Choose file to hash"
+                    tabIndex={-1}
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
                         handleProcessFile(e.target.files[0]);
@@ -389,7 +393,7 @@ export default function HashStudioPage() {
               {/* Checksum Verification Box */}
               <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                  <label htmlFor="verify-expected-hash" className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-500" />
                     <span>Verify Against Expected Checksum</span>
                   </label>
@@ -405,6 +409,8 @@ export default function HashStudioPage() {
 
                 <div className="relative">
                   <input
+                    id="verify-expected-hash"
+                    aria-label="Verify Against Expected Checksum"
                     type="text"
                     value={targetVerifyHash}
                     onChange={(e) => setTargetVerifyHash(e.target.value)}
@@ -605,7 +611,7 @@ export default function HashStudioPage() {
           <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="hash-text-input" className="text-xs font-bold uppercase tracking-wider text-zinc-500">
                   Input String / Text
                 </label>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
@@ -646,6 +652,8 @@ export default function HashStudioPage() {
             </div>
 
             <textarea
+              id="hash-text-input"
+              aria-label="Input String / Text to hash"
               rows={4}
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
@@ -784,10 +792,12 @@ export default function HashStudioPage() {
             {/* Algorithm & Format Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                <label htmlFor="hmac-algorithm-select" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                   Hash Algorithm
                 </label>
                 <select
+                  id="hmac-algorithm-select"
+                  aria-label="Hash Algorithm"
                   value={hmacAlgorithm}
                   onChange={(e) => setHmacAlgorithm(e.target.value as "SHA-256" | "SHA-512" | "SHA-384" | "SHA-1")}
                   className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -840,11 +850,13 @@ export default function HashStudioPage() {
 
             {/* Secret Key Input */}
             <div>
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+              <label htmlFor="hmac-secret-key-input" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                 HMAC Secret Key
               </label>
               <div className="relative">
                 <input
+                  id="hmac-secret-key-input"
+                  aria-label="HMAC Secret Key"
                   type={hmacShowSecret ? "text" : "password"}
                   value={hmacSecret}
                   onChange={(e) => setHmacSecret(e.target.value)}
@@ -853,6 +865,7 @@ export default function HashStudioPage() {
                 />
                 <button
                   type="button"
+                  aria-label={hmacShowSecret ? "Hide secret key" : "Show secret key"}
                   onClick={() => setHmacShowSecret(!hmacShowSecret)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                 >
@@ -867,10 +880,12 @@ export default function HashStudioPage() {
 
             {/* Message Input */}
             <div>
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+              <label htmlFor="hmac-message-input" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                 Message Payload
               </label>
               <textarea
+                id="hmac-message-input"
+                aria-label="Message Payload"
                 rows={4}
                 value={hmacMessage}
                 onChange={(e) => setHmacMessage(e.target.value)}
@@ -923,11 +938,13 @@ export default function HashStudioPage() {
           <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-5">
             {/* Password */}
             <div>
-              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+              <label htmlFor="pbkdf2-master-password" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                 Master Password
               </label>
               <div className="relative">
                 <input
+                  id="pbkdf2-master-password"
+                  aria-label="Master Password"
                   type={pbkdf2ShowPassword ? "text" : "password"}
                   value={pbkdf2Password}
                   onChange={(e) => setPbkdf2Password(e.target.value)}
@@ -936,6 +953,7 @@ export default function HashStudioPage() {
                 />
                 <button
                   type="button"
+                  aria-label={pbkdf2ShowPassword ? "Hide password" : "Show password"}
                   onClick={() => setPbkdf2ShowPassword(!pbkdf2ShowPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                 >
@@ -951,7 +969,7 @@ export default function HashStudioPage() {
             {/* Salt & Generator */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                <label htmlFor="pbkdf2-salt-input" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                   Cryptographic Salt
                 </label>
                 <button
@@ -963,6 +981,8 @@ export default function HashStudioPage() {
                 </button>
               </div>
               <input
+                id="pbkdf2-salt-input"
+                aria-label="Cryptographic Salt"
                 type="text"
                 value={pbkdf2Salt}
                 onChange={(e) => setPbkdf2Salt(e.target.value)}
@@ -974,10 +994,12 @@ export default function HashStudioPage() {
             {/* Controls Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                <label htmlFor="pbkdf2-iterations-input" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                   Iterations (Cost)
                 </label>
                 <input
+                  id="pbkdf2-iterations-input"
+                  aria-label="Iterations (Cost)"
                   type="number"
                   min={1000}
                   max={1000000}
@@ -1015,10 +1037,12 @@ export default function HashStudioPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                <label htmlFor="pbkdf2-key-length-select" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                   Key Bit-Length
                 </label>
                 <select
+                  id="pbkdf2-key-length-select"
+                  aria-label="Key Bit-Length"
                   value={pbkdf2KeyLength}
                   onChange={(e) => setPbkdf2KeyLength(parseInt(e.target.value, 10))}
                   className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -1030,10 +1054,12 @@ export default function HashStudioPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
+                <label htmlFor="pbkdf2-hash-alg-select" className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1">
                   Hash PRF
                 </label>
                 <select
+                  id="pbkdf2-hash-alg-select"
+                  aria-label="Hash PRF"
                   value={pbkdf2HashAlg}
                   onChange={(e) => setPbkdf2HashAlg(e.target.value as "SHA-256" | "SHA-512")}
                   className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
