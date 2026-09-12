@@ -243,7 +243,7 @@ export async function computeDigest(
   buffer: ArrayBuffer | Uint8Array,
   algorithm: "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512"
 ): Promise<string> {
-  const hashBuffer = await crypto.subtle.digest(algorithm, buffer as any);
+  const hashBuffer = await crypto.subtle.digest(algorithm, buffer as BufferSource);
   return bufferToHex(hashBuffer);
 }
 

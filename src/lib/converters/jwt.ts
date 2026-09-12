@@ -233,7 +233,7 @@ export function decodeJwt(raw: string): DecodedJwt {
 export async function verifyJwtSignature(
   token: string,
   keyInput: string,
-  keyType: "secret" | "public-pem" = "secret"
+  _keyType: "secret" | "public-pem" = "secret"
 ): Promise<{ valid: boolean; message: string }> {
   const parts = token.trim().split(".");
   if (parts.length !== 3) {

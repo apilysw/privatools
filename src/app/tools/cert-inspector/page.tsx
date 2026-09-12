@@ -323,7 +323,7 @@ export default function CertificateInspectorPage() {
                 </h3>
               </div>
               <span className="text-[11px] text-zinc-500">
-                100% In-Browser Conversion (0 Network Egress)
+                100% In-Browser Conversion (Zero Data Uploads)
               </span>
             </div>
 

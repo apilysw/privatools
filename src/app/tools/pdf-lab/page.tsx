@@ -145,8 +145,8 @@ export default function PdfLabPage() {
         setOrganizeOutputName("sample-organized.pdf");
         setSuccessMsg("Sample 3-page PDF loaded for organization.");
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Failed to generate sample PDF.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to generate sample PDF.");
     } finally {
       setIsProcessing(false);
     }
@@ -178,8 +178,8 @@ export default function PdfLabPage() {
           bytes,
           pageCount: details.pageCount,
         });
-      } catch (err: any) {
-        setErrorMsg(`Failed to inspect ${file.name}: ${err?.message || "Invalid PDF"}`);
+      } catch (err: unknown) {
+        setErrorMsg(`Failed to inspect ${file.name}: ${err instanceof Error ? err.message : "Invalid PDF"}`);
       }
     }
 
@@ -188,13 +188,17 @@ export default function PdfLabPage() {
   };
 
   const moveMergeItem = (index: number, direction: "up" | "down") => {
-    const targetIdx = direction === "up" ? index - 1 : index + 1;
-    if (targetIdx < 0 || targetIdx >= mergeFiles.length) return;
-
-    const newItems = [...mergeFiles];
-    const [moved] = newItems.splice(index, 1);
-    newItems.splice(targetIdx, 0, moved);
-    setMergeFiles(newItems);
+    if (
+      (direction === "up" && index === 0) ||
+      (direction === "down" && index === mergeFiles.length - 1)
+    ) {
+      return;
+    }
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const next = [...mergeFiles];
+    const [moved] = next.splice(index, 1);
+    next.splice(targetIndex, 0, moved);
+    setMergeFiles(next);
   };
 
   const removeMergeItem = (id: string) => {
@@ -203,22 +207,21 @@ export default function PdfLabPage() {
 
   const handleExecuteMerge = async () => {
     if (mergeFiles.length < 2) {
-      setErrorMsg("Please add at least 2 PDF documents to merge.");
+      setErrorMsg("Please add at least 2 PDF files to merge.");
       return;
     }
+    setIsProcessing(true);
+    setErrorMsg(null);
 
     try {
-      setIsProcessing(true);
-      setErrorMsg(null);
-
       const mergedBytes = await mergePdfs(
         mergeFiles.map((f) => ({ name: f.name, bytes: f.bytes }))
       );
 
       downloadPdf(mergedBytes, mergeOutputName || "merged-document.pdf");
       setSuccessMsg(`Successfully merged ${mergeFiles.length} PDFs!`);
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Failed to merge PDF documents.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to merge PDF documents.");
     } finally {
       setIsProcessing(false);
     }
@@ -246,8 +249,8 @@ export default function PdfLabPage() {
       setSplitOutputName(
         file.name.replace(/\.pdf$/i, "") + "-extracted.pdf"
       );
-    } catch (err: any) {
-      setErrorMsg(`Could not read PDF: ${err?.message || "Invalid format"}`);
+    } catch (err: unknown) {
+      setErrorMsg(`Could not read PDF: ${err instanceof Error ? err.message : "Invalid format"}`);
     } finally {
       setIsProcessing(false);
     }
@@ -349,8 +352,8 @@ export default function PdfLabPage() {
 
       downloadPdf(extractedBytes, splitOutputName || "extracted-pages.pdf");
       setSuccessMsg(`Extracted ${indices.length} pages successfully!`);
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Failed to extract pages.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to extract pages.");
     } finally {
       setIsProcessing(false);
     }
@@ -379,8 +382,8 @@ export default function PdfLabPage() {
       setOrganizeOutputName(
         file.name.replace(/\.pdf$/i, "") + "-organized.pdf"
       );
-    } catch (err: any) {
-      setErrorMsg(`Could not read PDF: ${err?.message || "Invalid format"}`);
+    } catch (err: unknown) {
+      setErrorMsg(`Could not read PDF: ${err instanceof Error ? err.message : "Invalid format"}`);
     } finally {
       setIsProcessing(false);
     }
@@ -394,8 +397,10 @@ export default function PdfLabPage() {
         rotationDelta: 0,
         deleted: false,
       };
-      const newDelta = (current.rotationDelta + delta + 360) % 360;
-      next.set(pageIndex, { ...current, rotationDelta: newDelta });
+      next.set(pageIndex, {
+        ...current,
+        rotationDelta: (current.rotationDelta + delta) % 360,
+      });
       return next;
     });
   };
@@ -408,7 +413,10 @@ export default function PdfLabPage() {
         rotationDelta: 0,
         deleted: false,
       };
-      next.set(pageIndex, { ...current, deleted: !current.deleted });
+      next.set(pageIndex, {
+        ...current,
+        deleted: !current.deleted,
+      });
       return next;
     });
   };
@@ -434,19 +442,18 @@ export default function PdfLabPage() {
   };
 
   const handleExecuteOrganize = async () => {
-    if (!organizeFile) return;
-
-    const configs = Array.from(pageTransforms.values());
-    const keptCount = configs.filter((c) => !c.deleted).length;
-
-    if (keptCount === 0) {
-      setErrorMsg("Cannot export: All pages are marked for deletion.");
-      return;
-    }
+    if (!organizeFile || !organizeDetails) return;
+    setIsProcessing(true);
+    setErrorMsg(null);
 
     try {
-      setIsProcessing(true);
-      setErrorMsg(null);
+      const configs = Array.from(pageTransforms.values());
+      const keptCount = configs.filter((c) => !c.deleted).length;
+      if (keptCount === 0) {
+        setErrorMsg("Cannot save document with 0 pages.");
+        setIsProcessing(false);
+        return;
+      }
 
       const transformedBytes = await transformPdf(organizeFile.bytes, configs);
       downloadPdf(
@@ -454,8 +461,8 @@ export default function PdfLabPage() {
         organizeOutputName || "organized-document.pdf"
       );
       setSuccessMsg(`Document saved with ${keptCount} active pages!`);
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Failed to transform PDF.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to transform PDF.");
     } finally {
       setIsProcessing(false);
     }
@@ -463,7 +470,7 @@ export default function PdfLabPage() {
 
   // Helper to trigger client-side download
   const downloadPdf = (bytes: Uint8Array, filename: string) => {
-    const blob = new Blob([bytes as any], { type: "application/pdf" });
+    const blob = new Blob([bytes as unknown as BlobPart], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

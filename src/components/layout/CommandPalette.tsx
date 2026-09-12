@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X, ArrowRight, FileSpreadsheet, Image, Binary, ShieldCheck, Code2, Key, FileText, Hash, Database, GitCompare, QrCode, Regex, BookOpen, Camera, Network, Clock, Video, Palette, Dices } from "lucide-react";
-import { TOOLS_REGISTRY, ToolMetadata, searchTools } from "@/lib/registry";
+import { ToolMetadata, searchTools } from "@/lib/registry";
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -40,9 +40,15 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   // Filter tools with shared robust multi-token search
   const filtered = useMemo(() => searchTools(query, "All"), [query]);
 
-  useEffect(() => {
+  const navigate = useCallback((tool: ToolMetadata) => {
+    onClose();
+    router.push(tool.slug);
+  }, [onClose, router]);
+
+  const handleQueryChange = (val: string) => {
+    setQuery(val);
     setSelectedIndex(0);
-  }, [query]);
+  };
 
   // Global keyboard listener for Esc and navigation
   useEffect(() => {
@@ -65,12 +71,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, filtered, selectedIndex, onClose]);
-
-  const navigate = (tool: ToolMetadata) => {
-    onClose();
-    router.push(tool.slug);
-  };
+  }, [isOpen, filtered, selectedIndex, onClose, navigate]);
 
   if (!isOpen) return null;
 
@@ -88,7 +89,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             type="text"
             placeholder="Search tools, formats (e.g. yaml, csv, webp)..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => handleQueryChange(e.target.value)}
             className="flex-1 bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none"
           />
           <button

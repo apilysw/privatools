@@ -89,7 +89,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
             <span className="font-medium text-zinc-700 dark:text-zinc-300">
-              Network Egress:
+              Data Uploads:
             </span>
             <span className="font-mono font-semibold text-emerald-500">0 Bytes</span>
           </div>
@@ -106,7 +106,7 @@ export default function HomePage() {
             <Lock className="w-3.5 h-3.5 text-emerald-500" />
             <span className="text-zinc-600 dark:text-zinc-400">Security:</span>
             <span className="font-medium text-zinc-700 dark:text-zinc-300">
-              GDPR & HIPAA Safe
+              GDPR/HIPAA-Friendly
             </span>
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function HomePage() {
               Verifiable Privacy Proof
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
-              Inspect our open source source code or check your browser’s DevTools Network
+              Inspect our open-source code or check your browser’s DevTools Network
               tab. Zero HTTP POST requests, zero telemetry, zero analytics tracking.
             </p>
           </div>

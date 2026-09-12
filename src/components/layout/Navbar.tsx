@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Shield, Search, Terminal } from "lucide-react";
+import { Shield, Search } from "lucide-react";
 import { PrivacyBadge } from "../shared/PrivacyBadge";
 
 interface NavbarProps {

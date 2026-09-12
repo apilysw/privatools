@@ -92,49 +92,7 @@ export default function MediaLabPage() {
   const audioInputRef = useRef<HTMLInputElement | null>(null);
   const waveformCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Load Initial Geotagged Sample Preset
-  useEffect(() => {
-    loadSampleGeotaggedPreset();
-  }, []);
 
-  // Presets Loader
-  const loadSampleGeotaggedPreset = async () => {
-    setActivePreset("iphone-gps");
-    const bytes = generateSampleGeotaggedJpeg({
-      make: "Apple",
-      model: "iPhone 16 Pro Max",
-      lat: 37.8199,
-      lon: -122.4783,
-      altitude: 67.5,
-      serial: "DN6ZL01Q0D82",
-      date: "2026:09:11 14:32:05",
-    });
-    const blob = new Blob([bytes as unknown as BlobPart], { type: "image/jpeg" });
-    processSingleImage(blob, "IMG_4821_GoldenGate.jpg");
-  };
-
-  const loadSampleDslrPreset = async () => {
-    setActivePreset("dslr-serial");
-    const bytes = generateSampleGeotaggedJpeg({
-      make: "Canon",
-      model: "EOS R5 Mark II",
-      lat: 51.5074,
-      lon: -0.1278,
-      altitude: 18.0,
-      serial: "042021003981",
-      date: "2026:09:10 11:15:30",
-    });
-    const blob = new Blob([bytes as unknown as BlobPart], { type: "image/jpeg" });
-    processSingleImage(blob, "RAW_2026_StudioMaster.jpg");
-  };
-
-  const loadSampleAudioPreset = async () => {
-    setActivePreset("audio-synth");
-    setActiveTab("audio");
-    const wavBytes = generateSampleAudioWav(3);
-    const blob = new Blob([wavBytes], { type: "audio/wav" });
-    await processAudioFile(blob, "ambient_chime_sample.wav");
-  };
 
   // Clear Input Handler
   const handleClear = () => {
@@ -298,6 +256,57 @@ export default function MediaLabPage() {
     setIsPlaying(false);
     setPlaybackTime(0);
   };
+
+  // Presets Loader
+  const loadSampleGeotaggedPreset = async () => {
+    setActivePreset("iphone-gps");
+    const bytes = generateSampleGeotaggedJpeg({
+      make: "Apple",
+      model: "iPhone 16 Pro Max",
+      lat: 37.8199,
+      lon: -122.4783,
+      altitude: 67.5,
+      serial: "DN6ZL01Q0D82",
+      date: "2026:09:11 14:32:05",
+    });
+    const blob = new Blob([bytes as unknown as BlobPart], { type: "image/jpeg" });
+    processSingleImage(blob, "IMG_4821_GoldenGate.jpg");
+  };
+
+  const loadSampleDslrPreset = async () => {
+    setActivePreset("dslr-serial");
+    const bytes = generateSampleGeotaggedJpeg({
+      make: "Canon",
+      model: "EOS R5 Mark II",
+      lat: 51.5074,
+      lon: -0.1278,
+      altitude: 18.0,
+      serial: "042021003981",
+      date: "2026:09:10 11:15:30",
+    });
+    const blob = new Blob([bytes as unknown as BlobPart], { type: "image/jpeg" });
+    processSingleImage(blob, "RAW_2026_StudioMaster.jpg");
+  };
+
+  const loadSampleAudioPreset = async () => {
+    setActivePreset("audio-synth");
+    setActiveTab("audio");
+    const wavBytes = generateSampleAudioWav(3);
+    const blob = new Blob([wavBytes], { type: "audio/wav" });
+    await processAudioFile(blob, "ambient_chime_sample.wav");
+  };
+
+  // Load Initial Geotagged Sample Preset
+  useEffect(() => {
+    let active = true;
+    requestAnimationFrame(() => {
+      if (active) loadSampleGeotaggedPreset();
+    });
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Export Trimmed Audio WAV
   const handleExportTrimmedAudio = () => {

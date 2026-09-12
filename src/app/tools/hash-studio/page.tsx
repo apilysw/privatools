@@ -108,7 +108,9 @@ export default function HashStudioPage() {
   useEffect(() => {
     let isMounted = true;
     if (!hmacSecret) {
-      setHmacResult("");
+      Promise.resolve().then(() => {
+        if (isMounted) setHmacResult("");
+      });
       return;
     }
     computeHmac(hmacMessage, hmacSecret, hmacAlgorithm).then((rawHex) => {
@@ -124,7 +126,9 @@ export default function HashStudioPage() {
   // --- COMPUTE PBKDF2 ---
   useEffect(() => {
     let isMounted = true;
-    setIsPbkdf2Deriving(true);
+    Promise.resolve().then(() => {
+      if (isMounted) setIsPbkdf2Deriving(true);
+    });
     deriveKeyPbkdf2(
       pbkdf2Password,
       pbkdf2Salt,
@@ -139,7 +143,7 @@ export default function HashStudioPage() {
         }
       })
       .catch((err) => {
-        console.error("PBKDF2 derivation error:", err);
+        console.error("PBKDF2 Error:", err);
         if (isMounted) setIsPbkdf2Deriving(false);
       });
 
@@ -778,7 +782,7 @@ export default function HashStudioPage() {
                 </label>
                 <select
                   value={hmacAlgorithm}
-                  onChange={(e) => setHmacAlgorithm(e.target.value as any)}
+                  onChange={(e) => setHmacAlgorithm(e.target.value as "SHA-256" | "SHA-512" | "SHA-384" | "SHA-1")}
                   className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 >
                   <option value="SHA-256">HMAC-SHA256 (Most Common / Webhooks)</option>
@@ -1024,7 +1028,7 @@ export default function HashStudioPage() {
                 </label>
                 <select
                   value={pbkdf2HashAlg}
-                  onChange={(e) => setPbkdf2HashAlg(e.target.value as any)}
+                  onChange={(e) => setPbkdf2HashAlg(e.target.value as "SHA-256" | "SHA-512")}
                   className="w-full px-3 py-2 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 >
                   <option value="SHA-256">HMAC-SHA256 (Standard)</option>

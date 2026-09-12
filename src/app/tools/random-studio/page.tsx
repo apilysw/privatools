@@ -170,9 +170,18 @@ export default function RandomStudioPage() {
 
   // Initialize server seed on mount
   useEffect(() => {
-    const seed = generateSecretServerSeed();
-    setServerSeed(seed);
-    computeCommitmentHash(seed).then((h) => setCommitmentHash(h));
+    let active = true;
+    (async () => {
+      const seed = generateSecretServerSeed();
+      const h = await computeCommitmentHash(seed);
+      if (active) {
+        setServerSeed(seed);
+        setCommitmentHash(h);
+      }
+    })();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleRegenerateServerSeed = useCallback(async () => {
@@ -261,7 +270,17 @@ export default function RandomStudioPage() {
   const [uniformDecimals, setUniformDecimals] = useState<number>(2);
   const [uniformUnique, setUniformUnique] = useState<boolean>(false);
   const [uniformSort, setUniformSort] = useState<"none" | "asc" | "desc">("none");
-  const [uniformResults, setUniformResults] = useState<number[]>([]);
+  const [uniformResults, setUniformResults] = useState<number[]>(() =>
+    generateRandomNumberBatch({
+      min: 1,
+      max: 100,
+      count: 10,
+      isFloat: false,
+      decimalPlaces: 2,
+      unique: false,
+      sort: "none",
+    })
+  );
 
   // Gaussian state
   const [gaussMean, setGaussMean] = useState<number>(100);
@@ -396,7 +415,14 @@ export default function RandomStudioPage() {
   const [dicewareResult, setDicewareResult] = useState<{
     passphrase: string;
     entropyBits: number;
-  } | null>(null);
+  } | null>(() =>
+    generateDicewarePassphrase({
+      wordCount: 5,
+      separator: "-",
+      capitalize: "title",
+      includeNumber: true,
+    })
+  );
 
   // Password
   const [passLength, setPassLength] = useState<number>(16);
@@ -408,12 +434,27 @@ export default function RandomStudioPage() {
   const [passwordResult, setPasswordResult] = useState<{
     password: string;
     entropyBits: number;
-  } | null>(null);
+  } | null>(() =>
+    generateCryptographicPassword({
+      length: 16,
+      includeUppercase: true,
+      includeLowercase: true,
+      includeNumbers: true,
+      includeSymbols: true,
+      excludeAmbiguous: false,
+    })
+  );
 
   // UUIDs & Tokens
   const [uuidType, setUuidType] = useState<"v7" | "v4" | "nanoid">("v7");
   const [uuidCount, setUuidCount] = useState<number>(5);
-  const [generatedTokens, setGeneratedTokens] = useState<string[]>([]);
+  const [generatedTokens, setGeneratedTokens] = useState<string[]>(() => {
+    const tokens: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      tokens.push(generateUuidV7());
+    }
+    return tokens;
+  });
 
   const handleGenerateDiceware = useCallback(() => {
     const res = generateDicewarePassphrase({
@@ -446,19 +487,6 @@ export default function RandomStudioPage() {
     }
     setGeneratedTokens(tokens);
   }, [uuidType, uuidCount]);
-
-  // Initialize crypto results on first mount
-  useEffect(() => {
-    handleGenerateDiceware();
-    handleGeneratePassword();
-    handleGenerateTokens();
-    handleGenerateUniform();
-  }, [
-    handleGenerateDiceware,
-    handleGeneratePassword,
-    handleGenerateTokens,
-    handleGenerateUniform,
-  ]);
 
   // ==========================================================================
   // TAB 6: STATISTICAL RANDOMNESS AUDIT STATE
@@ -1031,7 +1059,7 @@ export default function RandomStudioPage() {
 
             {rollHistory.length === 0 ? (
               <div className="text-center py-8 text-xs text-zinc-400">
-                No rolls recorded yet. Press "Roll Provably Fair Number" above to start your ledger.
+                No rolls recorded yet. Press &quot;Roll Provably Fair Number&quot; above to start your ledger.
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -1882,7 +1910,7 @@ export default function RandomStudioPage() {
               {shuffleMode === "shuffle" && (
                 shuffledList.length === 0 ? (
                   <div className="text-center py-12 text-xs text-zinc-400">
-                    Click "Shuffle List" to randomize order using Fisher-Yates algorithm.
+                    Click &quot;Shuffle List&quot; to randomize order using Fisher-Yates algorithm.
                   </div>
                 ) : (
                   <div className="space-y-1.5 max-h-80 overflow-y-auto">
@@ -1902,7 +1930,7 @@ export default function RandomStudioPage() {
               {shuffleMode === "raffle" && (
                 raffleWinners.length === 0 ? (
                   <div className="text-center py-12 text-xs text-zinc-400">
-                    Click "Pick Random Winners" to run raffle draw.
+                    Click &quot;Pick Random Winners&quot; to run raffle draw.
                   </div>
                 ) : (
                   <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -1927,7 +1955,7 @@ export default function RandomStudioPage() {
               {shuffleMode === "teams" && (
                 teams.length === 0 ? (
                   <div className="text-center py-12 text-xs text-zinc-400">
-                    Click "Partition into Teams" to evenly distribute members.
+                    Click &quot;Partition into Teams&quot; to evenly distribute members.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto">

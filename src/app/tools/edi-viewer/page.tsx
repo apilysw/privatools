@@ -360,7 +360,7 @@ export default function EdiViewerPage() {
                 </h3>
               </div>
               <span className="text-[11px] text-zinc-500">
-                100% Client-Side Conversion (Zero Network Egress)
+                100% Client-Side Conversion (Zero Data Uploads)
               </span>
             </div>
 

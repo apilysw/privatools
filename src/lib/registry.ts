@@ -34,11 +34,26 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     category: "Media & Images",
     shortDesc: "Transcode WebP, PNG, JPEG with quality compression and zero uploads.",
     description:
-      "Fast, private image converter using browser Canvas & Blob APIs. Convert between modern WebP, PNG, and JPEG formats, scale dimensions, and inspect file size savings.",
+      "Fast, private image converter using browser Canvas & Blob APIs. Import WebP, PNG, JPEG, AVIF, SVG, or BMP and export optimized WebP, PNG, and JPEG files, scale dimensions, and inspect file size savings in local memory.",
     icon: "Image",
     badge: "100% Local",
-    supportedFormats: ["WebP", "PNG", "JPEG", "AVIF", "SVG"],
-    keywords: ["image", "webp", "png", "jpeg", "jpg", "compress", "resize", "convert", "privacy"],
+    supportedFormats: ["WebP", "PNG", "JPEG"],
+    keywords: [
+      "image",
+      "webp",
+      "png",
+      "jpeg",
+      "jpg",
+      "avif",
+      "svg",
+      "bmp",
+      "ico",
+      "compress",
+      "resize",
+      "convert",
+      "privacy",
+      "photo",
+    ],
     status: "ready",
   },
   {
@@ -71,7 +86,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   },
   {
     id: "edi-viewer",
-    name: "EDI X12 & EDIFACT Viewer & Converter",
+    name: "EDI X12 & UN/EDIFACT Viewer & Converter",
     slug: "/tools/edi-viewer",
     category: "Security & Dev",
     shortDesc: "Inspect ANSI X12 and EDIFACT documents and convert between EDI, JSON, and XML.",
@@ -585,4 +600,12 @@ export function searchTools(query: string, category: string = "All"): ToolMetada
   // Sort descending by score, then number of matched terms
   scored.sort((a, b) => b.score - a.score || b.matchedTermsCount - a.matchedTermsCount);
   return scored.map((s) => s.tool);
+}
+
+export function getToolById(id: string): ToolMetadata | undefined {
+  return TOOLS_REGISTRY.find((t) => t.id === id);
+}
+
+export function getToolBySlug(slug: string): ToolMetadata | undefined {
+  return TOOLS_REGISTRY.find((t) => t.slug === slug || t.slug === `/tools/${slug}`);
 }

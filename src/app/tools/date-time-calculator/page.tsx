@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Clock,
   Copy,
@@ -32,22 +32,22 @@ import {
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import {
   parseEpoch,
+  EpochDetails,
   calculateDateDifference,
   addCompoundDuration,
   formatCompoundDuration,
   parseDurationString,
   CompoundDuration,
   calculateTimezonesMatrix,
-  parseCronExpression,
-  DATETIME_PRESETS,
-  DateTimePreset,
-  EpochDetails,
   KEY_TIMEZONE_CITIES,
   TimezoneCityConfig,
   POPULAR_IANA_TIMEZONES,
   isValidTimezone,
   getAllAvailableTimezones,
   TimezoneOption,
+  parseCronExpression,
+  DATETIME_PRESETS,
+  DateTimePreset,
 } from "@/lib/converters/datetime";
 
 type StudioTab = "math" | "epoch" | "tz" | "cron";
@@ -57,36 +57,28 @@ export default function DateTimeCalculatorPage() {
   const [activePreset, setActivePreset] = useState<string | null>("multi-unit-duration");
 
   // Live Ticker State
-  const [tickerTime, setTickerTime] = useState<number>(Date.now());
+  const [tickerTime, setTickerTime] = useState<number>(0);
   const [isTickerRunning, setIsTickerRunning] = useState<boolean>(true);
 
   // Epoch Converter State
-  const [epochInput, setEpochInput] = useState<string>(String(Math.floor(Date.now() / 1000)));
+  const [epochInput, setEpochInput] = useState<string>("1773273600");
   const [epochResolution, setEpochResolution] = useState<
     "auto" | "seconds" | "milliseconds" | "microseconds" | "nanoseconds"
   >("auto");
   const [copyStatus, setCopyStatus] = useState<Record<string, boolean>>({});
 
   // Reverse Date -> Epoch State
-  const [reverseDate, setReverseDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
+  const [reverseDate, setReverseDate] = useState<string>("2026-09-12");
   const [reverseTime, setReverseTime] = useState<string>("12:00:00");
   const [reverseTz, setReverseTz] = useState<"utc" | "local">("utc");
 
   // Date Math State
   const [mathMode, setMathMode] = useState<"add" | "diff">("add");
-  const [diffDateA, setDiffDateA] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
-  const [diffDateB, setDiffDateB] = useState<string>(
-    new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0]
-  );
+  const [diffDateA, setDiffDateA] = useState<string>("2026-09-12");
+  const [diffDateB, setDiffDateB] = useState<string>("2026-09-26");
 
   // Multi-Value Compound Duration Math State
-  const [addStartDate, setAddStartDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
+  const [addStartDate, setAddStartDate] = useState<string>("2026-09-12");
   const [addStartTime, setAddStartTime] = useState<string>("09:00:00");
   const [addOperation, setAddOperation] = useState<"add" | "sub">("add");
   const [durationExpression, setDurationExpression] = useState<string>(
@@ -101,9 +93,7 @@ export default function DateTimeCalculatorPage() {
     KEY_TIMEZONE_CITIES
   );
   const [isTzLoaded, setIsTzLoaded] = useState<boolean>(false);
-  const [matrixHourScrubber, setMatrixHourScrubber] = useState<number>(
-    new Date().getUTCHours()
-  );
+  const [matrixHourScrubber, setMatrixHourScrubber] = useState<number>(12);
   const [showAddCity, setShowAddCity] = useState<boolean>(false);
   const [newCityName, setNewCityName] = useState<string>("");
   const [newCountryName, setNewCountryName] = useState<string>("");
@@ -115,18 +105,35 @@ export default function DateTimeCalculatorPage() {
   // Cron State
   const [cronInput, setCronInput] = useState<string>("*/15 9-17 * * 1-5");
 
-  // Load persistent timezone list from localStorage
+  // Client-side initialization on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("privatools_timezones_v1");
-      if (saved !== null) {
-        setTimezoneCities(JSON.parse(saved));
+    let active = true;
+    requestAnimationFrame(() => {
+      if (!active) return;
+      const now = Date.now();
+      setTickerTime(now);
+      setEpochInput(String(Math.floor(now / 1000)));
+      const today = new Date(now).toISOString().split("T")[0];
+      const future = new Date(now + 14 * 86400000).toISOString().split("T")[0];
+      setReverseDate(today);
+      setDiffDateA(today);
+      setDiffDateB(future);
+      setAddStartDate(today);
+      setMatrixHourScrubber(new Date(now).getUTCHours());
+      try {
+        const saved = localStorage.getItem("privatools_timezones_v1");
+        if (saved !== null) {
+          setTimezoneCities(JSON.parse(saved));
+        }
+      } catch (e) {
+        console.error("Failed to load timezones from localStorage", e);
+      } finally {
+        setIsTzLoaded(true);
       }
-    } catch (e) {
-      console.error("Failed to load timezones from localStorage", e);
-    } finally {
-      setIsTzLoaded(true);
-    }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Save persistent timezone list to localStorage on changes
@@ -348,19 +355,21 @@ export default function DateTimeCalculatorPage() {
     setShowAddCity(false);
   };
 
-  const handleQuickAddCity = (city: string, country: string, tz: string) => {
+  const handleQuickAddCity = useCallback((city: string, country: string, tz: string) => {
     if (timezoneCities.some((c) => c.timeZone === tz && c.city === city)) return;
+    const cleanCity = city.toLowerCase().replace(/\s+/g, "-");
+    const cleanTz = tz.replace(/[\/\s+]/g, "-");
     const newEntry: TimezoneCityConfig = {
-      id: `quick-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      id: `quick-${cleanCity}-${cleanTz}`,
       city,
       country,
       timeZone: tz,
     };
     setTimezoneCities((prev) => [...prev, newEntry]);
-  };
+  }, [timezoneCities]);
 
   // Preset Selection
-  const handleSelectPreset = (p: DateTimePreset) => {
+  const handleSelectPreset = useCallback((p: DateTimePreset) => {
     setActivePreset(p.id);
     switch (p.type) {
       case "math":
@@ -371,9 +380,10 @@ export default function DateTimeCalculatorPage() {
           setCompoundDuration(parseDurationString("4 days 3 hours 27 min"));
         } else {
           setMathMode("diff");
-          setDiffDateA(new Date().toISOString().split("T")[0]);
+          const now = Date.now();
+          setDiffDateA(new Date(now).toISOString().split("T")[0]);
           setDiffDateB(
-            new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0]
+            new Date(now + 14 * 86400000).toISOString().split("T")[0]
           );
         }
         break;
@@ -396,7 +406,7 @@ export default function DateTimeCalculatorPage() {
         setCronInput(p.value);
         break;
     }
-  };
+  }, []);
 
   // Clear Input
   const handleClear = () => {
@@ -1797,7 +1807,7 @@ export default function DateTimeCalculatorPage() {
                     </thead>
                     <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-[11px]">
                       {cronResult.nextRuns.map((run, i) => {
-                        const diffMins = Math.round((run.getTime() - Date.now()) / 60000);
+                        const diffMins = Math.round((run.getTime() - (tickerTime || 1773273600000)) / 60000);
                         const countdown =
                           diffMins < 60
                             ? `in ${diffMins} min`

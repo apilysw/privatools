@@ -28,27 +28,27 @@ export default function ImageConverterPage() {
   const [result, setResult] = useState<ConvertedImageResult | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  // Load preview when file selected
-  useEffect(() => {
-    if (!file) {
-      setPreviewUrl(null);
-      setResult(null);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
+  const handleFileSelect = (newFile: File) => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setFile(newFile);
+    setPreviewUrl(URL.createObjectURL(newFile));
+  };
 
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [file]);
+  const handleClear = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setFile(null);
+    setResult(null);
+    setPreviewUrl(null);
+  };
 
   // Run conversion when file, format, quality or dimensions change
   useEffect(() => {
     if (!file) return;
 
     let isMounted = true;
-    setIsProcessing(true);
+    Promise.resolve().then(() => {
+      if (isMounted) setIsProcessing(true);
+    });
 
     convertImageClientSide(file, {
       format: targetFormat,
@@ -87,12 +87,6 @@ export default function ImageConverterPage() {
     a.click();
   };
 
-  const handleClear = () => {
-    setFile(null);
-    setResult(null);
-    setPreviewUrl(null);
-  };
-
   return (
     <div className="space-y-6">
       <ToolHeader
@@ -104,7 +98,7 @@ export default function ImageConverterPage() {
       {/* File Dropzone */}
       <FileDropzone
         accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/svg+xml"
-        onFileSelect={(f) => setFile(f)}
+        onFileSelect={handleFileSelect}
         selectedFile={file}
         onClear={handleClear}
         title="Select or drop an image here"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   Database as DatabaseIcon,
   Play,
@@ -60,11 +60,7 @@ export default function SqliteLabPage() {
   // --- TABLE EXPLORER STATE ---
   const [selectedTable, setSelectedTable] = useState<string>("");
   const [tableSearchQuery, setTableSearchQuery] = useState<string>("");
-  const [gridData, setGridData] = useState<{
-    columns: string[];
-    rows: any[][];
-    totalFilteredRows: number;
-  }>({ columns: [], rows: [], totalFilteredRows: 0 });
+  const [dbVersion, setDbVersion] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(15);
   const [showSchemaDetails, setShowSchemaDetails] = useState<boolean>(false);
@@ -98,31 +94,28 @@ ORDER BY total_spent DESC;`
   const refreshOverview = (currentDb: Database) => {
     const ov = getDatabaseOverview(currentDb);
     setOverview(ov);
+    setDbVersion((v) => v + 1);
     if (ov.tables.length > 0) {
       // If no table is selected or previously selected table is gone, select the first
       if (!selectedTable || !ov.tables.some((t) => t.name === selectedTable)) {
         setSelectedTable(ov.tables[0].name);
+        setPage(1);
       }
     } else {
       setSelectedTable("");
+      setPage(1);
     }
   };
 
-  // Load table grid data
-  useEffect(() => {
+  // Derive table grid data
+  const gridData = useMemo(() => {
     if (!db || !selectedTable) {
-      setGridData({ columns: [], rows: [], totalFilteredRows: 0 });
-      return;
+      return { columns: [], rows: [] as unknown[][], totalFilteredRows: 0 };
     }
     const offset = (page - 1) * pageSize;
-    const data = getTableData(db, selectedTable, pageSize, offset, tableSearchQuery);
-    setGridData(data);
-  }, [db, selectedTable, page, pageSize, tableSearchQuery]);
-
-  // Reset page when switching tables or changing search
-  useEffect(() => {
-    setPage(1);
-  }, [selectedTable, tableSearchQuery]);
+    return getTableData(db, selectedTable, pageSize, offset, tableSearchQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db, selectedTable, page, pageSize, tableSearchQuery, dbVersion]);
 
   // Load sample database
   const handleLoadSampleDb = async () => {
@@ -138,9 +131,9 @@ ORDER BY total_spent DESC;`
       setDbSize(bytes.byteLength);
       refreshOverview(newDb);
       setQueryResult(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to load sample database:", err);
-      setErrorMsg(err?.message || "Failed to load sample database.");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to load sample database.");
     } finally {
       setIsLoading(false);
     }
@@ -163,9 +156,9 @@ ORDER BY total_spent DESC;`
       setDbSize(bytes.byteLength);
       refreshOverview(newDb);
       setQueryResult(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to create blank database:", err);
-      setErrorMsg(err?.message || "Failed to initialize blank database.");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to initialize blank database.");
     } finally {
       setIsLoading(false);
     }
@@ -187,9 +180,9 @@ ORDER BY total_spent DESC;`
       setDbSize(bytes.byteLength);
       refreshOverview(newDb);
       setQueryResult(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to open SQLite database:", err);
-      setErrorMsg(err?.message || "Unable to parse SQLite database file. Ensure it is a valid .sqlite or .db file.");
+      setErrorMsg(err instanceof Error ? err.message : "Unable to parse SQLite database file. Ensure it is a valid .sqlite or .db file.");
     } finally {
       setIsLoading(false);
     }
@@ -208,7 +201,7 @@ ORDER BY total_spent DESC;`
   const handleDownloadDatabase = () => {
     if (!db) return;
     const bytes = exportDatabase(db);
-    const blob = new Blob([bytes as any], { type: "application/x-sqlite3" });
+    const blob = new Blob([bytes as unknown as BlobPart], { type: "application/x-sqlite3" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -356,7 +349,7 @@ ORDER BY total_spent DESC;`
               Drop your SQLite database file here or click to browse
             </p>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 text-center max-w-md">
-              Supports .sqlite, .db, and .sqlite3 files • Executed 100% inside your browser WebAssembly runtime with zero network egress
+              Supports .sqlite, .db, and .sqlite3 files • Executed 100% inside your browser WebAssembly runtime with zero data uploads
             </p>
           </div>
 
@@ -416,7 +409,7 @@ ORDER BY total_spent DESC;`
                   />
                 </div>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  {formatBytes(dbSize || overview?.pageSize! * overview?.pageCount! || 0)} •{" "}
+                  {formatBytes(dbSize || (overview ? overview.pageSize * overview.pageCount : 0))} •{" "}
                   {overview?.tables.length || 0} user tables •{" "}
                   {overview?.totalRows || 0} total records
                 </p>
@@ -456,6 +449,7 @@ ORDER BY total_spent DESC;`
                   setDb(null);
                   setOverview(null);
                   setSelectedTable("");
+                  setPage(1);
                 }}
                 className="p-1.5 rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
                 title="Close Database"
@@ -528,7 +522,10 @@ ORDER BY total_spent DESC;`
                     return (
                       <button
                         key={t.name}
-                        onClick={() => setSelectedTable(t.name)}
+                        onClick={() => {
+                          setSelectedTable(t.name);
+                          setPage(1);
+                        }}
                         className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-colors text-xs ${
                           isSelected
                             ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/20"
@@ -638,7 +635,10 @@ ORDER BY total_spent DESC;`
                         <input
                           type="text"
                           value={tableSearchQuery}
-                          onChange={(e) => setTableSearchQuery(e.target.value)}
+                          onChange={(e) => {
+                            setTableSearchQuery(e.target.value);
+                            setPage(1);
+                          }}
                           placeholder="Search records in table..."
                           className="w-full pl-9 pr-4 py-1.5 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                         />

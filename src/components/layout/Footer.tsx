@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Lock, Cpu, Globe, Wifi, WifiOff, Download } from "lucide-react";
+import { ShieldCheck, Lock, Cpu, Globe, WifiOff } from "lucide-react";
 import { PwaInstallButton, usePwa } from "@/components/pwa/PwaManager";
 
 export function Footer() {
@@ -86,7 +86,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/tools/edi-viewer" className="hover:text-emerald-500 transition-colors">
-                  EDI X12 & EDIFACT Viewer
+                  EDI X12 & UN/EDIFACT Viewer
                 </Link>
               </li>
               <li>

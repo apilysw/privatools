@@ -633,7 +633,7 @@ export function generateCryptographicPassword(options: PasswordOptions): {
   let upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let lower = "abcdefghijklmnopqrstuvwxyz";
   let numbers = "0123456789";
-  let symbols = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+  const symbols = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
   if (excludeAmbiguous) {
     upper = upper.replace(/[OI]/g, "");

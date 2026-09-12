@@ -85,20 +85,26 @@ export default function JwtInspectorPage() {
 
   // Automatic signature verification when decoded or keys change
   useEffect(() => {
+    let active = true;
     if (!decoded) return;
 
     const alg = decoded.algorithm.toUpperCase();
     if (alg.startsWith("HS") && secretInput) {
       verifyJwtSignature(tokenInput, secretInput, "secret").then((res) => {
-        setVerificationResult({ tested: true, ...res });
+        if (active) setVerificationResult({ tested: true, ...res });
       });
     } else if (alg.startsWith("RS") && publicKeyPem.trim()) {
       verifyJwtSignature(tokenInput, publicKeyPem, "public-pem").then((res) => {
-        setVerificationResult({ tested: true, ...res });
+        if (active) setVerificationResult({ tested: true, ...res });
       });
     } else {
-      setVerificationResult({ tested: false, valid: false, message: "" });
+      Promise.resolve().then(() => {
+        if (active) setVerificationResult({ tested: false, valid: false, message: "" });
+      });
     }
+    return () => {
+      active = false;
+    };
   }, [decoded, tokenInput, secretInput, publicKeyPem]);
 
   const handleCopy = async (text: string, fieldId: string) => {

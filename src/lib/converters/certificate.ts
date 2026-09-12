@@ -323,7 +323,7 @@ export async function parseCertificate(
       percentElapsed,
     },
     serialNumber: formattedSerial,
-    version: (((cert as any).asn?.tbsCertificate?.version ?? 2) + 1),
+    version: (((cert as unknown as { asn?: { tbsCertificate?: { version?: number } } }).asn?.tbsCertificate?.version ?? 2) + 1),
     signatureAlgorithm: sigAlgName,
     publicKey: {
       algorithm: keyAlgName,

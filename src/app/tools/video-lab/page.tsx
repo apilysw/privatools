@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Video,
   Volume2,
@@ -37,9 +37,7 @@ import {
   encodeWav,
   encodeMp3,
   encodeFlac,
-  extractWaveformPeaks,
   processAudioData,
-  calculateScaledDimensions,
   transcodeVideo,
   convertVideoToGif,
   convertAudioFile,
@@ -192,7 +190,6 @@ export default function VideoLabPage() {
   const [trimmedBlob, setTrimmedBlob] = useState<Blob | null>(null);
   const [trimmedUrl, setTrimmedUrl] = useState<string | null>(null);
   const trimVideoRef = useRef<HTMLVideoElement | null>(null);
-  const [previewHeadTime, setPreviewHeadTime] = useState<number>(0);
 
   // Clean up Object URLs
   const revokeAllUrls = useCallback(() => {
@@ -216,12 +213,6 @@ export default function VideoLabPage() {
     gifUrl,
     trimmedUrl,
   ]);
-
-  // Load Initial Preset
-  useEffect(() => {
-    handleLoadPreset(PRESETS[0]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Process and load input file
   const handleLoadFile = async (file: File | Blob, name: string) => {
@@ -319,6 +310,18 @@ export default function VideoLabPage() {
       setIsProcessingPreset(false);
     }
   };
+
+  // Load Initial Preset
+  useEffect(() => {
+    let active = true;
+    requestAnimationFrame(() => {
+      if (active) handleLoadPreset(PRESETS[0]);
+    });
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Clear Input
   const handleClear = () => {
@@ -1650,7 +1653,6 @@ export default function VideoLabPage() {
                   onTimeUpdate={(e) => {
                     const cur = (e.target as HTMLVideoElement).currentTime;
                     if (isFinite(cur)) {
-                      setPreviewHeadTime(cur);
                       const currentEnd =
                         isFinite(trimEnd) && trimEnd > 0
                           ? trimEnd

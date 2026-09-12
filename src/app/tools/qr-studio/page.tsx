@@ -55,10 +55,6 @@ export default function QRStudioPage() {
   const [barColor, setBarColor] = useState<string>("#000000");
   const [bgColor, setBgColor] = useState<string>("#ffffff");
   const [ecLevel, setEcLevel] = useState<"L" | "M" | "Q" | "H">("M");
-
-  // Single Generation Output
-  const [svgOutput, setSvgOutput] = useState<string | null>(null);
-  const [renderError, setRenderError] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied-svg" | "copied-png">("idle");
 
   // Batch Generation State
@@ -84,8 +80,8 @@ export default function QRStudioPage() {
   const [copiedDecoded, setCopiedDecoded] = useState<boolean>(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Active symbology details
   const activeSymbologyInfo = useMemo(() => {
@@ -95,11 +91,9 @@ export default function QRStudioPage() {
   }, [symbology]);
 
   // Generate single barcode whenever inputs change
-  useEffect(() => {
+  const { svgOutput, renderError } = useMemo(() => {
     if (!inputText.trim()) {
-      setSvgOutput(null);
-      setRenderError(null);
-      return;
+      return { svgOutput: null, renderError: null };
     }
 
     const res = generateBarcodeSVG({
@@ -115,12 +109,9 @@ export default function QRStudioPage() {
     });
 
     if (res.error) {
-      setRenderError(res.error);
-      setSvgOutput(null);
-    } else {
-      setRenderError(null);
-      setSvgOutput(res.svg);
+      return { svgOutput: null, renderError: res.error };
     }
+    return { svgOutput: res.svg || null, renderError: null };
   }, [symbology, inputText, scale, height, includeText, rotate, barColor, bgColor, ecLevel, activeSymbologyInfo]);
 
   // Handle Preset selection
@@ -140,8 +131,6 @@ export default function QRStudioPage() {
   const handleClear = () => {
     setInputText("");
     setActivePreset(null);
-    setSvgOutput(null);
-    setRenderError(null);
   };
 
   // Export SVG file
@@ -362,7 +351,14 @@ export default function QRStudioPage() {
     setIsScanning(false);
   };
 
-  // Cleanup scanner on unmount or tab switch
+  const handleTabChange = (tab: ActiveTab) => {
+    if (tab !== "scan") {
+      stopCamera();
+    }
+    setActiveTab(tab);
+  };
+
+  // Cleanup scanner on unmount
   useEffect(() => {
     return () => {
       if (codeReaderRef.current) {
@@ -370,12 +366,6 @@ export default function QRStudioPage() {
       }
     };
   }, []);
-
-  useEffect(() => {
-    if (activeTab !== "scan") {
-      stopCamera();
-    }
-  }, [activeTab]);
 
   return (
     <div className="space-y-6">
@@ -399,8 +389,8 @@ export default function QRStudioPage() {
             <button
               key={p.id}
               onClick={() => {
-                setActiveTab("single");
                 handleSelectPreset(p);
+                handleTabChange("single");
               }}
               title={p.description}
               className={`px-2.5 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
@@ -426,7 +416,7 @@ export default function QRStudioPage() {
       {/* Mode Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3 print:hidden">
         <button
-          onClick={() => setActiveTab("single")}
+          onClick={() => handleTabChange("single")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
             activeTab === "single"
               ? "bg-emerald-500 text-white shadow-sm font-semibold"
@@ -438,7 +428,7 @@ export default function QRStudioPage() {
         </button>
 
         <button
-          onClick={() => setActiveTab("batch")}
+          onClick={() => handleTabChange("batch")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
             activeTab === "batch"
               ? "bg-emerald-500 text-white shadow-sm font-semibold"
@@ -450,7 +440,7 @@ export default function QRStudioPage() {
         </button>
 
         <button
-          onClick={() => setActiveTab("scan")}
+          onClick={() => handleTabChange("scan")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
             activeTab === "scan"
               ? "bg-emerald-500 text-white shadow-sm font-semibold"

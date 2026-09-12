@@ -395,15 +395,15 @@ export function checkSubnetOverlap(cidrA: string, cidrB: string): boolean {
 
 // Parse IPv6 address and prefix into BigInt
 export function parseIpv6(input: string): { bigInt: bigint; prefix: number } {
-  let [base, pStr] = input.trim().split("/");
+  const [base, pStr] = input.trim().split("/");
   let prefix = pStr !== undefined ? parseInt(pStr, 10) : 64;
   if (isNaN(prefix) || prefix < 0 || prefix > 128) {
     prefix = 64;
   }
 
   let parts = base.split("::");
-  let left = parts[0] ? parts[0].split(":").filter(Boolean) : [];
-  let right = parts[1] ? parts[1].split(":").filter(Boolean) : [];
+  const left = parts[0] ? parts[0].split(":").filter(Boolean) : [];
+  const right = parts[1] ? parts[1].split(":").filter(Boolean) : [];
 
   if (parts.length > 1) {
     const missing = 8 - (left.length + right.length);
@@ -433,7 +433,7 @@ export function ipv6BigIntToString(bi: bigint): string {
 
 // Compress IPv6 address with :: shorthand
 export function compressIpv6(fullIpv6: string): string {
-  let groups = fullIpv6.split(":").map((g) => g.replace(/^0+/, "") || "0");
+  const groups = fullIpv6.split(":").map((g) => g.replace(/^0+/, "") || "0");
   const joined = groups.join(":");
   // Replace longest sequence of :0:0: with ::
   return joined.replace(/(?:^|:)(?:0:){2,}/, "::");

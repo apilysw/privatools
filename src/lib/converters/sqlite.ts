@@ -20,7 +20,7 @@ export interface TableColumnInfo {
   name: string;
   type: string;
   notnull: boolean;
-  defaultValue: any;
+  defaultValue: unknown;
   isPrimaryKey: boolean;
 }
 
@@ -40,7 +40,7 @@ export interface DatabaseOverview {
 
 export interface QueryResult {
   columns: string[];
-  rows: any[][];
+  rows: unknown[][];
   rowCount: number;
   executionTimeMs: number;
   statementExecuted?: string;
@@ -170,14 +170,14 @@ export function executeSql(db: Database, sqlQuery: string): QueryResult {
       executionTimeMs,
       statementExecuted: cleanSql,
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     const executionTimeMs = parseFloat((performance.now() - start).toFixed(2));
     return {
       columns: [],
       rows: [],
       rowCount: 0,
       executionTimeMs,
-      error: err?.message || "SQL Execution Error",
+      error: err instanceof Error ? err.message : String(err) || "SQL Execution Error",
     };
   }
 }
@@ -189,7 +189,7 @@ export function getTableData(
   limit = 50,
   offset = 0,
   searchFilter = ""
-): { columns: string[]; rows: any[][]; totalFilteredRows: number } {
+): { columns: string[]; rows: unknown[][]; totalFilteredRows: number } {
   try {
     let whereClause = "";
     if (searchFilter.trim()) {
@@ -255,7 +255,7 @@ export function exportTableToJson(db: Database, tableName: string): string {
   const rows = res[0].values;
 
   const objects = rows.map((row) => {
-    const obj: Record<string, any> = {};
+    const obj: Record<string, unknown> = {};
     columns.forEach((col, idx) => {
       obj[col] = row[idx];
     });
@@ -276,7 +276,7 @@ export function exportQueryResultToCsv(queryResult: QueryResult): string {
 // Export query result to JSON string
 export function exportQueryResultToJson(queryResult: QueryResult): string {
   const objects = queryResult.rows.map((row) => {
-    const obj: Record<string, any> = {};
+    const obj: Record<string, unknown> = {};
     queryResult.columns.forEach((col, idx) => {
       obj[col] = row[idx];
     });

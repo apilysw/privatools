@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   BookOpen,
   Eye,
@@ -43,7 +43,6 @@ import {
   extractHeadingsOutline,
   csvToMarkdownTable,
   formatMarkdownTable,
-  markdownTableToCsv,
   htmlToMarkdown,
   generateStandaloneHtml,
   MARKDOWN_PRESETS,
@@ -70,13 +69,20 @@ export default function MarkdownLabPage() {
     "Feature,Status,Latency,Engine\nFull Text Search,Active,12ms,WASM\nVector Embeddings,Beta,45ms,WebGPU\nZero Knowledge Proofs,Alpha,180ms,Rust"
   );
   const [tableAlign, setTableAlign] = useState<"left" | "center" | "right">("left");
-  const [generatedMdTable, setGeneratedMdTable] = useState<string>("");
+  const generatedMdTable = useMemo(() => {
+    if (!csvInput.trim()) return "";
+    const aligns = new Array(10).fill(tableAlign);
+    return csvToMarkdownTable(csvInput, aligns);
+  }, [csvInput, tableAlign]);
 
   // HTML -> Markdown converter states
   const [htmlInput, setHtmlInput] = useState<string>(
     `<h2>Local-First Storage</h2>\n<p>Data is stored inside browser <strong>IndexedDB</strong> and <em>Origin Private File System (OPFS)</em>.</p>\n<ul>\n  <li>Zero telemetry</li>\n  <li>Encrypted at rest with Web Crypto</li>\n</ul>`
   );
-  const [convertedMd, setConvertedMd] = useState<string>("");
+  const convertedMd = useMemo(() => {
+    if (!htmlInput.trim()) return "";
+    return htmlToMarkdown(htmlInput);
+  }, [htmlInput]);
 
   // Refs for sync scroll and textarea insertion
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -233,25 +239,6 @@ export default function MarkdownLabPage() {
   const handlePrint = () => {
     window.print();
   };
-
-  // Update Table Studio output
-  useEffect(() => {
-    if (!csvInput.trim()) {
-      setGeneratedMdTable("");
-      return;
-    }
-    const aligns = new Array(10).fill(tableAlign);
-    setGeneratedMdTable(csvToMarkdownTable(csvInput, aligns));
-  }, [csvInput, tableAlign]);
-
-  // Update HTML -> MD output
-  useEffect(() => {
-    if (!htmlInput.trim()) {
-      setConvertedMd("");
-      return;
-    }
-    setConvertedMd(htmlToMarkdown(htmlInput));
-  }, [htmlInput]);
 
   return (
     <div className="space-y-6">
