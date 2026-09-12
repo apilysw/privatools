@@ -46,8 +46,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     for (const cand of mdCandidates) {
       try {
         const mdUrl = new URL(cand, request.url);
-        const mdRes = await env.ASSETS.fetch(new Request(mdUrl.toString(), request));
-        if (mdRes && mdRes.status === 200) {
+        const mdRes = await env.ASSETS.fetch(new Request(mdUrl.toString(), { method: "GET" }));
+        if (mdRes && (mdRes.status === 200 || mdRes.status === 304)) {
           const body = await mdRes.text();
           return new Response(body, {
             status: 200,
@@ -55,6 +55,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               "Content-Type": "text/markdown; charset=utf-8",
               "Vary": "Accept, Content-Type",
               "Access-Control-Allow-Origin": "*",
+              "Cache-Control": "public, max-age=3600, must-revalidate",
             },
           });
         }
@@ -71,6 +72,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const headers = new Headers(response.headers);
     headers.set("Content-Type", "text/markdown; charset=utf-8");
     headers.set("Vary", "Accept, Content-Type");
+    headers.set("Access-Control-Allow-Origin", "*");
+    headers.set("Cache-Control", "public, max-age=3600, must-revalidate");
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,

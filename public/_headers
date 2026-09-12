@@ -22,12 +22,6 @@
 /tools.json
   Cache-Control: public, max-age=3600, must-revalidate
 
-/llms.md
-  Content-Type: text/markdown; charset=utf-8
-  Cache-Control: public, max-age=3600, must-revalidate
-  Vary: Accept, Content-Type
-  Access-Control-Allow-Origin: *
-
 /llms.txt
   Cache-Control: public, max-age=3600, must-revalidate
 
@@ -37,8 +31,3 @@
   Vary: Accept, Content-Type
   Access-Control-Allow-Origin: *
 
-/tools/*.md
-  Content-Type: text/markdown; charset=utf-8
-  Cache-Control: public, max-age=3600, must-revalidate
-  Vary: Accept, Content-Type
-  Access-Control-Allow-Origin: *
