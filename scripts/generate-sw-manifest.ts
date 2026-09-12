@@ -439,10 +439,12 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // 1. Markdown Content Negotiation (Accept: text/markdown, ?format=md, or .md requests)
+  // 1. Markdown Content Negotiation (Accept: text/markdown, Content-Type: text/markdown, ?format=md, or .md requests)
   const acceptHeader = request.headers.get("Accept") || "";
+  const contentTypeHeader = request.headers.get("Content-Type") || "";
   const wantsMarkdown =
     acceptHeader.includes("text/markdown") ||
+    contentTypeHeader.includes("text/markdown") ||
     url.searchParams.get("format") === "md" ||
     url.searchParams.get("format") === "markdown" ||
     url.pathname.endsWith(".md");
@@ -474,7 +476,7 @@ self.addEventListener("fetch", (event) => {
               status: 200,
               headers: {
                 "Content-Type": "text/markdown; charset=utf-8",
-                "Vary": "Accept",
+                "Vary": "Accept, Content-Type",
                 "Access-Control-Allow-Origin": "*",
               },
             });
@@ -493,7 +495,7 @@ self.addEventListener("fetch", (event) => {
                   status: 200,
                   headers: {
                     "Content-Type": "text/markdown; charset=utf-8",
-                    "Vary": "Accept",
+                    "Vary": "Accept, Content-Type",
                     "Access-Control-Allow-Origin": "*",
                   },
                 });
@@ -508,7 +510,7 @@ self.addEventListener("fetch", (event) => {
           status: 404,
           headers: {
             "Content-Type": "text/markdown; charset=utf-8",
-            "Vary": "Accept",
+            "Vary": "Accept, Content-Type",
           },
         });
       })()

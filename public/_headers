@@ -5,7 +5,7 @@
   Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=()
   X-Frame-Options: DENY
   Cache-Control: public, max-age=0, must-revalidate
-  Vary: Accept
+  Vary: Accept, Content-Type
 
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
@@ -25,7 +25,7 @@
 /llms.md
   Content-Type: text/markdown; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
-  Vary: Accept
+  Vary: Accept, Content-Type
   Access-Control-Allow-Origin: *
 
 /llms.txt
@@ -34,11 +34,11 @@
 /*.md
   Content-Type: text/markdown; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
-  Vary: Accept
+  Vary: Accept, Content-Type
   Access-Control-Allow-Origin: *
 
 /tools/*.md
   Content-Type: text/markdown; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
-  Vary: Accept
+  Vary: Accept, Content-Type
   Access-Control-Allow-Origin: *

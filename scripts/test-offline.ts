@@ -127,8 +127,10 @@ function runOfflineAcceptanceTest() {
 
     // Markdown Content Negotiation
     const acceptHeader = headers?.["Accept"] || headers?.["accept"] || "";
+    const contentTypeHeader = headers?.["Content-Type"] || headers?.["content-type"] || "";
     const wantsMarkdown =
       acceptHeader.includes("text/markdown") ||
+      contentTypeHeader.includes("text/markdown") ||
       url.searchParams.get("format") === "md" ||
       url.searchParams.get("format") === "markdown" ||
       url.pathname.endsWith(".md");
@@ -371,7 +373,14 @@ function runOfflineAcceptanceTest() {
       process.exit(1);
     }
 
-    // 2. Fetch with query param ?format=md
+    // 2. Fetch with Content-Type: text/markdown header (curl https://privatools.dev --header 'Content-Type: text/markdown')
+    const ctRes = simulateSwFetch(route.slug, "no-cors", { "Content-Type": "text/markdown" });
+    if (ctRes.status !== 200 || !ctRes.body || !ctRes.contentType?.includes("text/markdown")) {
+      console.error(`  ❌ Failed offline Markdown negotiation via Content-Type header for ${route.slug} (HTTP ${ctRes.status})`);
+      process.exit(1);
+    }
+
+    // 3. Fetch with query param ?format=md
     const queryRes = simulateSwFetch(`${route.slug}?format=md`, "no-cors");
     if (queryRes.status !== 200 || !queryRes.body || !queryRes.contentType?.includes("text/markdown")) {
       console.error(`  ❌ Failed offline Markdown query param fetch for ${route.slug}?format=md (HTTP ${queryRes.status})`);
@@ -379,7 +388,7 @@ function runOfflineAcceptanceTest() {
     }
 
     passedMarkdownRoutes++;
-    console.log(`  ✅ [${route.name}] (${route.slug}) -> Offline Markdown OK (${mdRes.body.length} bytes, starts with "${mdContent.slice(0, 30).trim()}...")`);
+    console.log(`  ✅ [${route.name}] (${route.slug}) -> Offline Markdown OK via Accept & Content-Type headers (${mdRes.body.length} bytes)`);
   }
 
   // Also test direct /index.md, /about.md, /privacy-audit.md, and /llms.md

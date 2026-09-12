@@ -22,10 +22,12 @@ type PagesFunction<Env = unknown, P extends string = string, Data = Record<strin
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env, next } = context;
   const accept = request.headers.get("Accept") || "";
+  const contentType = request.headers.get("Content-Type") || "";
   const url = new URL(request.url);
 
   const wantsMarkdown =
     accept.includes("text/markdown") ||
+    contentType.includes("text/markdown") ||
     url.searchParams.get("format") === "md" ||
     url.searchParams.get("format") === "markdown";
 
@@ -51,7 +53,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             status: 200,
             headers: {
               "Content-Type": "text/markdown; charset=utf-8",
-              "Vary": "Accept",
+              "Vary": "Accept, Content-Type",
               "Access-Control-Allow-Origin": "*",
             },
           });
@@ -68,7 +70,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (url.pathname.endsWith(".md")) {
     const headers = new Headers(response.headers);
     headers.set("Content-Type", "text/markdown; charset=utf-8");
-    headers.set("Vary", "Accept");
+    headers.set("Vary", "Accept, Content-Type");
     return new Response(response.body, {
       status: response.status,
       statusText: response.statusText,
