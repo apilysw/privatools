@@ -58,7 +58,7 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
           >
             <Search className="w-4 h-4" />
           </button>
-          <div className="hidden lg:block">
+          <div className="hidden xl:block">
             <PrivacyBadge />
           </div>
           <Link
