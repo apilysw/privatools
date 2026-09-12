@@ -1221,7 +1221,7 @@ export default function PdfLabPage() {
             Why Client-Side PDF Processing is Crucial
           </h4>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-            PDFs routinely contain tax documents, medical histories, bank statements, and sensitive contracts. Unlike commercial online PDF converters that send your files to remote cloud storage, Privatools runs 100% in local memory using WebAssembly and pure JavaScript. No files ever touch a network socket.
+            PDFs routinely contain tax documents, medical histories, bank statements, and sensitive contracts. Unlike commercial online PDF converters that send your files to remote cloud storage, Privatools runs 100% in local memory using pure client-side JavaScript. No files ever touch a network socket.
           </p>
         </div>
       </div>

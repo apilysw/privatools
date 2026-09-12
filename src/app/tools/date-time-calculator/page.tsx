@@ -15,8 +15,6 @@ import {
   Minus,
   Sparkles,
   AlertCircle,
-  Sun,
-  Moon,
   CheckCircle2,
   CalendarDays,
   CalendarCheck,
@@ -550,7 +548,7 @@ export default function DateTimeCalculatorPage() {
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
                 <div className="sm:col-span-4 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                    <label htmlFor="add-start-date" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                       Starting Date
                     </label>
                     <button
@@ -561,6 +559,8 @@ export default function DateTimeCalculatorPage() {
                     </button>
                   </div>
                   <input
+                    id="add-start-date"
+                    aria-label="Starting Date"
                     type="date"
                     value={addStartDate}
                     onChange={(e) => setAddStartDate(e.target.value)}
@@ -569,10 +569,12 @@ export default function DateTimeCalculatorPage() {
                 </div>
 
                 <div className="sm:col-span-3 space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label htmlFor="add-start-time" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     Starting Time
                   </label>
                   <input
+                    id="add-start-time"
+                    aria-label="Starting Time"
                     type="time"
                     step="1"
                     value={addStartTime}
@@ -613,7 +615,7 @@ export default function DateTimeCalculatorPage() {
               {/* Shorthand / Natural Language Expression Bar */}
               <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-800/30 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
+                  <label htmlFor="duration-expression-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
                     Compound Duration Expression (Multi-Value)
                   </label>
@@ -624,6 +626,8 @@ export default function DateTimeCalculatorPage() {
 
                 <div className="relative">
                   <input
+                    id="duration-expression-input"
+                    aria-label="Compound Duration Expression"
                     type="text"
                     value={durationExpression}
                     onChange={(e) => handleExpressionChange(e.target.value)}
@@ -664,8 +668,10 @@ export default function DateTimeCalculatorPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
                   {/* Days */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Days</label>
+                    <label htmlFor="unit-days" className="text-[11px] font-semibold text-zinc-500 block">Days</label>
                     <input
+                      id="unit-days"
+                      aria-label="Days"
                       type="number"
                       min={0}
                       value={compoundDuration.days || 0}
@@ -678,8 +684,10 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Hours */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Hours</label>
+                    <label htmlFor="unit-hours" className="text-[11px] font-semibold text-zinc-500 block">Hours</label>
                     <input
+                      id="unit-hours"
+                      aria-label="Hours"
                       type="number"
                       min={0}
                       value={compoundDuration.hours || 0}
@@ -692,8 +700,10 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Minutes */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Minutes</label>
+                    <label htmlFor="unit-minutes" className="text-[11px] font-semibold text-zinc-500 block">Minutes</label>
                     <input
+                      id="unit-minutes"
+                      aria-label="Minutes"
                       type="number"
                       min={0}
                       value={compoundDuration.minutes || 0}
@@ -706,8 +716,10 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Seconds */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Seconds</label>
+                    <label htmlFor="unit-seconds" className="text-[11px] font-semibold text-zinc-500 block">Seconds</label>
                     <input
+                      id="unit-seconds"
+                      aria-label="Seconds"
                       type="number"
                       min={0}
                       value={compoundDuration.seconds || 0}
@@ -723,10 +735,12 @@ export default function DateTimeCalculatorPage() {
                     className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1"
                     title="Skips Saturdays and Sundays"
                   >
-                    <label className="text-[11px] font-semibold text-zinc-500 block">
+                    <label htmlFor="unit-biz-days" className="text-[11px] font-semibold text-zinc-500 block">
                       Biz Days
                     </label>
                     <input
+                      id="unit-biz-days"
+                      aria-label="Business Days"
                       type="number"
                       min={0}
                       value={compoundDuration.businessDays || 0}
@@ -739,8 +753,10 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Weeks */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Weeks</label>
+                    <label htmlFor="unit-weeks" className="text-[11px] font-semibold text-zinc-500 block">Weeks</label>
                     <input
+                      id="unit-weeks"
+                      aria-label="Weeks"
                       type="number"
                       min={0}
                       value={compoundDuration.weeks || 0}
@@ -753,8 +769,10 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Months */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Months</label>
+                    <label htmlFor="unit-months" className="text-[11px] font-semibold text-zinc-500 block">Months</label>
                     <input
+                      id="unit-months"
+                      aria-label="Months"
                       type="number"
                       min={0}
                       value={compoundDuration.months || 0}
@@ -767,8 +785,10 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Years */}
                   <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500 block">Years</label>
+                    <label htmlFor="unit-years" className="text-[11px] font-semibold text-zinc-500 block">Years</label>
                     <input
+                      id="unit-years"
+                      aria-label="Years"
                       type="number"
                       min={0}
                       value={compoundDuration.years || 0}
@@ -837,10 +857,12 @@ export default function DateTimeCalculatorPage() {
             <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label htmlFor="diff-date-a" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     Start Date (Date A)
                   </label>
                   <input
+                    id="diff-date-a"
+                    aria-label="Start Date (Date A)"
                     type="date"
                     value={diffDateA}
                     onChange={(e) => setDiffDateA(e.target.value)}
@@ -849,10 +871,12 @@ export default function DateTimeCalculatorPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label htmlFor="diff-date-b" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                     End Date (Date B)
                   </label>
                   <input
+                    id="diff-date-b"
+                    aria-label="End Date (Date B)"
                     type="date"
                     value={diffDateB}
                     onChange={(e) => setDiffDateB(e.target.value)}
@@ -1082,13 +1106,15 @@ export default function DateTimeCalculatorPage() {
           <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
               <div className="sm:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center justify-between">
+                <label htmlFor="unix-epoch-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center justify-between">
                   <span>Unix Epoch Timestamp</span>
                   <span className="text-[11px] font-normal text-zinc-400">
                     Supports s, ms, µs, ns
                   </span>
                 </label>
                 <input
+                  id="unix-epoch-input"
+                  aria-label="Unix Epoch Timestamp"
                   type="text"
                   value={epochInput}
                   onChange={(e) => {
@@ -1271,8 +1297,10 @@ export default function DateTimeCalculatorPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Date</label>
+                <label htmlFor="reverse-date-input" className="text-xs text-zinc-400">Date</label>
                 <input
+                  id="reverse-date-input"
+                  aria-label="Reverse Converter Date"
                   type="date"
                   value={reverseDate}
                   onChange={(e) => setReverseDate(e.target.value)}
@@ -1281,8 +1309,10 @@ export default function DateTimeCalculatorPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Time (HH:mm:ss)</label>
+                <label htmlFor="reverse-time-input" className="text-xs text-zinc-400">Time (HH:mm:ss)</label>
                 <input
+                  id="reverse-time-input"
+                  aria-label="Reverse Converter Time (HH:mm:ss)"
                   type="time"
                   step="1"
                   value={reverseTime}
@@ -1292,8 +1322,10 @@ export default function DateTimeCalculatorPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Timezone Context</label>
+                <label htmlFor="reverse-tz-select" className="text-xs text-zinc-400">Timezone Context</label>
                 <select
+                  id="reverse-tz-select"
+                  aria-label="Reverse Converter Timezone Context"
                   value={reverseTz}
                   onChange={(e) => setReverseTz(e.target.value as "utc" | "local")}
                   className="w-full p-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
@@ -1435,7 +1467,7 @@ export default function DateTimeCalculatorPage() {
                   {/* Timezone Selector (md:col-span-6) */}
                   <div className="md:col-span-6 space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-semibold text-zinc-500">
+                      <label htmlFor={isManualTz ? "manual-tz-input" : "select-tz-dropdown"} className="text-[11px] font-semibold text-zinc-500">
                         IANA Timezone ({allAvailableTimezones.length} Available)
                       </label>
                       <button
@@ -1449,6 +1481,8 @@ export default function DateTimeCalculatorPage() {
 
                     {isManualTz ? (
                       <input
+                        id="manual-tz-input"
+                        aria-label="Manual IANA Timezone"
                         type="text"
                         placeholder="e.g. America/Indiana/Knox, Asia/Kuala_Lumpur..."
                         value={newTimeZone}
@@ -1462,6 +1496,8 @@ export default function DateTimeCalculatorPage() {
                       <div className="space-y-1.5">
                         <div className="relative">
                           <input
+                            id="filter-tz-input"
+                            aria-label="Filter timezones by city or timezone"
                             type="text"
                             placeholder="Filter by city or timezone (e.g. Tokyo, Chicago, Berlin, GMT)..."
                             value={tzSearchQuery}
@@ -1473,6 +1509,7 @@ export default function DateTimeCalculatorPage() {
                             <button
                               type="button"
                               onClick={() => setTzSearchQuery("")}
+                              aria-label="Clear timezone search"
                               className="absolute right-2 top-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -1481,6 +1518,8 @@ export default function DateTimeCalculatorPage() {
                         </div>
 
                         <select
+                          id="select-tz-dropdown"
+                          aria-label="Select a Timezone"
                           value={newTimeZone}
                           onChange={(e) => handleTimezoneSelect(e.target.value)}
                           className="w-full p-2.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -1502,10 +1541,12 @@ export default function DateTimeCalculatorPage() {
 
                   {/* City Name (md:col-span-3) */}
                   <div className="md:col-span-3 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500">
+                    <label htmlFor="city-name-input" className="text-[11px] font-semibold text-zinc-500">
                       City Name
                     </label>
                     <input
+                      id="city-name-input"
+                      aria-label="City Name"
                       type="text"
                       placeholder="e.g. Singapore, Berlin, Austin..."
                       value={newCityName}
@@ -1516,10 +1557,12 @@ export default function DateTimeCalculatorPage() {
 
                   {/* Country / Region (md:col-span-3) */}
                   <div className="md:col-span-3 space-y-1">
-                    <label className="text-[11px] font-semibold text-zinc-500">
+                    <label htmlFor="country-name-input" className="text-[11px] font-semibold text-zinc-500">
                       Country / Region
                     </label>
                     <input
+                      id="country-name-input"
+                      aria-label="Country or Region"
                       type="text"
                       placeholder="e.g. Singapore, Germany, USA..."
                       value={newCountryName}
@@ -1593,6 +1636,8 @@ export default function DateTimeCalculatorPage() {
                 </span>
               </div>
               <input
+                id="matrix-hour-scrubber"
+                aria-label="UTC Reference Hour Slider"
                 type="range"
                 min={0}
                 max={23}
@@ -1613,101 +1658,76 @@ export default function DateTimeCalculatorPage() {
                 </h5>
                 <p className="text-xs text-zinc-500 max-w-sm mx-auto">
                   Your city list has been cleared. Add custom timezones for your
-                  distributed team or restore the default global engineering hubs.
+                  distributed team or infrastructure hubs above.
                 </p>
-                <div className="pt-2 flex items-center justify-center gap-2">
-                  <button
-                    onClick={handleResetDefaultTimezones}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-white text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-sm"
-                  >
-                    Restore Default Global Hubs
-                  </button>
-                  <button
-                    onClick={() => setShowAddCity(true)}
-                    className="px-3.5 py-1.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
-                  >
-                    Add Custom City
-                  </button>
-                </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-x-auto text-xs">
-                <table className="w-full">
+              <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-zinc-50 dark:bg-zinc-800/80 text-zinc-500 text-left border-b border-zinc-200 dark:border-zinc-800">
-                      <th className="p-3 font-semibold">City & Country</th>
-                      <th className="p-3 font-semibold">Timezone / Abbr</th>
-                      <th className="p-3 font-semibold">Local Time</th>
-                      <th className="p-3 font-semibold">Status</th>
-                      <th className="p-3 font-semibold text-center">24-Hour Timeline</th>
-                      <th className="p-3 font-semibold text-right">Action</th>
+                    <tr className="bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 border-b border-zinc-200 dark:border-zinc-700">
+                      <th className="p-3 font-bold w-[220px]">City / Location</th>
+                      <th className="p-3 font-bold w-[120px]">Local Time</th>
+                      <th className="p-3 font-bold w-[120px]">UTC Offset</th>
+                      <th className="p-3 font-bold w-[120px]">Day Shift</th>
+                      <th className="p-3 font-bold w-[100px]">Biz Hours</th>
+                      <th className="p-3 font-bold w-[60px] text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                    {computedTimezones.map((c) => (
+                    {computedTimezones.map((row) => (
                       <tr
-                        key={c.id}
-                        className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30"
+                        key={row.id}
+                        className={`transition-colors ${
+                          row.isBusinessHour
+                            ? "bg-emerald-500/[0.03] hover:bg-emerald-500/[0.07]"
+                            : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                        }`}
                       >
                         <td className="p-3">
-                          <span className="font-bold text-zinc-800 dark:text-zinc-200 block">
-                            {c.city}
-                          </span>
-                          <span className="text-[10px] text-zinc-400">
-                            {c.country}
-                          </span>
-                        </td>
-                        <td className="p-3 font-mono text-zinc-500">
-                          {c.timeZone} ({c.abbr})
+                          <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+                            {row.city}
+                          </div>
+                          <div className="text-[11px] text-zinc-400">
+                            {row.country} • {row.iana}
+                          </div>
                         </td>
                         <td className="p-3 font-mono font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                          {c.currentLocalTime}
+                          {row.localTimeFormatted}
+                        </td>
+                        <td className="p-3 font-mono text-zinc-600 dark:text-zinc-300">
+                          {row.offsetFormatted}
                         </td>
                         <td className="p-3">
-                          {c.status === "workday" ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-                              <Sun className="w-3 h-3 text-emerald-500" /> Workday
-                            </span>
-                          ) : c.status === "extended" ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-400">
-                              <Sun className="w-3 h-3 text-amber-500" /> Leisure
+                          {row.dayOffset === 0 ? (
+                            <span className="text-[11px] text-zinc-400">Same Day</span>
+                          ) : row.dayOffset > 0 ? (
+                            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
+                              +{row.dayOffset} Next Day
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
-                              <Moon className="w-3 h-3 text-zinc-400" /> Night
+                            <span className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">
+                              {row.dayOffset} Prev Day
                             </span>
                           )}
                         </td>
-                        <td className="p-3 text-center">
-                          <div className="inline-flex items-center gap-0.5 h-3 w-48 bg-zinc-200 dark:bg-zinc-800 rounded overflow-hidden">
-                            {Array.from({ length: 24 }).map((_, h) => {
-                              const isCurrent = h === c.hour;
-                              const isWork = h >= 9 && h < 17;
-                              const isExt =
-                                (h >= 7 && h < 9) || (h >= 17 && h < 21);
-                              let bg = "bg-zinc-300 dark:bg-zinc-700";
-                              if (isWork) bg = "bg-emerald-500";
-                              else if (isExt) bg = "bg-amber-500";
-
-                              return (
-                                <div
-                                  key={h}
-                                  className={`flex-1 h-full ${bg} ${
-                                    isCurrent
-                                      ? "ring-2 ring-white z-10 scale-125"
-                                      : "opacity-80"
-                                  }`}
-                                  title={`${h}:00`}
-                                />
-                              );
-                            })}
-                          </div>
+                        <td className="p-3">
+                          {row.isBusinessHour ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                              Work (9-17)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                              Off Hours
+                            </span>
+                          )}
                         </td>
                         <td className="p-3 text-right">
                           <button
-                            onClick={() => handleDeleteCity(c.id)}
-                            title={`Remove ${c.city}`}
-                            className="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                            onClick={() => handleDeleteCity(row.id)}
+                            className="p-1 rounded-md text-zinc-400 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                            title={`Remove ${row.city}`}
+                            aria-label={`Remove ${row.city}`}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -1727,13 +1747,15 @@ export default function DateTimeCalculatorPage() {
         <div className="space-y-6">
           <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center justify-between">
+              <label htmlFor="cron-expression-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center justify-between">
                 <span>Cron Expression (5-Field Standard)</span>
                 <span className="text-[11px] font-normal text-zinc-400">
                   min hour dom month dow
                 </span>
               </label>
               <input
+                id="cron-expression-input"
+                aria-label="Cron Expression (5-Field Standard)"
                 type="text"
                 value={cronInput}
                 onChange={(e) => {

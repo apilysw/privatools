@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -10,10 +11,101 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { GithubIcon } from "@/components/shared/GithubIcon";
+import { SITE_NAME, getCanonicalUrl, DEFAULT_OG_IMAGE } from "@/lib/config";
+
+export const metadata: Metadata = {
+  title: "Independent Privacy Audit & Zero-Knowledge Proof | Privatools",
+  description:
+    "Verifiable DevTools audit proof demonstrating 100% client-side execution with zero data uploads, zero cookies, and zero tracking.",
+  alternates: {
+    canonical: getCanonicalUrl("/privacy-audit"),
+  },
+  openGraph: {
+    title: "Independent Privacy Audit & Zero-Knowledge Proof | Privatools",
+    description:
+      "Verifiable DevTools audit proof demonstrating 100% client-side execution with zero data uploads, zero cookies, and zero tracking.",
+    url: getCanonicalUrl("/privacy-audit"),
+    siteName: SITE_NAME,
+    type: "website",
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Independent Privacy Audit & Zero-Knowledge Proof | Privatools",
+    description:
+      "Verifiable DevTools audit proof demonstrating 100% client-side execution with zero data uploads, zero cookies, and zero tracking.",
+    images: [DEFAULT_OG_IMAGE.url],
+  },
+};
 
 export default function PrivacyAuditPage() {
+  const auditJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "HowTo",
+        name: "How to Verify Zero Network Data Uploads in Privatools",
+        description:
+          "Step-by-step instructions to inspect browser DevTools Network tab and independently verify zero data egress.",
+        step: [
+          {
+            "@type": "HowToStep",
+            position: 1,
+            name: "Open Browser DevTools",
+            text: "Press F12 or Cmd+Option+I and select the Network tab.",
+          },
+          {
+            "@type": "HowToStep",
+            position: 2,
+            name: "Convert or Transform a File",
+            text: "Drop any JSON, CSV, image, or certificate into a tool and execute the conversion.",
+          },
+          {
+            "@type": "HowToStep",
+            position: 3,
+            name: "Inspect Network Activity",
+            text: "Observe that 0 data upload requests are made. No background fetch, XMLHttpRequest, or WebSocket messages transmit your data.",
+          },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "Does Privatools upload files to any remote server?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "No. Privatools executes 100% of data processing in local browser memory using JavaScript, WebAssembly, and Canvas APIs. Zero bytes of payload data are uploaded.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Is Privatools compliant with GDPR, HIPAA, and SOC 2?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Because sensitive payloads and PII never leave the user's device, processing does not create third-party data processor exposure or data residency violations.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Does Privatools work offline?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. All tool engines run locally without network connection once loaded or installed via the PWA.",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(auditJsonLd) }}
+      />
       {/* Header */}
       <div>
         <Link
@@ -48,7 +140,7 @@ export default function PrivacyAuditPage() {
           <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
             All algorithms—whether parsing a 20MB CSV, converting an image to WebP, or decoding
             an X.509 certificate—execute directly via the browser’s V8 JavaScript engine,
-            Web Workers, and HTML5 Canvas API.
+            HTML5 Canvas API, Web Crypto, and WebAssembly (SQLite) runtime.
           </p>
         </div>
 
@@ -116,8 +208,8 @@ export default function PrivacyAuditPage() {
           </li>
           <li className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
             <strong className="text-zinc-900 dark:text-zinc-200">Inspect the Network Tab:</strong>{" "}
-            Observe that exactly <strong>0 requests</strong> are made. No background `fetch`, `XMLHttpRequest`, or `WebSocket`
-            messages are emitted.
+            Observe that exactly <strong>0 data upload requests</strong> are made. No background `fetch`, `XMLHttpRequest`, or `WebSocket`
+            messages transmit your file or string data. (Optional offline PWA license activation contacts Gumroad solely to verify your license key).
           </li>
         </ol>
       </section>

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { TOOLS_CONTENT } from "@/lib/tool-content";
 import { getToolById } from "@/lib/registry";
+import { getCanonicalUrl } from "@/lib/config";
 
 interface ToolLandingContentProps {
   toolId: string;
@@ -40,7 +41,7 @@ export function ToolLandingContent({ toolId }: ToolLandingContentProps) {
         description: tool.description,
         applicationCategory: "UtilityApplication",
         operatingSystem: "Web Browser",
-        url: `https://privatools.com${tool.slug}`,
+        url: getCanonicalUrl(tool.slug),
         offers: {
           "@type": "Offer",
           price: "0",

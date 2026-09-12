@@ -335,7 +335,7 @@ async function authenticateUser(credentials: UserCredentials): Promise<AuthUser>
   "cors": {
     "allowedOrigins": [
       "http://localhost:3000",
-      "https://staging.privatools.com"
+      "https://staging.privatools.dev"
     ]
   },
   "telemetry": {
@@ -358,8 +358,8 @@ async function authenticateUser(credentials: UserCredentials): Promise<AuthUser>
   },
   "cors": {
     "allowedOrigins": [
-      "https://privatools.com",
-      "https://app.privatools.com"
+      "https://privatools.dev",
+      "https://app.privatools.dev"
     ]
   },
   "telemetry": {

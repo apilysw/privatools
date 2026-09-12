@@ -38,6 +38,11 @@ export interface TimezoneCity {
   currentLocalTime: string;
   hour: number;
   status: "workday" | "extended" | "night";
+  iana: string;
+  localTimeFormatted: string;
+  offsetFormatted: string;
+  dayOffset: number;
+  isBusinessHour: boolean;
 }
 
 export interface CronScheduleResult {
@@ -625,6 +630,17 @@ export function calculateTimezonesMatrix(
         status = "extended";
       }
 
+      const isBiz = status === "workday";
+      const timeFormatted = `${String(hourVal).padStart(2, "0")}:${minVal}`;
+
+      // Calculate day offset relative to UTC reference
+      const utcDay = refDate.getUTCDate();
+      const localDayStr = new Intl.DateTimeFormat("en-US", { timeZone: c.timeZone, day: "numeric" }).format(refDate);
+      const localDay = parseInt(localDayStr, 10);
+      let dayOffset = localDay - utcDay;
+      if (dayOffset > 1) dayOffset = -1; // month rollover
+      if (dayOffset < -1) dayOffset = 1;
+
       return {
         id: c.id,
         city: c.city,
@@ -632,9 +648,14 @@ export function calculateTimezonesMatrix(
         timeZone: c.timeZone,
         abbr: tzName,
         utcOffsetStr: tzName,
-        currentLocalTime: `${String(hourVal).padStart(2, "0")}:${minVal}`,
+        currentLocalTime: timeFormatted,
         hour: hourVal,
         status,
+        iana: c.timeZone,
+        localTimeFormatted: timeFormatted,
+        offsetFormatted: tzName,
+        dayOffset,
+        isBusinessHour: isBiz,
       };
     } catch {
       return {
@@ -647,6 +668,11 @@ export function calculateTimezonesMatrix(
         currentLocalTime: "--:--",
         hour: 0,
         status: "night",
+        iana: c.timeZone,
+        localTimeFormatted: "--:--",
+        offsetFormatted: "Invalid TZ",
+        dayOffset: 0,
+        isBusinessHour: false,
       };
     }
   });

@@ -4,6 +4,7 @@ import Papa from "papaparse";
 
 export interface MarkdownParseResult {
   html: string;
+  previewHtml: string;
   frontmatter: Record<string, unknown> | null;
   rawFrontmatter: string;
   cleanMarkdown: string;
@@ -99,8 +100,15 @@ export function parseMarkdown(source: string): MarkdownParseResult {
   // Sanitize compiled HTML for zero-vulnerability rendering
   const sanitized = sanitizeHtml(html);
 
+  // Demote <h1> in previewHtml to prevent multiple <h1> headings on the host webpage
+  const previewHtml = sanitized.replace(
+    /<h1(\s+[^>]*)?>([\s\S]*?)<\/h1>/gi,
+    '<div role="heading" aria-level="2" class="preview-h1"$1>$2</div>'
+  );
+
   return {
     html: sanitized,
+    previewHtml,
     frontmatter,
     rawFrontmatter,
     cleanMarkdown,

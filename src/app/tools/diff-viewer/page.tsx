@@ -260,6 +260,8 @@ export default function DiffViewerPage() {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
                 <input
+                  id="diff-old-filename"
+                  aria-label="Original file name"
                   type="text"
                   value={oldFileName}
                   onChange={(e) => setOldFileName(e.target.value)}
@@ -277,6 +279,8 @@ export default function DiffViewerPage() {
                   <span>Upload</span>
                 </button>
                 <input
+                  id="diff-left-file-upload"
+                  aria-label="Upload original file"
                   ref={leftFileInputRef}
                   type="file"
                   onChange={(e) => {
@@ -295,7 +299,10 @@ export default function DiffViewerPage() {
               </div>
             </div>
 
+            <label htmlFor="diff-old-text" className="sr-only">Original text or code</label>
             <textarea
+              id="diff-old-text"
+              aria-label="Original text or code"
               rows={8}
               value={oldText}
               onChange={(e) => setOldText(e.target.value)}
@@ -313,6 +320,8 @@ export default function DiffViewerPage() {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                 <input
+                  id="diff-new-filename"
+                  aria-label="Modified file name"
                   type="text"
                   value={newFileName}
                   onChange={(e) => setNewFileName(e.target.value)}
@@ -330,6 +339,8 @@ export default function DiffViewerPage() {
                   <span>Upload</span>
                 </button>
                 <input
+                  id="diff-right-file-upload"
+                  aria-label="Upload modified file"
                   ref={rightFileInputRef}
                   type="file"
                   onChange={(e) => {
@@ -348,7 +359,10 @@ export default function DiffViewerPage() {
               </div>
             </div>
 
+            <label htmlFor="diff-new-text" className="sr-only">Modified text or code</label>
             <textarea
+              id="diff-new-text"
+              aria-label="Modified text or code"
               rows={8}
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
@@ -367,6 +381,8 @@ export default function DiffViewerPage() {
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
+              id="diff-ignore-whitespace"
+              aria-label="Ignore Whitespace Differences"
               type="checkbox"
               checked={ignoreWhitespace}
               onChange={(e) => setIgnoreWhitespace(e.target.checked)}
@@ -377,6 +393,8 @@ export default function DiffViewerPage() {
 
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
+              id="diff-word-highlight"
+              aria-label="Intra-Line Word Highlighting"
               type="checkbox"
               checked={wordDiffEnabled}
               onChange={(e) => setWordDiffEnabled(e.target.checked)}

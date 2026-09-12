@@ -3,12 +3,13 @@
   "platform": "Privatools",
   "description": "100% Client-Side Zero-Knowledge Privacy Utilities",
   "canonicalBase": "https://privatools.dev",
-  "privacyGuarantee": "Zero data uploads. All processing executes in browser memory via WebAssembly, Web Crypto, and Canvas.",
+  "privacyGuarantee": "Zero data uploads. All processing executes in browser memory via WebAssembly (SQLite), Web Crypto, and Canvas APIs.",
   "toolCount": 19,
   "tools": [
     {
       "id": "data-converter",
       "name": "Structured Data Converter",
+      "seoTitle": "JSON to YAML, CSV & XML Converter | Privatools",
       "slug": "/tools/data-converter",
       "canonicalUrl": "https://privatools.dev/tools/data-converter/",
       "category": "Data & Config",
@@ -31,23 +32,22 @@
         "parse",
         "format"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "image-converter",
       "name": "Client-Side Image Lab",
+      "seoTitle": "Private Image Converter & WebP Lab | Privatools",
       "slug": "/tools/image-converter",
       "canonicalUrl": "https://privatools.dev/tools/image-converter/",
       "category": "Media & Images",
       "shortDesc": "Transcode WebP, PNG, JPEG with quality compression and zero uploads.",
-      "description": "Fast, private image converter using browser Canvas & Blob APIs. Convert between modern WebP, PNG, and JPEG formats, scale dimensions, and inspect file size savings.",
+      "description": "Fast, private image converter using browser Canvas & Blob APIs. Import WebP, PNG, JPEG, AVIF, SVG, or BMP and export optimized WebP, PNG, and JPEG files, scale dimensions, and inspect file size savings in local memory.",
       "supportedFormats": [
         "WebP",
         "PNG",
-        "JPEG",
-        "AVIF",
-        "SVG"
+        "JPEG"
       ],
       "keywords": [
         "image",
@@ -55,17 +55,23 @@
         "png",
         "jpeg",
         "jpg",
+        "avif",
+        "svg",
+        "bmp",
+        "ico",
         "compress",
         "resize",
         "convert",
-        "privacy"
+        "privacy",
+        "photo"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "text-converter",
       "name": "Text & Encoding Studio",
+      "seoTitle": "Text & Base64 Hex Encoder / Decoder | Privatools",
       "slug": "/tools/text-converter",
       "canonicalUrl": "https://privatools.dev/tools/text-converter/",
       "category": "Text & Encodings",
@@ -89,12 +95,13 @@
         "strings",
         "hash"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "cert-inspector",
       "name": "X.509 Certificate Inspector & Exporter",
+      "seoTitle": "X.509 Certificate Inspector & Parser | Privatools",
       "slug": "/tools/cert-inspector",
       "canonicalUrl": "https://privatools.dev/tools/cert-inspector/",
       "category": "Security & Dev",
@@ -121,12 +128,13 @@
         "export",
         "convert"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "edi-viewer",
-      "name": "EDI X12 & EDIFACT Viewer & Converter",
+      "name": "EDI X12 & UN/EDIFACT Viewer & Converter",
+      "seoTitle": "EDI X12 & EDIFACT Viewer & Validator | Privatools",
       "slug": "/tools/edi-viewer",
       "canonicalUrl": "https://privatools.dev/tools/edi-viewer/",
       "category": "Security & Dev",
@@ -154,12 +162,13 @@
         "hipaa",
         "b2b"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "jwt-inspector",
       "name": "JWT & OAuth Token Debugger",
+      "seoTitle": "Private JWT Decoder & Signature Verifier | Privatools",
       "slug": "/tools/jwt-inspector",
       "canonicalUrl": "https://privatools.dev/tools/jwt-inspector/",
       "category": "Security & Dev",
@@ -185,12 +194,13 @@
         "rs256",
         "security"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "pdf-lab",
       "name": "Client-Side PDF Privacy Lab",
+      "seoTitle": "Private PDF Merge, Split & Organize Lab | Privatools",
       "slug": "/tools/pdf-lab",
       "canonicalUrl": "https://privatools.dev/tools/pdf-lab/",
       "category": "Data & Config",
@@ -215,12 +225,13 @@
         "document",
         "organize"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "hash-studio",
       "name": "Cryptographic Checksum & File Hash Studio",
+      "seoTitle": "File Checksum & SHA-256 Hash Studio | Privatools",
       "slug": "/tools/hash-studio",
       "canonicalUrl": "https://privatools.dev/tools/hash-studio/",
       "category": "Security & Dev",
@@ -248,12 +259,13 @@
         "digest",
         "signature"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "sqlite-lab",
       "name": "SQLite Database Explorer & Exporter",
+      "seoTitle": "Online SQLite Viewer — No Uploads | Privatools",
       "slug": "/tools/sqlite-lab",
       "canonicalUrl": "https://privatools.dev/tools/sqlite-lab/",
       "category": "Data & Config",
@@ -279,12 +291,13 @@
         "export",
         "wasm"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "diff-viewer",
       "name": "Code & Text Diff / Patch Studio",
+      "seoTitle": "Code & Text Diff Checker | Privatools",
       "slug": "/tools/diff-viewer",
       "canonicalUrl": "https://privatools.dev/tools/diff-viewer/",
       "category": "Data & Config",
@@ -308,12 +321,13 @@
         "merge",
         "changes"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "qr-studio",
       "name": "Offline QR Code & Barcode Studio",
+      "seoTitle": "Offline QR Code & Barcode Generator | Privatools",
       "slug": "/tools/qr-studio",
       "canonicalUrl": "https://privatools.dev/tools/qr-studio/",
       "category": "Media & Images",
@@ -348,12 +362,13 @@
         "generator",
         "batch"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "regex-studio",
       "name": "Client-Side Regex Workbench & Tester",
+      "seoTitle": "Regex Tester & Match Workbench | Privatools",
       "slug": "/tools/regex-studio",
       "canonicalUrl": "https://privatools.dev/tools/regex-studio/",
       "category": "Security & Dev",
@@ -380,12 +395,13 @@
         "parser",
         "workbench"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "markdown-lab",
       "name": "Markdown & Technical Documentation Studio",
+      "seoTitle": "Markdown Editor & Live PDF Preview | Privatools",
       "slug": "/tools/markdown-lab",
       "canonicalUrl": "https://privatools.dev/tools/markdown-lab/",
       "category": "Text & Encodings",
@@ -417,12 +433,13 @@
         "export",
         "pdf"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "media-lab",
       "name": "Media Privacy Lab & Metadata Scrubber",
+      "seoTitle": "EXIF & Photo Metadata Scrubber | Privatools",
       "slug": "/tools/media-lab",
       "canonicalUrl": "https://privatools.dev/tools/media-lab/",
       "category": "Media & Images",
@@ -455,12 +472,13 @@
         "waveform",
         "batch"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "subnet-calculator",
       "name": "Network & Subnet CIDR Studio",
+      "seoTitle": "IPv4 & IPv6 Subnet CIDR Calculator | Privatools",
       "slug": "/tools/subnet-calculator",
       "canonicalUrl": "https://privatools.dev/tools/subnet-calculator/",
       "category": "Security & Dev",
@@ -492,12 +510,13 @@
         "bitmask",
         "rfc1918"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "date-time-calculator",
       "name": "Date, Time, Epoch & Cron Precision Studio",
+      "seoTitle": "Unix Epoch Timestamp & Cron Studio | Privatools",
       "slug": "/tools/date-time-calculator",
       "canonicalUrl": "https://privatools.dev/tools/date-time-calculator/",
       "category": "Text & Encodings",
@@ -530,12 +549,13 @@
         "y2038",
         "leap year"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "video-lab",
       "name": "Video & Audio Transcoder Studio",
+      "seoTitle": "Video & Audio Converter Lab | Privatools",
       "slug": "/tools/video-lab",
       "canonicalUrl": "https://privatools.dev/tools/video-lab/",
       "category": "Media & Images",
@@ -585,12 +605,13 @@
         "transcode",
         "media"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "color-studio",
       "name": "CSS & Modern Color Palette Studio",
+      "seoTitle": "Color Converter & Contrast Checker | Privatools",
       "slug": "/tools/color-studio",
       "canonicalUrl": "https://privatools.dev/tools/color-studio/",
       "category": "Media & Images",
@@ -641,12 +662,13 @@
         "eyedropper",
         "wheel"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     },
     {
       "id": "random-studio",
       "name": "Provably Fair & Random Studio",
+      "seoTitle": "Provably Fair Random Number Studio | Privatools",
       "slug": "/tools/random-studio",
       "canonicalUrl": "https://privatools.dev/tools/random-studio/",
       "category": "Security & Dev",
@@ -688,7 +710,7 @@
         "lottery",
         "d&d"
       ],
-      "privacyModel": "100% Client-Side In-Memory Execution, Zero Server Egress",
+      "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
     }
   ]

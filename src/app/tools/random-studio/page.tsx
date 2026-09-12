@@ -890,9 +890,11 @@ export default function RandomStudioPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Client Seed:</label>
+                  <label htmlFor="provable-client-seed" className="text-xs text-zinc-500">Client Seed:</label>
                   <div className="flex items-center gap-1">
                     <input
+                      id="provable-client-seed"
+                      aria-label="Client Seed"
                       type="text"
                       value={clientSeed}
                       onChange={(e) => setClientSeed(e.target.value)}
@@ -902,6 +904,7 @@ export default function RandomStudioPage() {
                       onClick={() => setClientSeed(bytesToHex(getRandomBytes(8)))}
                       className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500"
                       title="Generate random client seed"
+                      aria-label="Generate random client seed"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                     </button>
@@ -909,8 +912,10 @@ export default function RandomStudioPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Nonce (Counter):</label>
+                  <label htmlFor="provable-nonce" className="text-xs text-zinc-500">Nonce (Counter):</label>
                   <input
+                    id="provable-nonce"
+                    aria-label="Nonce (Counter)"
                     type="number"
                     min={0}
                     value={nonce}
@@ -922,8 +927,10 @@ export default function RandomStudioPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Min Value:</label>
+                  <label htmlFor="provable-min" className="text-xs text-zinc-500">Min Value:</label>
                   <input
+                    id="provable-min"
+                    aria-label="Min Value"
                     type="number"
                     value={provableMin}
                     onChange={(e) => setProvableMin(parseFloat(e.target.value) || 0)}
@@ -931,8 +938,10 @@ export default function RandomStudioPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Max Value:</label>
+                  <label htmlFor="provable-max" className="text-xs text-zinc-500">Max Value:</label>
                   <input
+                    id="provable-max"
+                    aria-label="Max Value"
                     type="number"
                     value={provableMax}
                     onChange={(e) => setProvableMax(parseFloat(e.target.value) || 100)}
@@ -954,8 +963,10 @@ export default function RandomStudioPage() {
 
                 {provableIsFloat && (
                   <div className="flex items-center gap-1.5 text-xs text-zinc-500">
-                    <span>Decimals:</span>
+                    <label htmlFor="provable-decimals">Decimals:</label>
                     <input
+                      id="provable-decimals"
+                      aria-label="Decimals"
                       type="number"
                       min={1}
                       max={6}
@@ -1108,8 +1119,10 @@ export default function RandomStudioPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs text-zinc-500">Revealed Server Seed:</label>
+                <label htmlFor="verify-server-seed" className="text-xs text-zinc-500">Revealed Server Seed:</label>
                 <input
+                  id="verify-server-seed"
+                  aria-label="Revealed Server Seed"
                   type="text"
                   value={verifyServerSeed}
                   onChange={(e) => setVerifyServerSeed(e.target.value)}
@@ -1119,8 +1132,10 @@ export default function RandomStudioPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-500">Expected Commitment Hash:</label>
+                <label htmlFor="verify-commitment" className="text-xs text-zinc-500">Expected Commitment Hash:</label>
                 <input
+                  id="verify-commitment"
+                  aria-label="Expected Commitment Hash"
                   type="text"
                   value={verifyExpectedCommitment}
                   onChange={(e) => setVerifyExpectedCommitment(e.target.value)}
@@ -1130,8 +1145,10 @@ export default function RandomStudioPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-500">Client Seed:</label>
+                <label htmlFor="verify-client-seed" className="text-xs text-zinc-500">Client Seed:</label>
                 <input
+                  id="verify-client-seed"
+                  aria-label="Client Seed"
                   type="text"
                   value={verifyClientSeed}
                   onChange={(e) => setVerifyClientSeed(e.target.value)}
@@ -1141,8 +1158,10 @@ export default function RandomStudioPage() {
 
               <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Nonce:</label>
+                  <label htmlFor="verify-nonce" className="text-xs text-zinc-500">Nonce:</label>
                   <input
+                    id="verify-nonce"
+                    aria-label="Nonce"
                     type="number"
                     value={verifyNonce}
                     onChange={(e) => setVerifyNonce(parseInt(e.target.value, 10) || 0)}
@@ -1150,8 +1169,10 @@ export default function RandomStudioPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Min:</label>
+                  <label htmlFor="verify-min" className="text-xs text-zinc-500">Min:</label>
                   <input
+                    id="verify-min"
+                    aria-label="Minimum value"
                     type="number"
                     value={verifyMin}
                     onChange={(e) => setVerifyMin(parseFloat(e.target.value) || 0)}
@@ -1159,8 +1180,10 @@ export default function RandomStudioPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500">Max:</label>
+                  <label htmlFor="verify-max" className="text-xs text-zinc-500">Max:</label>
                   <input
+                    id="verify-max"
+                    aria-label="Maximum value"
                     type="number"
                     value={verifyMax}
                     onChange={(e) => setVerifyMax(parseFloat(e.target.value) || 100)}
@@ -1253,8 +1276,10 @@ export default function RandomStudioPage() {
               <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Min:</label>
+                    <label htmlFor="uniform-min" className="text-xs text-zinc-500 font-medium">Min:</label>
                     <input
+                      id="uniform-min"
+                      aria-label="Minimum value"
                       type="number"
                       value={uniformMin}
                       onChange={(e) => setUniformMin(parseFloat(e.target.value) || 0)}
@@ -1263,8 +1288,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Max:</label>
+                    <label htmlFor="uniform-max" className="text-xs text-zinc-500 font-medium">Max:</label>
                     <input
+                      id="uniform-max"
+                      aria-label="Maximum value"
                       type="number"
                       value={uniformMax}
                       onChange={(e) => setUniformMax(parseFloat(e.target.value) || 100)}
@@ -1273,8 +1300,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Quantity (Count):</label>
+                    <label htmlFor="uniform-count" className="text-xs text-zinc-500 font-medium">Quantity (Count):</label>
                     <input
+                      id="uniform-count"
+                      aria-label="Quantity count"
                       type="number"
                       min={1}
                       max={1000}
@@ -1285,8 +1314,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Sort Order:</label>
+                    <label htmlFor="uniform-sort" className="text-xs text-zinc-500 font-medium">Sort Order:</label>
                     <select
+                      id="uniform-sort"
+                      aria-label="Sort Order"
                       value={uniformSort}
                       onChange={(e) => setUniformSort(e.target.value as "none" | "asc" | "desc")}
                       className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -1303,6 +1334,7 @@ export default function RandomStudioPage() {
                     <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
                       <input
                         type="checkbox"
+                        aria-label="Unique (No Duplicates)"
                         checked={uniformUnique}
                         onChange={(e) => setUniformUnique(e.target.checked)}
                         className="rounded border-zinc-300 dark:border-zinc-700 text-emerald-500"
@@ -1313,6 +1345,7 @@ export default function RandomStudioPage() {
                     <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
                       <input
                         type="checkbox"
+                        aria-label="Floating Point"
                         checked={uniformIsFloat}
                         onChange={(e) => setUniformIsFloat(e.target.checked)}
                         className="rounded border-zinc-300 dark:border-zinc-700 text-emerald-500"
@@ -1322,8 +1355,10 @@ export default function RandomStudioPage() {
 
                     {uniformIsFloat && (
                       <div className="flex items-center gap-1 text-xs text-zinc-500">
-                        <span>Decimals:</span>
+                        <label htmlFor="uniform-decimals">Decimals:</label>
                         <input
+                          id="uniform-decimals"
+                          aria-label="Decimals"
                           type="number"
                           min={1}
                           max={6}
@@ -1419,8 +1454,10 @@ export default function RandomStudioPage() {
               <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Mean (μ):</label>
+                    <label htmlFor="gauss-mean" className="text-xs text-zinc-500 font-medium">Mean (μ):</label>
                     <input
+                      id="gauss-mean"
+                      aria-label="Mean (μ)"
                       type="number"
                       value={gaussMean}
                       onChange={(e) => setGaussMean(parseFloat(e.target.value) || 0)}
@@ -1429,8 +1466,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Std Dev (σ):</label>
+                    <label htmlFor="gauss-std-dev" className="text-xs text-zinc-500 font-medium">Std Dev (σ):</label>
                     <input
+                      id="gauss-std-dev"
+                      aria-label="Std Dev (σ)"
                       type="number"
                       min={0.1}
                       value={gaussStdDev}
@@ -1440,8 +1479,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Sample Size (N):</label>
+                    <label htmlFor="gauss-count" className="text-xs text-zinc-500 font-medium">Sample Size (N):</label>
                     <input
+                      id="gauss-count"
+                      aria-label="Sample Size (N)"
                       type="number"
                       min={50}
                       max={5000}
@@ -1452,8 +1493,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Decimals:</label>
+                    <label htmlFor="gauss-decimals" className="text-xs text-zinc-500 font-medium">Decimals:</label>
                     <input
+                      id="gauss-decimals"
+                      aria-label="Decimals"
                       type="number"
                       min={0}
                       max={4}
@@ -1612,6 +1655,8 @@ export default function RandomStudioPage() {
 
             <div className="flex items-center gap-2">
               <input
+                id="dice-notation-input"
+                aria-label="Dice notation expression"
                 type="text"
                 value={diceNotation}
                 onChange={(e) => setDiceNotation(e.target.value)}
@@ -1801,6 +1846,8 @@ export default function RandomStudioPage() {
               </div>
 
               <textarea
+                id="shuffle-input-text"
+                aria-label="Items or names to shuffle, one per line"
                 rows={8}
                 value={shuffleInputText}
                 onChange={(e) => setShuffleInputText(e.target.value)}
@@ -1812,8 +1859,10 @@ export default function RandomStudioPage() {
               {shuffleMode === "raffle" && (
                 <div className="flex items-center justify-between pt-1">
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-zinc-500">Winners to Pick:</span>
+                    <label htmlFor="raffle-winner-count" className="text-zinc-500">Winners to Pick:</label>
                     <input
+                      id="raffle-winner-count"
+                      aria-label="Winners to Pick"
                       type="number"
                       min={1}
                       max={100}
@@ -1825,6 +1874,8 @@ export default function RandomStudioPage() {
 
                   <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
                     <input
+                      id="raffle-with-replacement"
+                      aria-label="Allow Duplicates (Replacement)"
                       type="checkbox"
                       checked={raffleWithReplacement}
                       onChange={(e) => setRaffleWithReplacement(e.target.checked)}
@@ -1837,8 +1888,10 @@ export default function RandomStudioPage() {
 
               {shuffleMode === "teams" && (
                 <div className="flex items-center gap-3 pt-1 text-xs">
-                  <span className="text-zinc-500">Number of Teams:</span>
+                  <label htmlFor="team-count" className="text-zinc-500">Number of Teams:</label>
                   <input
+                    id="team-count"
+                    aria-label="Number of Teams"
                     type="number"
                     min={2}
                     max={20}
@@ -2019,8 +2072,10 @@ export default function RandomStudioPage() {
             <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500 font-medium">Word Count ({diceWordCount}):</label>
+                  <label htmlFor="diceware-word-count" className="text-xs text-zinc-500 font-medium">Word Count ({diceWordCount}):</label>
                   <input
+                    id="diceware-word-count"
+                    aria-label="Diceware word count"
                     type="range"
                     min={3}
                     max={10}
@@ -2031,8 +2086,10 @@ export default function RandomStudioPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500 font-medium">Separator:</label>
+                  <label htmlFor="diceware-separator" className="text-xs text-zinc-500 font-medium">Separator:</label>
                   <select
+                    id="diceware-separator"
+                    aria-label="Diceware word separator"
                     value={diceSeparator}
                     onChange={(e) => setDiceSeparator(e.target.value as "-" | "_" | "." | " " | "/")}
                     className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -2046,8 +2103,10 @@ export default function RandomStudioPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-500 font-medium">Capitalization:</label>
+                  <label htmlFor="diceware-capitalize" className="text-xs text-zinc-500 font-medium">Capitalization:</label>
                   <select
+                    id="diceware-capitalize"
+                    aria-label="Diceware capitalization"
                     value={diceCapitalize}
                     onChange={(e) => setDiceCapitalize(e.target.value as "lower" | "title" | "upper")}
                     className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -2061,6 +2120,8 @@ export default function RandomStudioPage() {
                 <div className="flex items-center pt-5">
                   <label className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer">
                     <input
+                      id="diceware-include-number"
+                      aria-label="Append Number"
                       type="checkbox"
                       checked={diceIncludeNumber}
                       onChange={(e) => setDiceIncludeNumber(e.target.checked)}
@@ -2118,10 +2179,12 @@ export default function RandomStudioPage() {
             <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-5">
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-zinc-500">
-                  <span>Password Length:</span>
+                  <label htmlFor="password-length-slider">Password Length:</label>
                   <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">{passLength} characters</span>
                 </div>
                 <input
+                  id="password-length-slider"
+                  aria-label="Password Length"
                   type="range"
                   min={8}
                   max={64}
@@ -2134,6 +2197,8 @@ export default function RandomStudioPage() {
               <div className="flex flex-wrap gap-4 text-xs">
                 <label className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 cursor-pointer">
                   <input
+                    id="pass-upper"
+                    aria-label="Uppercase (A–Z)"
                     type="checkbox"
                     checked={passUpper}
                     onChange={(e) => setPassUpper(e.target.checked)}
@@ -2143,6 +2208,8 @@ export default function RandomStudioPage() {
                 </label>
                 <label className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 cursor-pointer">
                   <input
+                    id="pass-lower"
+                    aria-label="Lowercase (a–z)"
                     type="checkbox"
                     checked={passLower}
                     onChange={(e) => setPassLower(e.target.checked)}
@@ -2152,6 +2219,8 @@ export default function RandomStudioPage() {
                 </label>
                 <label className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 cursor-pointer">
                   <input
+                    id="pass-numbers"
+                    aria-label="Numbers (0–9)"
                     type="checkbox"
                     checked={passNumbers}
                     onChange={(e) => setPassNumbers(e.target.checked)}
@@ -2161,6 +2230,8 @@ export default function RandomStudioPage() {
                 </label>
                 <label className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 cursor-pointer">
                   <input
+                    id="pass-symbols"
+                    aria-label="Symbols (!@#$)"
                     type="checkbox"
                     checked={passSymbols}
                     onChange={(e) => setPassSymbols(e.target.checked)}
@@ -2170,6 +2241,8 @@ export default function RandomStudioPage() {
                 </label>
                 <label className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 cursor-pointer">
                   <input
+                    id="pass-exclude-ambiguous"
+                    aria-label="Exclude Ambiguous (0, O, 1, l)"
                     type="checkbox"
                     checked={passExcludeAmbiguous}
                     onChange={(e) => setPassExcludeAmbiguous(e.target.checked)}
@@ -2221,8 +2294,10 @@ export default function RandomStudioPage() {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Identifier Format:</label>
+                    <label htmlFor="uuid-type-select" className="text-xs text-zinc-500 font-medium">Identifier Format:</label>
                     <select
+                      id="uuid-type-select"
+                      aria-label="Identifier format"
                       value={uuidType}
                       onChange={(e) => setUuidType(e.target.value as "v7" | "v4" | "nanoid")}
                       className="px-2.5 py-1.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -2234,8 +2309,10 @@ export default function RandomStudioPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-zinc-500 font-medium">Batch Count:</label>
+                    <label htmlFor="uuid-count-input" className="text-xs text-zinc-500 font-medium">Batch Count:</label>
                     <input
+                      id="uuid-count-input"
+                      aria-label="Batch count"
                       type="number"
                       min={1}
                       max={20}
@@ -2318,8 +2395,10 @@ export default function RandomStudioPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="space-y-1">
-                <label className="text-xs text-zinc-500 font-medium">Domain Min:</label>
+                <label htmlFor="audit-min" className="text-xs text-zinc-500 font-medium">Domain Min:</label>
                 <input
+                  id="audit-min"
+                  aria-label="Domain Min"
                   type="number"
                   value={auditMin}
                   onChange={(e) => setAuditMin(parseFloat(e.target.value) || 0)}
@@ -2328,8 +2407,10 @@ export default function RandomStudioPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-500 font-medium">Domain Max:</label>
+                <label htmlFor="audit-max" className="text-xs text-zinc-500 font-medium">Domain Max:</label>
                 <input
+                  id="audit-max"
+                  aria-label="Domain Max"
                   type="number"
                   value={auditMax}
                   onChange={(e) => setAuditMax(parseFloat(e.target.value) || 100)}
@@ -2349,10 +2430,12 @@ export default function RandomStudioPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs text-zinc-500">
+              <label htmlFor="audit-raw-input" className="text-xs text-zinc-500">
                 Sample Values (comma or space separated):
               </label>
               <textarea
+                id="audit-raw-input"
+                aria-label="Sample Values (comma or space separated)"
                 rows={3}
                 value={auditRawInput}
                 onChange={(e) => setAuditRawInput(e.target.value)}

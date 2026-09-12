@@ -39,9 +39,10 @@ import {
   ExternalLink,
   X,
 } from "lucide-react";
-import { TOOL_CATEGORIES, searchTools, ToolMetadata } from "@/lib/registry";
+import { TOOL_CATEGORIES, TOOLS_REGISTRY, searchTools, ToolMetadata } from "@/lib/registry";
 import { useToolPreferences, orderToolsByCustomOrder } from "@/lib/useToolPreferences";
-import { usePwa, GUMROAD_BUY_URL } from "@/components/pwa/PwaManager";
+import { usePwa } from "@/components/pwa/PwaManager";
+import { SITE_URL, SITE_NAME, GITHUB_REPO_URL, GUMROAD_BUY_URL, getCanonicalUrl } from "@/lib/config";
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,
@@ -375,8 +376,47 @@ export default function HomePage() {
     );
   };
 
+  const homepageJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        name: SITE_NAME,
+        url: `${SITE_URL}/`,
+        description:
+          "100% Client-Side Zero-Knowledge Privacy Utilities. Process sensitive datasets, files, and secrets directly in browser memory with zero data uploads.",
+      },
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`,
+        name: SITE_NAME,
+        url: `${SITE_URL}/`,
+        logo: `${SITE_URL}/icons/icon-512.png`,
+        sameAs: [GITHUB_REPO_URL],
+      },
+      {
+        "@type": "ItemList",
+        name: "Privatools Web Utilities",
+        description: "Complete catalog of 100% client-side privacy converters and developer studios",
+        numberOfItems: TOOLS_REGISTRY.length,
+        itemListElement: TOOLS_REGISTRY.map((t, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: t.name,
+          description: t.shortDesc,
+          url: getCanonicalUrl(t.slug),
+        })),
+      },
+    ],
+  };
+
   return (
     <div className="space-y-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="text-center pt-6 sm:pt-12 pb-6 max-w-3xl mx-auto space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
@@ -525,10 +565,15 @@ export default function HomePage() {
           {/* Quick Search & Reorder Action */}
           <div className="flex items-center gap-2.5 w-full md:w-auto">
             <div className="relative flex-1 md:w-64">
-              <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <label htmlFor="homepage-tool-search" className="sr-only">
+                Filter tools by format or keyword
+              </label>
+              <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
+                id="homepage-tool-search"
                 type="text"
                 placeholder="Filter by format or keyword..."
+                aria-label="Filter tools by format or keyword"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
@@ -675,11 +720,11 @@ export default function HomePage() {
               <Zap className="w-5 h-5" />
             </div>
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
-              Sub-Millisecond Execution
+              Fast Local Execution
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
               No network round-trips, file upload latency, or server queue bottlenecks.
-              Instant keystroke conversions powered by optimized WebAssembly.
+              Computations execute directly in device memory at native hardware speeds.
             </p>
           </div>
 
@@ -700,7 +745,7 @@ export default function HomePage() {
               >
                 open-source code on GitHub
               </a>{" "}
-              or check your browser’s DevTools Network tab. Zero HTTP POST requests, zero telemetry, zero analytics tracking.
+              or check your browser’s DevTools Network tab. Tool processing makes zero data-upload requests. Zero telemetry, zero analytics tracking.
             </p>
           </div>
         </div>

@@ -13,6 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/config";
+
 export const viewport: Viewport = {
   themeColor: "#10b981",
   width: "device-width",
@@ -21,9 +23,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Privatools — 100% Client-Side Privacy Converters",
   description:
-    "Zero-knowledge web utilities for structured data, images, code, and text. Fast, private, zero data egress.",
+    "Zero-knowledge web utilities for structured data, images, code, and text. Fast, private, zero data uploads.",
   keywords: [
     "privacy converter",
     "json to yaml",
@@ -35,6 +38,9 @@ export const metadata: Metadata = {
     "pwa",
   ],
   authors: [{ name: "Privatools" }],
+  alternates: {
+    canonical: "/",
+  },
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -55,7 +61,17 @@ export const metadata: Metadata = {
     title: "Privatools — Zero-Knowledge Privacy Converters",
     description:
       "All file conversions and transformations run 100% locally in your browser. Zero tracking, zero uploads.",
+    url: SITE_URL,
+    siteName: "Privatools",
     type: "website",
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privatools — Zero-Knowledge Privacy Converters",
+    description:
+      "All file conversions and transformations run 100% locally in your browser. Zero tracking, zero uploads.",
+    images: [DEFAULT_OG_IMAGE.url],
   },
 };
 

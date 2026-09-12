@@ -458,7 +458,7 @@ export default function QRStudioPage() {
             {/* Symbology Selector */}
             <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="symbology-select" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Barcode Symbology
                 </label>
                 <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
@@ -467,6 +467,8 @@ export default function QRStudioPage() {
               </div>
 
               <select
+                id="symbology-select"
+                aria-label="Barcode Symbology"
                 value={symbology}
                 onChange={(e) => {
                   setSymbology(e.target.value);
@@ -511,7 +513,7 @@ export default function QRStudioPage() {
             {/* Payload Input */}
             <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label htmlFor="barcode-data-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                   Barcode Data / Payload
                 </label>
                 <span className="text-xs text-zinc-400 font-mono">
@@ -521,6 +523,8 @@ export default function QRStudioPage() {
 
               {symbology === "qrcode" || symbology === "pdf417" ? (
                 <textarea
+                  id="barcode-data-input"
+                  aria-label="Barcode Data or Payload"
                   value={inputText}
                   onChange={(e) => {
                     setInputText(e.target.value);
@@ -532,6 +536,8 @@ export default function QRStudioPage() {
                 />
               ) : (
                 <input
+                  id="barcode-data-input"
+                  aria-label="Barcode Data or Payload"
                   type="text"
                   value={inputText}
                   onChange={(e) => {
@@ -570,10 +576,12 @@ export default function QRStudioPage() {
                 {/* Scale Multiplier */}
                 <div>
                   <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400 mb-1">
-                    <span>Scale / Width:</span>
+                    <label htmlFor="qr-scale-slider">Scale / Width:</label>
                     <span className="font-semibold">{scale}x</span>
                   </div>
                   <input
+                    id="qr-scale-slider"
+                    aria-label="Scale / Width"
                     type="range"
                     min="1"
                     max="6"
@@ -588,10 +596,12 @@ export default function QRStudioPage() {
                 {!activeSymbologyInfo.is2D && (
                   <div>
                     <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400 mb-1">
-                      <span>Bar Height:</span>
+                      <label htmlFor="barcode-height-slider">Bar Height:</label>
                       <span className="font-semibold">{height}mm</span>
                     </div>
                     <input
+                      id="barcode-height-slider"
+                      aria-label="Bar Height"
                       type="range"
                       min="5"
                       max="30"
@@ -606,10 +616,12 @@ export default function QRStudioPage() {
                 {/* QR Error Correction */}
                 {symbology === "qrcode" && (
                   <div>
-                    <span className="block text-xs text-zinc-600 dark:text-zinc-400 mb-1">
+                    <label htmlFor="qr-ec-level" className="block text-xs text-zinc-600 dark:text-zinc-400 mb-1">
                       Error Correction:
-                    </span>
+                    </label>
                     <select
+                      id="qr-ec-level"
+                      aria-label="Error Correction Level"
                       value={ecLevel}
                       onChange={(e) => setEcLevel(e.target.value as "L" | "M" | "Q" | "H")}
                       className="w-full px-2 py-1.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -624,10 +636,12 @@ export default function QRStudioPage() {
 
                 {/* Orientation / Rotation */}
                 <div>
-                  <span className="block text-xs text-zinc-600 dark:text-zinc-400 mb-1">
+                  <label htmlFor="qr-rotate-select" className="block text-xs text-zinc-600 dark:text-zinc-400 mb-1">
                     Orientation:
-                  </span>
+                  </label>
                   <select
+                    id="qr-rotate-select"
+                    aria-label="Orientation"
                     value={rotate}
                     onChange={(e) => setRotate(e.target.value as "N" | "R" | "L" | "I")}
                     className="w-full px-2 py-1.5 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -645,6 +659,8 @@ export default function QRStudioPage() {
                 {!activeSymbologyInfo.is2D && (
                   <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
                     <input
+                      id="barcode-include-text"
+                      aria-label="Human-Readable Text Line"
                       type="checkbox"
                       checked={includeText}
                       onChange={(e) => setIncludeText(e.target.checked)}
@@ -658,6 +674,8 @@ export default function QRStudioPage() {
                   <label className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                     <span>Bars:</span>
                     <input
+                      id="barcode-bar-color"
+                      aria-label="Bars color"
                       type="color"
                       value={barColor}
                       onChange={(e) => setBarColor(e.target.value)}
@@ -667,6 +685,8 @@ export default function QRStudioPage() {
                   <label className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
                     <span>Bg:</span>
                     <input
+                      id="barcode-bg-color"
+                      aria-label="Background color"
                       type="color"
                       value={bgColor}
                       onChange={(e) => setBgColor(e.target.value)}
@@ -791,10 +811,12 @@ export default function QRStudioPage() {
             {/* Batch Configuration Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div>
-                <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                <label htmlFor="batch-symbology-select" className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
                   Symbology:
                 </label>
                 <select
+                  id="batch-symbology-select"
+                  aria-label="Batch symbology"
                   value={batchSymbology}
                   onChange={(e) => setBatchSymbology(e.target.value)}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -810,10 +832,12 @@ export default function QRStudioPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                <label htmlFor="batch-columns-select" className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
                   Print Columns per Row:
                 </label>
                 <select
+                  id="batch-columns-select"
+                  aria-label="Print columns per row"
                   value={batchColumns}
                   onChange={(e) => setBatchColumns(Number(e.target.value))}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
@@ -828,6 +852,8 @@ export default function QRStudioPage() {
               <div className="flex items-end pb-2">
                 <label className="flex items-center gap-2 cursor-pointer text-xs text-zinc-700 dark:text-zinc-300">
                   <input
+                    id="batch-show-text-checkbox"
+                    aria-label="Show Text Under Barcode"
                     type="checkbox"
                     checked={batchShowText}
                     onChange={(e) => setBatchShowText(e.target.checked)}
@@ -841,7 +867,7 @@ export default function QRStudioPage() {
             {/* Textarea for list of items */}
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                <label htmlFor="batch-items-textarea" className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   Enter or Paste Items (One Per Line):
                 </label>
                 <span className="text-xs text-zinc-400 font-mono">
@@ -849,6 +875,8 @@ export default function QRStudioPage() {
                 </span>
               </div>
               <textarea
+                id="batch-items-textarea"
+                aria-label="Enter or Paste Items (One Per Line)"
                 value={batchInput}
                 onChange={(e) => setBatchInput(e.target.value)}
                 rows={4}
@@ -958,6 +986,8 @@ export default function QRStudioPage() {
                     </p>
                   </div>
                   <input
+                    id="qr-scan-file-upload"
+                    aria-label="Upload barcode image to scan"
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
@@ -988,6 +1018,8 @@ export default function QRStudioPage() {
                   <div className="flex items-center justify-between gap-3">
                     {cameras.length > 1 && (
                       <select
+                        id="camera-device-select"
+                        aria-label="Select camera device"
                         value={selectedCameraId}
                         onChange={(e) => {
                           setSelectedCameraId(e.target.value);

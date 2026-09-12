@@ -1,19 +1,17 @@
 # Privatools — Zero-Knowledge Privacy Converters
 
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?style=flat-square&logo=buy-me-a-coffee)](https://buymeacoffee.com/YOUR_USERNAME)
-
 > **100% Client-Side Web Utilities.** Your data, files, certificates, and secrets never leave your browser.
 
-Privatools is a source-available, high-performance suite of utility converters built with **Next.js 15 (Static Export)**, **TypeScript**, and **Tailwind CSS**. All operations execute strictly within the browser's local sandbox (using JavaScript, Canvas APIs, and Web Workers) with **zero network egress**.
+Privatools is a source-available, high-performance suite of utility converters built with **Next.js 15 (Static Export)**, **TypeScript**, and **Tailwind CSS**. All operations execute strictly within the browser's local sandbox (using JavaScript, Canvas APIs, and Web Workers) with **zero data uploads**.
 
 
 ---
 
 ## ⚡ Key Highlights
 
-- 🔒 **Zero Data Egress:** 0 bytes uploaded to any remote server. Everything is parsed, converted, and downloaded locally.
+- 🔒 **Zero Data Uploads:** 0 bytes uploaded to any remote server. Everything is parsed, converted, and downloaded locally.
 - ✈️ **Offline Capable:** Works with Wi-Fi disconnected or in Airplane mode once loaded.
-- ⚡ **Sub-Millisecond Execution:** No upload latency, network queuing, or server timeouts.
+- ⚡ **Fast Local Execution:** No upload latency, network queuing, or server timeouts.
 - 🔍 **Keyboard-First Omnibox:** Press `Cmd + K` or `Ctrl + K` anywhere to jump between tools or search formats instantly.
 - 📦 **Static HTML Export:** Compiles to static files (`out/`) that can be hosted on Cloudflare Pages, Vercel, Netlify, GitHub Pages, or S3 with zero server maintenance.
 
@@ -175,7 +173,7 @@ The resulting `out/` directory contains standard static HTML/CSS/JS ready for de
 
 Love Privatools? Get the **installable offline app** — all 20+ tools on your home screen, no internet required, no ads. One-time purchase, no subscription.
 
-👉 **[Get it on Gumroad](https://YOUR_GUMROAD_USERNAME.gumroad.com/l/privatools-pwa)** — ~£3 / ~$4
+👉 **[Get it on Gumroad](https://privatools.gumroad.com/l/pwa)** — ~£3 / ~$4
 
 ---
 

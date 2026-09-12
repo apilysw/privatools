@@ -1,21 +1,21 @@
 import type { MetadataRoute } from "next";
 import { TOOLS_REGISTRY } from "@/lib/registry";
+import { SITE_URL, getCanonicalUrl } from "@/lib/config";
 
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://privatools.dev";
   const lastModified = new Date();
 
   const routes: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}/`,
+      url: `${SITE_URL}/`,
       lastModified,
       changeFrequency: "daily",
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/privacy-audit/`,
+      url: getCanonicalUrl("/privacy-audit"),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   for (const tool of TOOLS_REGISTRY) {
     routes.push({
-      url: `${baseUrl}${tool.slug}/`,
+      url: getCanonicalUrl(tool.slug),
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,

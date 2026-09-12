@@ -65,7 +65,7 @@ export const SUPPORTED_SYMBOLOGIES: SymbologyInfo[] = [
     name: "QR Code",
     category: "matrix",
     description: "Universal 2D matrix code supporting URLs, Wi-Fi provisioning, vCards, and rack location links.",
-    placeholder: "https://privatools.com/dispatch?route=402",
+    placeholder: "https://privatools.dev/dispatch?route=402",
     is2D: true,
     defaultOptions: { scale: 4, includetext: false },
   },

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0c" />
+      <stop offset="50%" stop-color="#121316" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+    <linearGradient id="emerald-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="accent-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+    </linearGradient>
+    <radialGradient id="radial" cx="50%" cy="0%" r="70%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#radial)" />
+
+  <!-- Grid overlay -->
+  <g stroke="#27272a" stroke-width="1" stroke-opacity="0.3">
+    <line x1="100" y1="0" x2="100" y2="630" />
+    <line x1="300" y1="0" x2="300" y2="630" />
+    <line x1="500" y1="0" x2="500" y2="630" />
+    <line x1="700" y1="0" x2="700" y2="630" />
+    <line x1="900" y1="0" x2="900" y2="630" />
+    <line x1="1100" y1="0" x2="1100" y2="630" />
+    <line x1="0" y1="100" x2="1200" y2="100" />
+    <line x1="0" y1="250" x2="1200" y2="250" />
+    <line x1="0" y1="400" x2="1200" y2="400" />
+    <line x1="0" y1="550" x2="1200" y2="550" />
+  </g>
+
+  <!-- Outer frame border -->
+  <rect x="30" y="30" width="1140" height="570" rx="28" stroke="#27272a" stroke-width="2" fill="none" />
+
+  <!-- Header Badge -->
+  <g transform="translate(100, 95)">
+    <rect width="280" height="42" rx="21" fill="#10b981" fill-opacity="0.12" stroke="#10b981" stroke-opacity="0.3" stroke-width="1.5" />
+    <circle cx="24" cy="21" r="5" fill="#10b981" />
+    <text x="38" y="27" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" letter-spacing="1">ZERO DATA UPLOADS</text>
+  </g>
+
+  <!-- Brand Title & Logo -->
+  <g transform="translate(100, 180)">
+    <!-- Shield Logo Icon -->
+    <rect width="80" height="80" rx="22" fill="url(#emerald-glow)" />
+    <path d="M40 22 L58 30 V45 C58 56 50 64 40 68 C30 64 22 56 22 45 V30 Z" fill="white" />
+    <path d="M37 43 L43 43 C44.5 43 45.5 44 45.5 45.5 V52.5 C45.5 54 44.5 55 43 55 L37 55 C35.5 55 34.5 54 34.5 52.5 V45.5 C34.5 44 35.5 43 37 43 Z" fill="#059669" />
+    <path d="M37 43 V38 C37 36.3 38.3 35 40 35 C41.7 35 43 36.3 43 38 V43" stroke="#059669" stroke-width="2" fill="none" />
+
+    <!-- Name -->
+    <text x="105" y="60" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="64" font-weight="800" letter-spacing="-1">Privatools</text>
+  </g>
+
+  <!-- Subtitle / Tagline -->
+  <text x="100" y="320" fill="#e4e4e7" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="700">100% Client-Side Privacy Utilities</text>
+
+  <!-- Description -->
+  <text x="100" y="370" fill="#a1a1aa" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="400">
+    Process sensitive data, documents, keys, and media directly in your browser's local memory.
+  </text>
+  <text x="100" y="402" fill="#71717a" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="400">
+    Zero server uploads • Zero network tracking • GDPR, HIPAA &amp; SOC 2 friendly.
+  </text>
+
+  <!-- Bottom Badges / Feature Cards -->
+  <g transform="translate(100, 460)">
+    <!-- Card 1 -->
+    <rect x="0" y="0" width="220" height="74" rx="16" fill="#18181b" stroke="#27272a" stroke-width="1.5" />
+    <text x="20" y="32" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">DATA &amp; CONVERTERS</text>
+    <text x="20" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600">JSON • CSV • YAML • XML</text>
+
+    <!-- Card 2 -->
+    <rect x="240" y="0" width="230" height="74" rx="16" fill="#18181b" stroke="#27272a" stroke-width="1.5" />
+    <text x="260" y="32" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">SECURITY &amp; DEV</text>
+    <text x="260" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600">JWT • X.509 • Hashes • Diff</text>
+
+    <!-- Card 3 -->
+    <rect x="490" y="0" width="220" height="74" rx="16" fill="#18181b" stroke="#27272a" stroke-width="1.5" />
+    <text x="510" y="32" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">LOCAL ENGINES</text>
+    <text x="510" y="54" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600">SQLite WASM • Web Crypto</text>
+
+    <!-- Card 4 (Domain) -->
+    <rect x="730" y="0" width="270" height="74" rx="16" fill="#10b981" fill-opacity="0.1" stroke="#10b981" stroke-opacity="0.3" stroke-width="1.5" />
+    <text x="750" y="32" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700">OFFICIAL REPOSITORY</text>
+    <text x="750" y="54" fill="#10b981" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="700">privatools.dev</text>
+  </g>
+</svg>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useSyncExternalStore } from "react";
 import {
   Regex,
   Code2,
@@ -47,6 +47,11 @@ export default function RegexStudioPage() {
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
   const [copiedReplaced, setCopiedReplaced] = useState<boolean>(false);
   const [selectedMatchIndex, setSelectedMatchIndex] = useState<number | null>(null);
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -408,7 +413,9 @@ export default function RegexStudioPage() {
 
                 <div className="flex items-center gap-1 text-xs text-zinc-400 font-mono">
                   <Clock className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>{result.executionTimeMs} ms</span>
+                  <span suppressHydrationWarning>
+                    {isMounted ? `${result.executionTimeMs} ms` : "< 1 ms"}
+                  </span>
                 </div>
               </div>
 

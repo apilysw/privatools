@@ -55,7 +55,8 @@ body {
   line-height: 1.65;
   font-size: 0.9375rem;
 }
-.markdown-preview h1 {
+.markdown-preview h1,
+.markdown-preview .preview-h1 {
   font-size: 1.875rem;
   font-weight: 700;
   border-bottom: 1px solid var(--color-zinc-200, #e4e4e7);
@@ -63,7 +64,8 @@ body {
   margin-top: 1.75rem;
   margin-bottom: 1rem;
 }
-.dark .markdown-preview h1 {
+.dark .markdown-preview h1,
+.dark .markdown-preview .preview-h1 {
   border-color: var(--color-zinc-800, #27272a);
 }
 .markdown-preview h2 {

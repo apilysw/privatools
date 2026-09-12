@@ -1,4 +1,5 @@
-import * as exifr from "exifr";
+// @ts-expect-error - exifr lite ESM bundle
+import exifr from "exifr/dist/lite.esm.mjs";
 
 export interface GpsCoordinates {
   latitude: number;

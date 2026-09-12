@@ -214,7 +214,7 @@ export const TOOLS_CONTENT: Record<string, ToolContent> = {
       {
         question: "Does this tool upload my certificate or public key to any server?",
         answer:
-          "No. ASN.1 decoding and fingerprint calculations happen strictly inside your browser via WebAssembly and Web Crypto.",
+          "No. ASN.1 decoding and fingerprint calculations happen strictly inside your browser via Web Crypto and pure client-side JavaScript.",
       },
       {
         question: "Can this tool read private keys?",
@@ -335,7 +335,7 @@ export const TOOLS_CONTENT: Record<string, ToolContent> = {
     headline: "Private In-Browser PDF Studio: Merge, Split, Rotate, and Reorder",
     overview:
       "Manipulate, reorder, and split PDF documents locally inside your browser. Combine multiple invoices, rotate scanned pages, extract specific page ranges, and organize contracts without uploading confidential PDFs to cloud servers.",
-    techStack: ["pdf-lib WebAssembly Engine", "Local File Streamer", "Interactive Page Grid", "Blob Download Pipeline"],
+    techStack: ["pdf-lib Client-Side Engine", "Local File Streamer", "Interactive Page Grid", "Blob Download Pipeline"],
     howItWorks: [
       "PDF binary streams are ingested into typed Uint8Array buffers directly in memory.",
       "pdf-lib manipulates low-level PDF object trees, page dictionaries, and cross-reference tables locally.",
@@ -364,7 +364,7 @@ export const TOOLS_CONTENT: Record<string, ToolContent> = {
       {
         question: "Are my PDF files uploaded to your servers to perform operations?",
         answer:
-          "No. All PDF operations (merging, splitting, rotating, saving) are performed entirely within your web browser using WebAssembly. Your documents never touch a remote server.",
+          "No. All PDF operations (merging, splitting, rotating, saving) are performed entirely within your web browser using pure client-side JavaScript (pdf-lib). Your documents never touch a remote server.",
       },
       {
         question: "Is there a limit on how many pages or files I can merge?",

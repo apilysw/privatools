@@ -291,6 +291,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertHeading(1)}
             title="Heading 1 (#)"
+            aria-label="Heading 1"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Heading1 className="w-4 h-4" />
@@ -298,6 +299,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertHeading(2)}
             title="Heading 2 (##)"
+            aria-label="Heading 2"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Heading2 className="w-4 h-4" />
@@ -305,6 +307,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertHeading(3)}
             title="Heading 3 (###)"
+            aria-label="Heading 3"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Heading3 className="w-4 h-4" />
@@ -313,6 +316,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("**", "**", "bold text")}
             title="Bold (**text**)"
+            aria-label="Bold"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Bold className="w-4 h-4" />
@@ -320,6 +324,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("*", "*", "italic text")}
             title="Italic (*text*)"
+            aria-label="Italic"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Italic className="w-4 h-4" />
@@ -327,6 +332,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("~~", "~~", "strikethrough text")}
             title="Strikethrough (~~text~~)"
+            aria-label="Strikethrough"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Strikethrough className="w-4 h-4" />
@@ -334,6 +340,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("`", "`", "code")}
             title="Inline Code (`code`)"
+            aria-label="Inline Code"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Code className="w-4 h-4" />
@@ -342,6 +349,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("\n```bash\n", "\n```\n", "echo 'Hello World'")}
             title="Code Block (```)"
+            aria-label="Code Block"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-xs font-mono font-bold"
           >
             {"{ }"}
@@ -349,6 +357,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("\n> ", "\n", "Quote")}
             title="Blockquote (>)"
+            aria-label="Blockquote"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Quote className="w-4 h-4" />
@@ -356,6 +365,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("\n> [!NOTE]\n> ", "\n", "Informative note")}
             title="GitHub Alert Callout (> [!NOTE])"
+            aria-label="GitHub Alert Callout"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Sparkles className="w-4 h-4 text-emerald-500" />
@@ -363,6 +373,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("- ", "", "List item")}
             title="Bulleted List (-)"
+            aria-label="Bulleted List"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <List className="w-4 h-4" />
@@ -370,6 +381,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("1. ", "", "Ordered item")}
             title="Numbered List (1.)"
+            aria-label="Numbered List"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <ListOrdered className="w-4 h-4" />
@@ -377,6 +389,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("- [ ] ", "", "Task item")}
             title="Task Checklist (- [ ])"
+            aria-label="Task Checklist"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <ListTodo className="w-4 h-4" />
@@ -385,6 +398,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("[", "](https://example.com)", "link title")}
             title="Hyperlink ([text](url))"
+            aria-label="Hyperlink"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Link2 className="w-4 h-4" />
@@ -392,6 +406,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("![", "](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe)", "Image Alt")}
             title="Image (![alt](url))"
+            aria-label="Image"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <ImageIcon className="w-4 h-4" />
@@ -403,6 +418,7 @@ export default function MarkdownLabPage() {
               )
             }
             title="Insert Table"
+            aria-label="Insert Table"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <TableIcon className="w-4 h-4" />
@@ -410,6 +426,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => insertText("\n---\n")}
             title="Horizontal Divider (---)"
+            aria-label="Horizontal Divider"
             className="p-1.5 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             <Minus className="w-4 h-4" />
@@ -424,11 +441,13 @@ export default function MarkdownLabPage() {
             type="file"
             accept=".md,.markdown,.txt"
             onChange={handleFileUpload}
+            aria-label="Upload Markdown file"
             className="hidden"
           />
           <button
             onClick={() => fileInputRef.current?.click()}
             title="Open local .md file"
+            aria-label="Open local .md file"
             className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-xs font-medium transition-colors"
           >
             <Upload className="w-3.5 h-3.5" />
@@ -439,6 +458,7 @@ export default function MarkdownLabPage() {
           <button
             onClick={() => setSyncScroll(!syncScroll)}
             title={syncScroll ? "Synchronized scrolling enabled" : "Synchronized scrolling disabled"}
+            aria-label={syncScroll ? "Synchronized scrolling enabled" : "Synchronized scrolling disabled"}
             className={`px-2.5 py-1.5 rounded-xl border text-xs font-medium transition-colors hidden md:inline-flex items-center gap-1 ${
               syncScroll
                 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
@@ -453,6 +473,7 @@ export default function MarkdownLabPage() {
           <div className="inline-flex p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800">
             <button
               onClick={() => setViewMode("split")}
+              aria-label="Split view"
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 ${
                 viewMode === "split"
                   ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs"
@@ -464,6 +485,7 @@ export default function MarkdownLabPage() {
             </button>
             <button
               onClick={() => setViewMode("editor")}
+              aria-label="Editor only view"
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 ${
                 viewMode === "editor"
                   ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs"
@@ -475,6 +497,7 @@ export default function MarkdownLabPage() {
             </button>
             <button
               onClick={() => setViewMode("preview")}
+              aria-label="Preview only view"
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 ${
                 viewMode === "preview"
                   ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs"
@@ -531,6 +554,8 @@ export default function MarkdownLabPage() {
             </div>
 
             <textarea
+              id="markdown-editor-input"
+              aria-label="Markdown editor source input"
               ref={textareaRef}
               value={markdown}
               onChange={(e) => {
@@ -684,7 +709,7 @@ export default function MarkdownLabPage() {
                   {markdown.trim() ? (
                     <div
                       className="markdown-preview text-zinc-900 dark:text-zinc-100"
-                      dangerouslySetInnerHTML={{ __html: parseResult.html }}
+                      dangerouslySetInnerHTML={{ __html: parseResult.previewHtml }}
                     />
                   ) : (
                     <div className="h-full flex flex-col items-center justify-center text-center p-8 text-zinc-400">
@@ -706,6 +731,8 @@ export default function MarkdownLabPage() {
                     <span>{parseResult.html.length.toLocaleString()} characters</span>
                   </div>
                   <textarea
+                    id="raw-html-output"
+                    aria-label="Sanitized HTML markup"
                     readOnly
                     value={parseResult.html}
                     className="flex-1 w-full p-4 font-mono text-xs text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200 dark:border-zinc-700/60 resize-none focus:outline-none"
@@ -808,7 +835,7 @@ export default function MarkdownLabPage() {
                 <div className="p-6 space-y-6">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                      <label htmlFor="csv-table-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                         CSV / TSV / Excel Clipboard Input
                       </label>
                       <div className="flex items-center gap-2 text-xs">
@@ -817,6 +844,7 @@ export default function MarkdownLabPage() {
                           <button
                             key={align}
                             onClick={() => setTableAlign(align)}
+                            aria-label={`Align table ${align}`}
                             className={`px-2 py-0.5 rounded capitalize text-[11px] font-medium border ${
                               tableAlign === align
                                 ? "bg-emerald-500 text-white border-emerald-500 font-semibold"
@@ -829,6 +857,8 @@ export default function MarkdownLabPage() {
                       </div>
                     </div>
                     <textarea
+                      id="csv-table-input"
+                      aria-label="CSV / TSV / Excel Clipboard Input"
                       rows={5}
                       value={csvInput}
                       onChange={(e) => setCsvInput(e.target.value)}
@@ -908,10 +938,12 @@ export default function MarkdownLabPage() {
               {activeTab === "htmlToMd" && (
                 <div className="p-6 space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                    <label htmlFor="html-to-markdown-input" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
                       HTML / Rich Text Input
                     </label>
                     <textarea
+                      id="html-to-markdown-input"
+                      aria-label="HTML / Rich Text Input"
                       rows={6}
                       value={htmlInput}
                       onChange={(e) => setHtmlInput(e.target.value)}
@@ -1041,7 +1073,7 @@ export default function MarkdownLabPage() {
 
       {/* Clean Printable View for @media print */}
       <div className="hidden print:block markdown-preview text-black">
-        <div dangerouslySetInnerHTML={{ __html: parseResult.html }} />
+        <div dangerouslySetInnerHTML={{ __html: parseResult.previewHtml }} />
       </div>
     </div>
   );

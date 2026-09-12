@@ -267,6 +267,8 @@ export default function ColorStudioPage() {
                 style={{ backgroundColor: formats.rgbaStr }}
               />
               <input
+                id="native-color-picker"
+                aria-label="Master Color Picker"
                 type="color"
                 value={formats.hex}
                 onChange={(e) => handleSetHex(e.target.value)}
@@ -284,6 +286,7 @@ export default function ColorStudioPage() {
                   onClick={() => copyToClipboard(formats.hex, "master-hex")}
                   className="p-1 rounded-md text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   title="Copy HEX"
+                  aria-label="Copy HEX"
                 >
                   {copiedFormat === "master-hex" ? (
                     <Check className="w-4 h-4 text-emerald-500" />
@@ -296,6 +299,7 @@ export default function ColorStudioPage() {
                     onClick={handlePickEyeDropper}
                     className="p-1 rounded-md text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
                     title="Sample pixel from screen (EyeDropper API)"
+                    aria-label="Sample pixel from screen (EyeDropper API)"
                   >
                     <Pipette className="w-4 h-4" />
                   </button>
@@ -315,10 +319,12 @@ export default function ColorStudioPage() {
           <div className="w-full sm:w-72 space-y-2">
             <div className="space-y-1">
               <div className="flex justify-between text-[11px] text-zinc-500">
-                <span>Alpha Transparency:</span>
+                <label htmlFor="alpha-transparency-slider">Alpha Transparency:</label>
                 <span className="font-mono">{alphaPercent}%</span>
               </div>
               <input
+                id="alpha-transparency-slider"
+                aria-label="Alpha Transparency"
                 type="range"
                 min="0"
                 max="100"
@@ -328,7 +334,10 @@ export default function ColorStudioPage() {
               />
             </div>
             <div className="flex items-center gap-2">
+              <label htmlFor="color-hex-input" className="sr-only">Color hex or rgb input</label>
               <input
+                id="color-hex-input"
+                aria-label="Color input (hex or rgb)"
                 type="text"
                 value={hexInput}
                 onChange={(e) => handleSetHex(e.target.value)}
@@ -430,10 +439,12 @@ export default function ColorStudioPage() {
             {/* Red Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-red-500 font-semibold">Red (R):</span>
+                <label htmlFor="slider-red" className="text-red-500 font-semibold">Red (R):</label>
                 <span>{currentRgb.r}</span>
               </div>
               <input
+                id="slider-red"
+                aria-label="Red (R)"
                 type="range"
                 min="0"
                 max="255"
@@ -446,10 +457,12 @@ export default function ColorStudioPage() {
             {/* Green Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-emerald-500 font-semibold">Green (G):</span>
+                <label htmlFor="slider-green" className="text-emerald-500 font-semibold">Green (G):</label>
                 <span>{currentRgb.g}</span>
               </div>
               <input
+                id="slider-green"
+                aria-label="Green (G)"
                 type="range"
                 min="0"
                 max="255"
@@ -462,10 +475,12 @@ export default function ColorStudioPage() {
             {/* Blue Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs font-mono">
-                <span className="text-blue-500 font-semibold">Blue (B):</span>
+                <label htmlFor="slider-blue" className="text-blue-500 font-semibold">Blue (B):</label>
                 <span>{currentRgb.b}</span>
               </div>
               <input
+                id="slider-blue"
+                aria-label="Blue (B)"
                 type="range"
                 min="0"
                 max="255"
@@ -483,10 +498,12 @@ export default function ColorStudioPage() {
 
               <div className="space-y-1">
                 <div className="flex justify-between text-xs font-mono text-zinc-500">
-                  <span>Hue:</span>
+                  <label htmlFor="slider-hue">Hue:</label>
                   <span>{formats.hsl.h}°</span>
                 </div>
                 <input
+                  id="slider-hue"
+                  aria-label="Hue"
                   type="range"
                   min="0"
                   max="360"
@@ -507,10 +524,12 @@ export default function ColorStudioPage() {
 
               <div className="space-y-1">
                 <div className="flex justify-between text-xs font-mono text-zinc-500">
-                  <span>Saturation:</span>
+                  <label htmlFor="slider-saturation">Saturation:</label>
                   <span>{formats.hsl.s}%</span>
                 </div>
                 <input
+                  id="slider-saturation"
+                  aria-label="Saturation"
                   type="range"
                   min="0"
                   max="100"
@@ -527,10 +546,12 @@ export default function ColorStudioPage() {
 
               <div className="space-y-1">
                 <div className="flex justify-between text-xs font-mono text-zinc-500">
-                  <span>Lightness:</span>
+                  <label htmlFor="slider-lightness">Lightness:</label>
                   <span>{formats.hsl.l}%</span>
                 </div>
                 <input
+                  id="slider-lightness"
+                  aria-label="Lightness"
                   type="range"
                   min="0"
                   max="100"
@@ -614,6 +635,8 @@ export default function ColorStudioPage() {
                   style={{ backgroundColor: contrastFgHex }}
                 >
                   <input
+                    id="contrast-fg-color-picker"
+                    aria-label="Foreground color picker"
                     type="color"
                     value={contrastFgHex}
                     onChange={(e) => setContrastFgHex(e.target.value)}
@@ -621,10 +644,12 @@ export default function ColorStudioPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block">
+                  <label htmlFor="contrast-fg-hex-input" className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block">
                     Foreground (Text)
                   </label>
                   <input
+                    id="contrast-fg-hex-input"
+                    aria-label="Foreground color hex code"
                     type="text"
                     value={contrastFgHex}
                     onChange={(e) => setContrastFgHex(e.target.value)}
@@ -642,6 +667,7 @@ export default function ColorStudioPage() {
                 }}
                 className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors shrink-0"
                 title="Swap foreground and background"
+                aria-label="Swap foreground and background"
               >
                 <ArrowRightLeft className="w-4 h-4" />
               </button>
@@ -653,6 +679,8 @@ export default function ColorStudioPage() {
                   style={{ backgroundColor: contrastBgHex }}
                 >
                   <input
+                    id="contrast-bg-color-picker"
+                    aria-label="Background color picker"
                     type="color"
                     value={contrastBgHex}
                     onChange={(e) => setContrastBgHex(e.target.value)}
@@ -660,10 +688,12 @@ export default function ColorStudioPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block">
+                  <label htmlFor="contrast-bg-hex-input" className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block">
                     Background
                   </label>
                   <input
+                    id="contrast-bg-hex-input"
+                    aria-label="Background color hex code"
                     type="text"
                     value={contrastBgHex}
                     onChange={(e) => setContrastBgHex(e.target.value)}
@@ -1125,8 +1155,10 @@ export default function ColorStudioPage() {
 
               {/* Brand Name Input */}
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-500">Token Prefix:</span>
+                <label htmlFor="shade-token-prefix" className="text-xs text-zinc-500">Token Prefix:</label>
                 <input
+                  id="shade-token-prefix"
+                  aria-label="Token Prefix"
                   type="text"
                   value={shadeBrandName}
                   onChange={(e) => setShadeBrandName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
@@ -1310,9 +1342,11 @@ export default function ColorStudioPage() {
 
                 {/* Interactive Mockup Form Input */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium opacity-80">API Gateway Endpoint</label>
+                  <label htmlFor="mockup-api-endpoint" className="text-xs font-medium opacity-80">API Gateway Endpoint</label>
                   <div className="relative">
                     <input
+                      id="mockup-api-endpoint"
+                      aria-label="API Gateway Endpoint"
                       type="text"
                       readOnly
                       value="https://api.privatools.local/v1/vault"
