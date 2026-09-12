@@ -41,32 +41,7 @@ import {
 } from "lucide-react";
 import { TOOL_CATEGORIES, searchTools, ToolMetadata } from "@/lib/registry";
 import { useToolPreferences, orderToolsByCustomOrder } from "@/lib/useToolPreferences";
-
-// Conditionally import PWA context & buy link — falls back safely when
-// src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
-let usePwa: () => {
-  isLicensed: boolean;
-  isInstalled: boolean;
-  installApp: () => Promise<void>;
-  showLicenseGate: () => void;
-};
-let GUMROAD_BUY_URL = "https://privatools.gumroad.com/l/pwa";
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pwa = require("@/components/pwa/PwaManager");
-  usePwa = pwa.usePwa;
-  if (pwa.GUMROAD_BUY_URL) {
-    GUMROAD_BUY_URL = pwa.GUMROAD_BUY_URL;
-  }
-} catch {
-  usePwa = () => ({
-    isLicensed: false,
-    isInstalled: false,
-    installApp: async () => {},
-    showLicenseGate: () => {},
-  });
-}
+import { usePwa, GUMROAD_BUY_URL } from "@/components/pwa/PwaManager";
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,
@@ -112,7 +87,8 @@ export default function HomePage() {
   const [isBannerDismissed, setIsBannerDismissed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     try {
-      return localStorage.getItem("privatools_pwa_banner_dismissed") === "true";
+      localStorage.removeItem("privatools_pwa_banner_dismissed");
+      return sessionStorage.getItem("privatools_pwa_banner_dismissed") === "true";
     } catch {
       return false;
     }
@@ -121,7 +97,7 @@ export default function HomePage() {
   const handleDismissBanner = () => {
     setIsBannerDismissed(true);
     try {
-      localStorage.setItem("privatools_pwa_banner_dismissed", "true");
+      sessionStorage.setItem("privatools_pwa_banner_dismissed", "true");
     } catch {
       // ignore
     }

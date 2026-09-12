@@ -5,18 +5,7 @@ import Link from "next/link";
 import { Shield, Search } from "lucide-react";
 import { PrivacyBadge } from "../shared/PrivacyBadge";
 import { GithubIcon } from "../shared/GithubIcon";
-
-// Conditionally import PWA install button — falls back to null when
-// src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
-let PwaInstallButton: React.ComponentType<{ className?: string }>;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pwa = require("@/components/pwa/PwaManager");
-  PwaInstallButton = pwa.PwaInstallButton;
-} catch {
-  function PwaInstallButtonFallback() { return null; }
-  PwaInstallButton = PwaInstallButtonFallback;
-}
+import { PwaInstallButton } from "@/components/pwa/PwaManager";
 
 interface NavbarProps {
   onOpenCommandPalette?: () => void;

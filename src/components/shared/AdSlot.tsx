@@ -16,17 +16,9 @@ import React from "react";
  * @see https://www.ethicalads.io/publishers/
  */
 
-const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED === "true";
+import { usePwa } from "@/components/pwa/PwaManager";
 
-// Conditionally import usePwa to check license status
-let usePwa: () => { isLicensed: boolean };
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pwa = require("@/components/pwa/PwaManager");
-  usePwa = pwa.usePwa;
-} catch {
-  usePwa = () => ({ isLicensed: false });
-}
+const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED === "true";
 
 export function AdSlot({ className = "" }: { className?: string }) {
   const { isLicensed } = usePwa();

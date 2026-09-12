@@ -4,21 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Lock, Cpu, Globe, WifiOff } from "lucide-react";
 import { GithubIcon } from "../shared/GithubIcon";
-
-// Conditionally import PWA components — falls back to stubs when
-// src/components/pwa/ is absent (e.g. public GitHub clone without PWA code).
-let PwaInstallButton: React.ComponentType<{ className?: string }>;
-let usePwa: () => { isOnline: boolean; canInstall: boolean; isInstalled: boolean; isLicensed: boolean; installApp: () => Promise<void> };
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pwa = require("@/components/pwa/PwaManager");
-  PwaInstallButton = pwa.PwaInstallButton;
-  usePwa = pwa.usePwa;
-} catch {
-  function PwaInstallButtonFallback() { return null; }
-  PwaInstallButton = PwaInstallButtonFallback;
-  usePwa = () => ({ isOnline: true, canInstall: false, isInstalled: false, isLicensed: false, installApp: async () => {} });
-}
+import { usePwa, PwaInstallButton } from "@/components/pwa/PwaManager";
 
 export function Footer() {
   const { isOnline } = usePwa();
@@ -32,14 +18,14 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-emerald-500" />
               <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                Zero-Knowledge Privacy Guarantee
+                Zero-Knowledge Privacy Guarantee & Offline PWA
               </span>
               <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                Zero Egress
+                Zero Uploads
               </span>
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-              Privatools executes all file transformations, cryptographic algorithms, media transcoders, and decoders strictly in local browser memory using WebAssembly, Web Crypto, and Web Workers. Your data never touches a remote server.
+              Privatools processes files and data strictly in local browser memory with 0 bytes uploaded to remote servers. Install the standalone desktop or mobile PWA to run all 20+ utilities anywhere with zero internet connection.
             </p>
           </div>
 
@@ -64,6 +50,14 @@ export function Footer() {
                 </>
               )}
             </div>
+
+            <Link
+              href="/privacy-audit"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Verify Audit Proof</span>
+            </Link>
 
             {/* PWA Install Trigger */}
             <PwaInstallButton />
