@@ -30,10 +30,29 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            {/* Online / Offline status badge */}
+          {/* Action & Status Buttons: 2x2 Grid aligned right */}
+          <div className="grid grid-cols-2 gap-2.5 shrink-0 w-full sm:w-auto self-stretch sm:self-auto">
+            {/* Row 1, Col 1: About & Mission */}
+            <Link
+              href="/about"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs whitespace-nowrap w-full"
+            >
+              <Cpu className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>About & Mission</span>
+            </Link>
+
+            {/* Row 1, Col 2: Verify Audit Proof */}
+            <Link
+              href="/privacy-audit"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs whitespace-nowrap w-full"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Verify Audit Proof</span>
+            </Link>
+
+            {/* Row 2, Col 1: Online & Ready */}
             <div
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
+              className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap w-full ${
                 isOnline
                   ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400"
                   : "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
@@ -41,35 +60,19 @@ export function Footer() {
             >
               {isOnline ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                   <span>Online & Ready</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="w-3.5 h-3.5 text-amber-500" />
+                  <WifiOff className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                   <span>Offline Mode Active</span>
                 </>
               )}
             </div>
 
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
-            >
-              <Cpu className="w-3.5 h-3.5 text-emerald-500" />
-              <span>About & Mission</span>
-            </Link>
-
-            <Link
-              href="/privacy-audit"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Verify Audit Proof</span>
-            </Link>
-
-            {/* PWA Install Trigger */}
-            <PwaInstallButton />
+            {/* Row 2, Col 2: Install App */}
+            <PwaInstallButton className="w-full" />
           </div>
         </div>
 
