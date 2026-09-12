@@ -75,6 +75,7 @@ export default function TextConverterPage() {
   return (
     <div className="space-y-6">
       <ToolHeader
+        toolId="text-converter"
         title="Text & Encoding Studio"
         description="Encode, decode, escape, and transform strings client-side. Zero server requests."
         badge="Zero Egress"

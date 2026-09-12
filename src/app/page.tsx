@@ -28,8 +28,15 @@ import {
   Video,
   Palette,
   Dices,
+  Star,
+  SlidersHorizontal,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
+  RotateCcw,
 } from "lucide-react";
-import { TOOL_CATEGORIES, searchTools } from "@/lib/registry";
+import { TOOL_CATEGORIES, searchTools, ToolMetadata } from "@/lib/registry";
+import { useToolPreferences, orderToolsByCustomOrder } from "@/lib/useToolPreferences";
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,
@@ -56,11 +63,263 @@ const iconMap: Record<string, React.ElementType> = {
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isReorderMode, setIsReorderMode] = useState<boolean>(false);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
-  const filteredTools = useMemo(
-    () => searchTools(searchQuery, selectedCategory),
-    [searchQuery, selectedCategory]
-  );
+  const {
+    isLoaded,
+    pinnedIds,
+    customOrder,
+    isPinned,
+    togglePin,
+    moveTool,
+    reorderTools,
+    resetToDefault,
+  } = useToolPreferences();
+
+  // Dynamically include Pinned filter if user has pinned tools
+  const categories = useMemo(() => {
+    if (isLoaded && pinnedIds.length > 0) {
+      return ["All", "★ Pinned", ...TOOL_CATEGORIES.filter((c) => c !== "All")];
+    }
+    return TOOL_CATEGORIES;
+  }, [isLoaded, pinnedIds.length]);
+
+  // Order tools based on custom sequence
+  const orderedTools = useMemo(() => {
+    if (!isLoaded) {
+      return searchTools(searchQuery, selectedCategory === "★ Pinned" ? "All" : selectedCategory);
+    }
+
+    if (selectedCategory === "★ Pinned") {
+      let list = orderToolsByCustomOrder(
+        searchTools("", "All").filter((t) => pinnedIds.includes(t.id)),
+        customOrder
+      );
+      if (searchQuery.trim()) {
+        const matching = searchTools(searchQuery, "All");
+        const matchingIds = new Set(matching.map((m) => m.id));
+        list = list.filter((t) => matchingIds.has(t.id));
+      }
+      return list;
+    }
+
+    const searched = searchTools(searchQuery, selectedCategory);
+    return orderToolsByCustomOrder(searched, customOrder);
+  }, [isLoaded, searchQuery, selectedCategory, pinnedIds, customOrder]);
+
+  // Pinned favorites quick list for display on All tab
+  const pinnedFavorites = useMemo(() => {
+    if (!isLoaded || pinnedIds.length === 0) return [];
+    return orderToolsByCustomOrder(
+      searchTools("", "All").filter((t) => pinnedIds.includes(t.id)),
+      customOrder
+    );
+  }, [isLoaded, pinnedIds, customOrder]);
+
+  // Drag and Drop handlers
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    e.dataTransfer.setData("text/plain", id);
+    e.dataTransfer.effectAllowed = "move";
+    setDraggedId(id);
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverId !== id) {
+      setDragOverId(id);
+    }
+  };
+
+  const handleDrop = (targetId: string) => {
+    if (!draggedId || draggedId === targetId) {
+      setDraggedId(null);
+      setDragOverId(null);
+      return;
+    }
+
+    const list = [...customOrder];
+    const fromIdx = list.indexOf(draggedId);
+    const toIdx = list.indexOf(targetId);
+
+    if (fromIdx !== -1 && toIdx !== -1) {
+      const [moved] = list.splice(fromIdx, 1);
+      list.splice(toIdx, 0, moved);
+      reorderTools(list);
+    }
+
+    setDraggedId(null);
+    setDragOverId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedId(null);
+    setDragOverId(null);
+  };
+
+  const renderToolCard = (tool: ToolMetadata, index: number, isPinnedQuickList = false) => {
+    const Icon = iconMap[tool.icon] || FileSpreadsheet;
+    const isReady = tool.status === "ready";
+    const pinned = isPinned(tool.id);
+    const isDragOver = dragOverId === tool.id && draggedId !== tool.id;
+
+    const CardInner = (
+      <div
+        draggable={isReorderMode && !isPinnedQuickList}
+        onDragStart={(e) => handleDragStart(e, tool.id)}
+        onDragOver={(e) => handleDragOver(e, tool.id)}
+        onDrop={(e) => {
+          e.preventDefault();
+          handleDrop(tool.id);
+        }}
+        onDragEnd={handleDragEnd}
+        className={`group relative h-full flex flex-col justify-between p-6 rounded-2xl border transition-all duration-200 ${
+          isDragOver
+            ? "border-emerald-500 ring-2 ring-emerald-500/50 scale-[1.02] bg-emerald-500/5"
+            : isReady
+            ? "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-0.5 cursor-pointer"
+            : "border-dashed border-zinc-300 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/20 opacity-80"
+        }`}
+      >
+        <div>
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              {isReorderMode && !isPinnedQuickList && (
+                <div
+                  className="cursor-grab active:cursor-grabbing p-1 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 bg-zinc-100 dark:bg-zinc-800"
+                  title="Drag to reorder"
+                >
+                  <GripVertical className="w-4 h-4" />
+                </div>
+              )}
+              <div
+                className={`p-2.5 rounded-xl ${
+                  isReady
+                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 group-hover:bg-emerald-500 group-hover:text-white transition-colors"
+                    : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              {/* Reorder Up/Down arrows in reorder mode */}
+              {isReorderMode && !isPinnedQuickList && (
+                <div className="flex items-center gap-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg p-0.5 border border-zinc-200 dark:border-zinc-700">
+                  <button
+                    type="button"
+                    disabled={index === 0}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      moveTool(tool.id, "up");
+                    }}
+                    className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 disabled:opacity-25 text-zinc-600 dark:text-zinc-300 transition-colors"
+                    title="Move up / earlier"
+                    aria-label="Move earlier"
+                  >
+                    <ChevronUp className="w-3 h-3" />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={index === orderedTools.length - 1}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      moveTool(tool.id, "down");
+                    }}
+                    className="p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 disabled:opacity-25 text-zinc-600 dark:text-zinc-300 transition-colors"
+                    title="Move down / later"
+                    aria-label="Move later"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+
+              {/* Pin / Favorite Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  togglePin(tool.id);
+                }}
+                className={`p-1.5 rounded-xl transition-all ${
+                  pinned
+                    ? "text-amber-500 bg-amber-500/10 dark:bg-amber-500/20 hover:bg-amber-500/20"
+                    : "text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 opacity-60 group-hover:opacity-100"
+                }`}
+                title={pinned ? "Remove from Pinned Favorites" : "Pin to Favorites"}
+                aria-label={pinned ? "Remove from Pinned Favorites" : "Pin to Favorites"}
+              >
+                <Star className={`w-4 h-4 ${pinned ? "fill-amber-500" : ""}`} />
+              </button>
+
+              {tool.badge && (
+                <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  {tool.badge}
+                </span>
+              )}
+              {!isReady && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-500">
+                  In Development
+                </span>
+              )}
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">
+            {tool.name}
+          </h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 line-clamp-2 leading-relaxed">
+            {tool.shortDesc}
+          </p>
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+          <div className="flex flex-wrap gap-1">
+            {tool.supportedFormats.slice(0, 4).map((fmt) => (
+              <span
+                key={fmt}
+                className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+              >
+                {fmt}
+              </span>
+            ))}
+            {tool.supportedFormats.length > 4 && (
+              <span className="text-[10px] font-mono text-zinc-400 px-1">
+                +{tool.supportedFormats.length - 4}
+              </span>
+            )}
+          </div>
+
+          {isReady && !isReorderMode && (
+            <div className="inline-flex items-center gap-1 text-xs font-medium text-emerald-500 group-hover:translate-x-0.5 transition-transform">
+              <span>Launch</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+
+    // Disable navigation click during reorder mode so users can interact with cards safely
+    if (isReorderMode) {
+      return <div key={tool.id}>{CardInner}</div>;
+    }
+
+    return isReady ? (
+      <Link key={tool.id} href={tool.slug}>
+        {CardInner}
+      </Link>
+    ) : (
+      <div key={tool.id}>{CardInner}</div>
+    );
+  };
 
   return (
     <div className="space-y-16">
@@ -116,7 +375,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Category Tabs */}
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 overflow-x-auto w-full md:w-auto">
-            {TOOL_CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -131,102 +390,125 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Quick Search */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Filter by format or keyword..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-            />
+          {/* Quick Search & Reorder Action */}
+          <div className="flex items-center gap-2.5 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Filter by format or keyword..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsReorderMode((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all border whitespace-nowrap ${
+                isReorderMode
+                  ? "bg-emerald-500 text-white border-emerald-500 shadow-sm"
+                  : "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/50"
+              }`}
+              title={isReorderMode ? "Done reordering tools" : "Customize order of tools"}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>{isReorderMode ? "Done" : "Customise"}</span>
+            </button>
           </div>
         </div>
 
+        {/* Reorder Mode Helper Banner */}
+        {isReorderMode && (
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 text-emerald-800 dark:text-emerald-300 font-medium">
+              <GripVertical className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>
+                Drag cards or use arrow buttons to arrange your tools. Reordering is saved to local storage.
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={resetToDefault}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset Default</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsReorderMode(false)}
+                className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors"
+              >
+                Done Reordering
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Pinned Favorites Section (Displayed on All tab when no search query and not in reorder mode) */}
+        {!isReorderMode &&
+          selectedCategory === "All" &&
+          !searchQuery.trim() &&
+          pinnedFavorites.length > 0 && (
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                    Pinned Favorites ({pinnedFavorites.length})
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory("★ Pinned")}
+                  className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+                >
+                  View only favorites
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {pinnedFavorites.map((tool, idx) => renderToolCard(tool, idx, true))}
+              </div>
+
+              <div className="pt-6 border-b border-zinc-200 dark:border-zinc-800"></div>
+            </div>
+          )}
+
+        {/* Section Header for Main Grid */}
+        {!isReorderMode &&
+          selectedCategory === "All" &&
+          !searchQuery.trim() &&
+          pinnedFavorites.length > 0 && (
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                All Utilities ({orderedTools.length})
+              </h2>
+            </div>
+          )}
+
         {/* Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredTools.map((tool) => {
-            const Icon = iconMap[tool.icon] || FileSpreadsheet;
-            const isReady = tool.status === "ready";
-
-            const CardContent = (
-              <div
-                className={`group relative h-full flex flex-col justify-between p-6 rounded-2xl border transition-all duration-200 ${
-                  isReady
-                    ? "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-0.5 cursor-pointer"
-                    : "border-dashed border-zinc-300 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/20 opacity-80"
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <div
-                      className={`p-2.5 rounded-xl ${
-                        isReady
-                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 group-hover:bg-emerald-500 group-hover:text-white transition-colors"
-                          : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {tool.badge && (
-                        <span className="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                          {tool.badge}
-                        </span>
-                      )}
-                      {!isReady && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-500">
-                          In Development
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <h3 className="font-semibold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">
-                    {tool.name}
-                  </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 line-clamp-2 leading-relaxed">
-                    {tool.shortDesc}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
-                  <div className="flex flex-wrap gap-1">
-                    {tool.supportedFormats.slice(0, 4).map((fmt) => (
-                      <span
-                        key={fmt}
-                        className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
-                      >
-                        {fmt}
-                      </span>
-                    ))}
-                    {tool.supportedFormats.length > 4 && (
-                      <span className="text-[10px] font-mono text-zinc-400 px-1">
-                        +{tool.supportedFormats.length - 4}
-                      </span>
-                    )}
-                  </div>
-
-                  {isReady && (
-                    <div className="inline-flex items-center gap-1 text-xs font-medium text-emerald-500 group-hover:translate-x-0.5 transition-transform">
-                      <span>Launch</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-
-            return isReady ? (
-              <Link key={tool.id} href={tool.slug}>
-                {CardContent}
-              </Link>
-            ) : (
-              <div key={tool.id}>{CardContent}</div>
-            );
-          })}
+          {orderedTools.length === 0 ? (
+            <div className="col-span-full text-center py-12 space-y-3 bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+              <Star className="w-8 h-8 text-zinc-400 mx-auto" />
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                {selectedCategory === "★ Pinned"
+                  ? "No pinned favorites yet"
+                  : "No tools found matching your search"}
+              </p>
+              <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+                {selectedCategory === "★ Pinned"
+                  ? "Click the star icon on any tool card to add it to your pinned favorites."
+                  : "Try searching with different keywords, format names (e.g. json, csv, mp3), or clear the search input."}
+              </p>
+            </div>
+          ) : (
+            orderedTools.map((tool, idx) => renderToolCard(tool, idx))
+          )}
         </div>
       </section>
 

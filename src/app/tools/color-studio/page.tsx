@@ -213,6 +213,7 @@ export default function ColorStudioPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="color-studio"
           title="CSS & Modern Color Palette Studio"
           description="Zero-egress client-side color studio. Bi-directional HEX, RGB, HSL, OKLCH, and HWB conversions, WCAG 2.1 & APCA contrast checker with intelligent auto-fixer, 8-profile color blindness simulator, interactive color wheel harmonies, and Tailwind 11-step design token generator."
           badge="Zero Egress"

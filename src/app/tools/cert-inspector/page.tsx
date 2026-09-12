@@ -118,6 +118,7 @@ export default function CertificateInspectorPage() {
   return (
     <div className="space-y-8">
       <ToolHeader
+        toolId="cert-inspector"
         title="X.509 Certificate Inspector & Exporter"
         description="Inspect, validate, and convert SSL/TLS certificates client-side. Convert between PEM, binary DER, Public Key SPKI, and JSON with zero data egress."
         badge="Zero Egress"

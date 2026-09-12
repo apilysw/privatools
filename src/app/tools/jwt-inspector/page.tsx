@@ -176,6 +176,7 @@ export default function JwtInspectorPage() {
   return (
     <div className="space-y-8">
       <ToolHeader
+        toolId="jwt-inspector"
         title="JWT & OAuth Token Debugger"
         description="Decode, inspect, verify Web Crypto signatures, and test tokens client-side. Zero server transmission guaranteed."
         badge="Zero Egress"

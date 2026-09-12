@@ -134,6 +134,7 @@ export default function DiffViewerPage() {
     <div className="space-y-6">
       {/* Header */}
       <ToolHeader
+        toolId="diff-viewer"
         title="Code & Text Diff / Patch Studio"
         description="Compare code, configuration files, and text documents side-by-side or inline with word-level highlight differences. 100% zero data egress."
         badge="Zero Egress"

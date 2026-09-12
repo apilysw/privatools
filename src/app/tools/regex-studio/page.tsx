@@ -164,6 +164,7 @@ export default function RegexStudioPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="regex-studio"
           title="Client-Side Regex Workbench & Tester"
           description="Build, test, and debug regular expressions with real-time match highlighting, group extraction, substitution preview, and code generators. 100% in-browser zero egress."
           badge="Zero Egress"

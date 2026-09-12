@@ -231,6 +231,7 @@ export default function HashStudioPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <ToolHeader
+          toolId="hash-studio"
           title="Cryptographic Checksum & File Hash Studio"
           description="Compute and verify SHA-256, SHA-512, MD5, CRC32, HMACs, and PBKDF2 keys directly in your browser. 100% zero data egress."
           badge="Zero Egress"

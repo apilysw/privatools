@@ -275,6 +275,7 @@ ORDER BY total_spent DESC;`
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <ToolHeader
+          toolId="sqlite-lab"
           title="SQLite Database Explorer & Exporter"
           description="Inspect schemas, run arbitrary SQL queries, browse data grids, and export tables to CSV or JSON using in-browser WebAssembly. Zero bytes leave your device."
           badge="Zero Egress"

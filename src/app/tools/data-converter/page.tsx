@@ -117,6 +117,7 @@ export default function DataConverterPage() {
   return (
     <div className="space-y-6">
       <ToolHeader
+        toolId="data-converter"
         title="Structured Data Converter"
         description="Convert seamlessly between JSON, YAML, CSV, and XML with instant validation and zero data uploads."
         badge="Bi-directional"

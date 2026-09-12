@@ -245,6 +245,7 @@ export default function MarkdownLabPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="markdown-lab"
           title="Client-Side Markdown & Technical Documentation Studio"
           description="Author, preview, and format Markdown and technical documents client-side. Inspect YAML frontmatter, convert CSV tables, compile to standalone HTML/PDF, and analyze readability metrics with zero data egress."
           badge="Zero Egress"

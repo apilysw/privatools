@@ -427,6 +427,7 @@ export default function DateTimeCalculatorPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="date-time-calculator"
           title="Date, Time, Epoch & Cron Precision Studio"
           description="High-precision Unix epoch timestamp converter (s/ms/µs/ns), working days date math, 24-hour visual timezone meeting planner, and Cron expression explainer with next 10 runs calculation."
           badge="Zero Egress"

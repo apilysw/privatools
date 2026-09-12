@@ -714,6 +714,7 @@ export default function VideoLabPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="video-lab"
           title="Video & Audio Transcoder Studio"
           description="Zero-egress client-side media lab. Lossless MP4 audio stripper, video-to-WAV/MP3/FLAC audio extractor with waveform visualizer, audio format converter, resolution & bitrate transcoder, animated GIF generator, and visual timeline trimmer."
           badge="Zero Egress"

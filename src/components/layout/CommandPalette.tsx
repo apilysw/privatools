@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X, ArrowRight, FileSpreadsheet, Image, Binary, ShieldCheck, Code2, Key, FileText, Hash, Database, GitCompare, QrCode, Regex, BookOpen, Camera, Network, Clock, Video, Palette, Dices } from "lucide-react";
+import { Search, X, ArrowRight, FileSpreadsheet, Image, Binary, ShieldCheck, Code2, Key, FileText, Hash, Database, GitCompare, QrCode, Regex, BookOpen, Camera, Network, Clock, Video, Palette, Dices, Star } from "lucide-react";
 import { ToolMetadata, searchTools } from "@/lib/registry";
+import { useToolPreferences } from "@/lib/useToolPreferences";
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -36,9 +37,21 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
+  const { isPinned, isLoaded } = useToolPreferences();
 
-  // Filter tools with shared robust multi-token search
-  const filtered = useMemo(() => searchTools(query, "All"), [query]);
+  // Filter tools with shared robust multi-token search, prioritizing pinned tools when query is empty
+  const filtered = useMemo(() => {
+    const list = searchTools(query, "All");
+    if (!isLoaded) return list;
+    if (!query.trim()) {
+      return [...list].sort((a, b) => {
+        const aPinned = isPinned(a.id) ? 1 : 0;
+        const bPinned = isPinned(b.id) ? 1 : 0;
+        return bPinned - aPinned;
+      });
+    }
+    return list;
+  }, [query, isLoaded, isPinned]);
 
   const navigate = useCallback((tool: ToolMetadata) => {
     onClose();
@@ -134,6 +147,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium truncate">{tool.name}</span>
+                        {isLoaded && isPinned(tool.id) && (
+                          <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                        )}
                         {tool.badge && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 font-medium">
                             {tool.badge}

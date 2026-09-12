@@ -396,6 +396,7 @@ export default function MediaLabPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="media-lab"
           title="Client-Side Media Privacy Lab & Metadata Scrubber"
           description="Audit and purge embedded EXIF, GPS coordinates, camera serials, and device fingerprints from photos. Clean images losslessly with zero recompression, inspect location pins, batch-scrub albums, and trim audio waveforms with 100% in-browser zero egress."
           badge="Zero Egress"

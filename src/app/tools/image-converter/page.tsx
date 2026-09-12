@@ -87,6 +87,7 @@ export default function ImageConverterPage() {
   return (
     <div className="space-y-6">
       <ToolHeader
+        toolId="image-converter"
         title="Client-Side Image Lab"
         description="Convert, compress, and resize images locally in your browser. Files never touch a remote server."
         badge="100% Local"

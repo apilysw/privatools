@@ -136,6 +136,7 @@ export default function EdiViewerPage() {
   return (
     <div className="space-y-8">
       <ToolHeader
+        toolId="edi-viewer"
         title="EDI X12 & UN/EDIFACT Viewer & Converter"
         description="Decode, inspect, and translate cryptic EDI files into human-readable segment trees, formatted EDI, structured JSON, and semantic XML with zero data egress."
         badge="Zero Egress"

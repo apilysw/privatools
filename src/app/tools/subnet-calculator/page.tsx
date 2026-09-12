@@ -159,6 +159,7 @@ export default function SubnetCalculatorPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="subnet-calculator"
           title="Network & Subnet CIDR Studio"
           description="Calculate IPv4 & IPv6 CIDR subnets, analyze 32-bit binary bitmasks, compute Cisco wildcard masks, plan Variable Length Subnet Masking (VLSM), and verify VPC routing collisions with zero data egress."
           badge="Zero Egress"

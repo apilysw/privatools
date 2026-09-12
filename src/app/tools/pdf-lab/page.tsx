@@ -490,6 +490,7 @@ export default function PdfLabPage() {
       {/* Tool Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <ToolHeader
+          toolId="pdf-lab"
           title="Client-Side PDF Privacy Lab"
           description="Merge, split, extract, rotate, and organize PDF documents in-memory. Zero bytes ever leave your browser."
           badge="Zero Egress"

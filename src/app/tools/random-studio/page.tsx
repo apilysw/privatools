@@ -648,6 +648,7 @@ export default function RandomStudioPage() {
       {/* Tool Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="random-studio"
           title="Provably Fair & Configurable Random Number Studio"
           description="Zero-egress client-side randomness studio. SHA-256 / HMAC-SHA256 provably fair commit-reveal scheme, uniform & Box-Muller Gaussian normal distributions, tabletop polyhedral dice roller, Fisher-Yates list shuffler, EFF Diceware passphrases, UUID v4/v7 tokens, and real-time Chi-Square & Shannon entropy statistical audit."
           badge="Zero Egress"

@@ -367,6 +367,7 @@ export default function QRStudioPage() {
       {/* Header */}
       <div className="print:hidden">
         <ToolHeader
+          toolId="qr-studio"
           title="Offline QR Code & Barcode Studio"
           description="Generate, customize, batch print, and decode 1D/2D barcodes for warehousing, distribution, retail, and logistics. 100% in-browser with zero data egress."
           badge="Zero Egress"
