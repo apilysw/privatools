@@ -1,11 +1,14 @@
 import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 
-const nextConfig: NextConfig = {
-  output: "export",
-  trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
-};
+export default function config(phase: string): NextConfig {
+  const isDev = phase === PHASE_DEVELOPMENT_SERVER;
 
-export default nextConfig;
+  return {
+    ...(!isDev ? { output: "export" } : {}),
+    trailingSlash: true,
+    images: {
+      unoptimized: true,
+    },
+  };
+}

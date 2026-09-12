@@ -11,6 +11,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   useEffect(() => {
+    // Client-side fallback for static hosting environments when format=md is requested in browser
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const fmt = params.get("format");
+      if (fmt === "md" || fmt === "markdown") {
+        const cleanPath = window.location.pathname.replace(/\/+$/, "") || "/index";
+        window.location.replace(`${cleanPath}.md`);
+        return;
+      }
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
