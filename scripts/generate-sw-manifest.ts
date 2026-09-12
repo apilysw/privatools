@@ -49,6 +49,13 @@ function createRouteAliases(dir: string) {
       }
     }
   }
+
+  // Create llms.txt fallback alias from llms.md if present
+  const outLlmsMd = path.join(dir, "llms.md");
+  const outLlmsTxt = path.join(dir, "llms.txt");
+  if (fs.existsSync(outLlmsMd) && !fs.existsSync(outLlmsTxt)) {
+    fs.copyFileSync(outLlmsMd, outLlmsTxt);
+  }
 }
 
 function generateSwManifest() {
@@ -505,6 +512,7 @@ self.addEventListener("fetch", (event) => {
     url.pathname.endsWith(".png") ||
     url.pathname.endsWith(".ico") ||
     url.pathname.endsWith(".woff2") ||
+    url.pathname.endsWith(".md") ||
     url.pathname.endsWith(".json");
 
   if (isStaticAsset) {

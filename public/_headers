@@ -21,5 +21,8 @@
 /tools.json
   Cache-Control: public, max-age=3600, must-revalidate
 
+/llms.md
+  Cache-Control: public, max-age=3600, must-revalidate
+
 /llms.txt
   Cache-Control: public, max-age=3600, must-revalidate

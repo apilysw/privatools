@@ -58,7 +58,7 @@ function runSmokeTests() {
     "precache-manifest.json",
     "manifest.json",
     "tools.json",
-    "llms.txt",
+    "llms.md",
     "robots.txt",
     "sitemap.xml",
     "og-image.png",
@@ -71,6 +71,15 @@ function runSmokeTests() {
       const headersContent = fs.readFileSync(filePath, "utf8");
       assert(headersContent.includes("Content-Security-Policy"), "Headers", "out/_headers contains CSP");
       assert(headersContent.includes("Permissions-Policy"), "Headers", "out/_headers contains Permissions-Policy");
+    }
+    if (file === "robots.txt" && fs.existsSync(filePath)) {
+      const robotsContent = fs.readFileSync(filePath, "utf8");
+      assert(
+        robotsContent.includes("Content-Signal: ai-train=yes,search=yes,ai-input=yes") ||
+          robotsContent.includes("Content-Signal:ai-train=yes,search=yes,ai-input=yes"),
+        "Robots",
+        "out/robots.txt contains 'Content-Signal: ai-train=yes,search=yes,ai-input=yes'"
+      );
     }
   }
 

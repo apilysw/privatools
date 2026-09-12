@@ -5,6 +5,7 @@ import { TOOLS_CONTENT } from "../src/lib/tool-content";
 import { SITE_URL, GUMROAD_BUY_URL, BUY_ME_A_COFFEE_URL } from "../src/lib/config";
 import { generateToolMetadata } from "../src/lib/seo";
 import sitemap from "../src/app/sitemap";
+import robots from "../src/app/robots";
 
 interface TestFailure {
   category: string;
@@ -257,39 +258,58 @@ async function runTests() {
     }
   }
 
-  // 6. public/llms.txt Verification
-  console.log("\n--- 6. Public llms.txt Discovery Document ---");
-  const llmsPath = path.join(process.cwd(), "public", "llms.txt");
-  assert(fs.existsSync(llmsPath), "llms.txt", "public/llms.txt exists on disk");
+  // 6. public/llms.md Verification
+  console.log("\n--- 6. Public llms.md Discovery Document ---");
+  const llmsPath = path.join(process.cwd(), "public", "llms.md");
+  assert(fs.existsSync(llmsPath), "llms.md", "public/llms.md exists on disk");
 
   if (fs.existsSync(llmsPath)) {
     const llmsContent = fs.readFileSync(llmsPath, "utf8");
     assert(
       llmsContent.includes("https://privatools.dev"),
-      "llms.txt",
-      "llms.txt contains canonical domain https://privatools.dev"
+      "llms.md",
+      "llms.md contains canonical domain https://privatools.dev"
     );
 
     assert(
       llmsContent.includes("BUSL-1.1") || llmsContent.includes("BSL 1.1"),
-      "llms.txt",
-      "llms.txt references BSL 1.1 / BUSL-1.1 license"
+      "llms.md",
+      "llms.md references BSL 1.1 / BUSL-1.1 license"
     );
 
     assert(
       llmsContent.includes("September 12, 2030"),
-      "llms.txt",
-      "llms.txt documents the September 12, 2030 MIT change date"
+      "llms.md",
+      "llms.md documents the September 12, 2030 MIT change date"
     );
 
     for (const tool of TOOLS_REGISTRY) {
       const canonicalUrl = `https://privatools.dev${tool.slug}/`;
       assert(
         llmsContent.includes(canonicalUrl),
-        "llms.txt",
-        `llms.txt contains canonical URL for tool: "${canonicalUrl}"`
+        "llms.md",
+        `llms.md contains canonical URL for tool: "${canonicalUrl}"`
       );
     }
+  }
+
+  // 6b. robots.ts Content-Signal Verification
+  console.log("\n--- 6b. Robots Content-Signal Directive ---");
+  try {
+    const robotsConfig = robots();
+    const rules = Array.isArray(robotsConfig.rules) ? robotsConfig.rules : [robotsConfig.rules];
+    const hasContentSignal = rules.some(
+      (rule) =>
+        rule.other &&
+        rule.other["Content-Signal"] === "ai-train=yes,search=yes,ai-input=yes"
+    );
+    assert(
+      hasContentSignal,
+      "Robots",
+      "robots.ts includes 'Content-Signal: ai-train=yes,search=yes,ai-input=yes'"
+    );
+  } catch (err) {
+    assert(false, "Robots", `Failed to evaluate src/app/robots.ts: ${err}`);
   }
 
   // 7. Sitemap & Canonical URL Integrity

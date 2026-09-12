@@ -74,7 +74,7 @@ Privatools is a suite of **100% Client-Side Web Utilities**. Your data, files, c
 │       ├── seo.ts                  # Shared OpenGraph & Twitter metadata generator
 │       └── utils.ts                # Tailwind cn() utility
 ├── public/
-│   ├── llms.txt                    # Machine-readable LLM context document
+│   ├── llms.md                     # Machine-readable LLM context document (Markdown)
 │   ├── tools.json                  # Public JSON API catalog of all tools
 │   ├── sw.js                       # PWA Service Worker (Cache-First asset pre-caching)
 │   └── manifest.json               # Web App Manifest
@@ -110,7 +110,7 @@ When creating a new utility tool, complete every step in this checklist:
      - Export metadata using `generateToolMetadata()` from `src/lib/seo.ts`
      - Render children and `<ToolLandingContent toolId="..." />` at the bottom
 5. **Update Public Discovery Files**:
-   - Update `public/llms.txt` with tool description and architecture.
+   - Update `public/llms.md` with tool description and architecture.
    - Update `public/tools.json` with the new tool entry.
    - Verify `src/app/sitemap.ts` includes the route.
 6. **Lint & Build Verification**:
