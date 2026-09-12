@@ -320,9 +320,19 @@ async function runTests() {
       "Includes Permissions-Policy with camera=(self) for QR scanner"
     );
     assert(
-      headersContent.includes("frame-ancestors 'self'"),
+      headersContent.includes("wasm-unsafe-eval") && !headersContent.includes("'unsafe-eval'"),
       "Headers",
-      "Includes frame-ancestors 'self' for clickjacking protection"
+      "Uses wasm-unsafe-eval for WebAssembly while strictly forbidding general unsafe-eval"
+    );
+    assert(
+      headersContent.includes("frame-ancestors 'none'"),
+      "Headers",
+      "Includes frame-ancestors 'none' for complete clickjacking protection"
+    );
+    assert(
+      headersContent.includes("X-Frame-Options: DENY"),
+      "Headers",
+      "Includes X-Frame-Options: DENY"
     );
     assert(
       headersContent.includes("/_next/static/*") && headersContent.includes("immutable"),
@@ -333,6 +343,11 @@ async function runTests() {
       headersContent.includes("/sw.js") && headersContent.includes("no-cache"),
       "Headers",
       "Includes no-cache revalidation for /sw.js"
+    );
+    assert(
+      headersContent.includes("/precache-manifest.json") && headersContent.includes("no-cache"),
+      "Headers",
+      "Includes no-cache revalidation for /precache-manifest.json"
     );
   }
 

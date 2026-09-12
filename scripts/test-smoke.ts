@@ -55,6 +55,7 @@ function runSmokeTests() {
   const requiredFiles = [
     "_headers",
     "sw.js",
+    "precache-manifest.json",
     "manifest.json",
     "tools.json",
     "llms.txt",

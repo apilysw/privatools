@@ -11,13 +11,14 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "tsx scripts/generate-tools-json.ts",
-    "test": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts",
+    "test": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts && tsx scripts/test-offline.ts",
     "test:consistency": "tsx scripts/test-consistency.ts",
     "test:functional": "tsx scripts/test-functional.ts",
     "test:smoke": "tsx scripts/test-smoke.ts",
-    "test:all": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts && tsx scripts/test-smoke.ts",
-    "build": "next build",
-    "postbuild": "tsx scripts/test-smoke.ts",
+    "test:offline": "tsx scripts/test-offline.ts",
+    "test:all": "tsx scripts/test-consistency.ts && tsx scripts/test-functional.ts && tsx scripts/test-smoke.ts && tsx scripts/test-offline.ts",
+    "build": "next build && tsx scripts/generate-sw-manifest.ts",
+    "postbuild": "tsx scripts/test-smoke.ts && tsx scripts/test-offline.ts",
     "start": "next start",
     "lint": "eslint"
   },

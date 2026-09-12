@@ -177,7 +177,7 @@ export default function RegexStudioPage() {
       </div>
 
       {/* Sample Regexes Card (matches cert-inspector, diff-viewer, qr-studio) */}
-      <div className="flex items-center justify-between gap-4 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm print:hidden">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm print:hidden">
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mr-1 flex items-center gap-1.5">
             <Regex className="w-3.5 h-3.5 text-zinc-400" />
@@ -210,7 +210,7 @@ export default function RegexStudioPage() {
 
       {/* Main Pattern Bar */}
       <div className="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
             <span>Regular Expression</span>
             <span className="text-[11px] font-mono text-zinc-400 font-normal">
@@ -283,7 +283,7 @@ export default function RegexStudioPage() {
       </div>
 
       {/* Mode Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3 print:hidden">
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3 print:hidden overflow-x-auto max-w-full">
         <button
           onClick={() => setActiveTab("match")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${

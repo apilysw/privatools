@@ -43,4 +43,5 @@ next-env.d.ts
 # PWA (gated feature — not published to GitHub)
 public/sw.js
 public/manifest.json
+public/precache-manifest.json
 src/components/pwa/

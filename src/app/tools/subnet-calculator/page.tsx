@@ -417,6 +417,8 @@ export default function SubnetCalculatorPage() {
                     </span>
                     <button
                       onClick={() => handleCopy("net", ipv4Result.details!.networkAddress)}
+                      aria-label="Copy network address"
+                      title="Copy network address"
                       className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                     >
                       {copyStatus["net"] ? (
@@ -442,6 +444,8 @@ export default function SubnetCalculatorPage() {
                     </span>
                     <button
                       onClick={() => handleCopy("bcast", ipv4Result.details!.broadcastAddress)}
+                      aria-label="Copy broadcast address"
+                      title="Copy broadcast address"
                       className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                     >
                       {copyStatus["bcast"] ? (
@@ -472,6 +476,8 @@ export default function SubnetCalculatorPage() {
                           `${ipv4Result.details!.firstUsableAddress} - ${ipv4Result.details!.lastUsableAddress}`
                         )
                       }
+                      aria-label="Copy usable host range"
+                      title="Copy usable host range"
                       className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                     >
                       {copyStatus["range"] ? (
@@ -515,6 +521,8 @@ export default function SubnetCalculatorPage() {
                     </span>
                     <button
                       onClick={() => handleCopy("mask", ipv4Result.details!.subnetMask)}
+                      aria-label="Copy subnet mask"
+                      title="Copy subnet mask"
                       className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                     >
                       {copyStatus["mask"] ? (
@@ -540,6 +548,8 @@ export default function SubnetCalculatorPage() {
                     </span>
                     <button
                       onClick={() => handleCopy("wild", ipv4Result.details!.wildcardMask)}
+                      aria-label="Copy wildcard mask"
+                      title="Copy wildcard mask"
                       className="p-1 rounded text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                     >
                       {copyStatus["wild"] ? (
@@ -779,6 +789,8 @@ export default function SubnetCalculatorPage() {
                         onClick={() =>
                           setVlsmRequirements((prev) => prev.filter((r) => r.id !== req.id))
                         }
+                        aria-label={`Remove subnet requirement ${idx + 1}`}
+                        title={`Remove subnet requirement ${idx + 1}`}
                         className="p-1.5 rounded-lg text-zinc-400 hover:text-red-500 transition-colors"
                       >
                         <X className="w-4 h-4" />
