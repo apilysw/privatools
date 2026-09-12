@@ -6,6 +6,9 @@ export const metadata: Metadata = {
     "Inspect our zero-knowledge architecture. Verify how Privatools executes all file conversions, cryptographic calculations, and media processing in browser memory with zero data uploads.",
   alternates: {
     canonical: "https://privatools.dev/privacy-audit/",
+    types: {
+      "text/markdown": "https://privatools.dev/privacy-audit.md",
+    },
   },
   openGraph: {
     title: "Client-Side Privacy Audit Proof — Privatools",

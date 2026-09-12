@@ -59,6 +59,9 @@ function runSmokeTests() {
     "manifest.json",
     "tools.json",
     "llms.md",
+    "index.md",
+    "about.md",
+    "privacy-audit.md",
     "robots.txt",
     "sitemap.xml",
     "og-image.png",
@@ -71,6 +74,7 @@ function runSmokeTests() {
       const headersContent = fs.readFileSync(filePath, "utf8");
       assert(headersContent.includes("Content-Security-Policy"), "Headers", "out/_headers contains CSP");
       assert(headersContent.includes("Permissions-Policy"), "Headers", "out/_headers contains Permissions-Policy");
+      assert(headersContent.includes("Vary: Accept"), "Headers", "out/_headers contains Vary: Accept");
     }
     if (file === "robots.txt" && fs.existsSync(filePath)) {
       const robotsContent = fs.readFileSync(filePath, "utf8");
@@ -81,6 +85,12 @@ function runSmokeTests() {
         "out/robots.txt contains 'Content-Signal: ai-train=yes,search=yes,ai-input=yes'"
       );
     }
+  }
+
+  // Verify all 19 tool markdown pages exist in out/tools/
+  for (const tool of TOOLS_REGISTRY) {
+    const toolMdPath = path.join(outDir, "tools", `${tool.id}.md`);
+    assert(fs.existsSync(toolMdPath), "Artifact", `out/tools/${tool.id}.md exists`);
   }
 
   // 2. Canonical Routes HTML Smoke Tests
@@ -163,6 +173,39 @@ function runSmokeTests() {
       route,
       `Canonical URL points to https://privatools.dev: "${canonical}"`
     );
+
+    // Check Markdown alternate link
+    const mdAlternateMatch =
+      html.match(/<link[^>]+rel=["']alternate["'][^>]+type=["']text\/markdown["'][^>]+href=["']([^"']+)["']/i) ||
+      html.match(/<link[^>]+type=["']text\/markdown["'][^>]+rel=["']alternate["'][^>]+href=["']([^"']+)["']/i) ||
+      html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']alternate["'][^>]+type=["']text\/markdown["']/i) ||
+      html.match(/<link[^>]+href=["']([^"']+)["'][^>]+type=["']text\/markdown["'][^>]+rel=["']alternate["']/i);
+
+    const mdHref = mdAlternateMatch ? mdAlternateMatch[1].trim() : "";
+    assert(
+      mdHref.startsWith("https://privatools.dev") && mdHref.endsWith(".md"),
+      route,
+      `Has valid text/markdown alternate link: "${mdHref}"`
+    );
+
+    if (mdHref && mdHref.startsWith("https://privatools.dev")) {
+      // Verify the alternate markdown file exists in out/ and has valid content
+      const mdRelPath = mdHref.replace("https://privatools.dev/", "");
+      const mdDiskPath = path.join(outDir, mdRelPath);
+      assert(
+        fs.existsSync(mdDiskPath) && !fs.statSync(mdDiskPath).isDirectory(),
+        route,
+        `Alternate markdown file exists at out/${mdRelPath}`
+      );
+      if (fs.existsSync(mdDiskPath) && !fs.statSync(mdDiskPath).isDirectory()) {
+        const mdContent = fs.readFileSync(mdDiskPath, "utf8");
+        assert(
+          mdContent.startsWith("# ") && mdContent.length > 100,
+          route,
+          `Alternate markdown file has valid content (${mdContent.length} chars)`
+        );
+      }
+    }
 
     // Check Open Graph tags
     assert(html.includes('property="og:title"') || html.includes("property='og:title'"), route, "Has og:title");

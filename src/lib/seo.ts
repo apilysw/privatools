@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { TOOLS_REGISTRY } from "./registry";
-import { SITE_NAME, getCanonicalUrl, DEFAULT_OG_IMAGE } from "./config";
+import { SITE_NAME, SITE_URL, getCanonicalUrl, DEFAULT_OG_IMAGE } from "./config";
 
 /**
  * SEO metadata generator for Privatools utilities.
@@ -38,6 +38,9 @@ export function generateToolMetadata(toolIdOrSlug: string): Metadata {
     ],
     alternates: {
       canonical: url,
+      types: {
+        "text/markdown": `${SITE_URL}${tool.slug}.md`,
+      },
     },
     openGraph: {
       title,

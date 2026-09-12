@@ -45,6 +45,13 @@ function createRouteAliases(dir: string) {
         if (fs.existsSync(indexHtml) && !fs.existsSync(targetHtml)) {
           fs.copyFileSync(indexHtml, targetHtml);
         }
+        const indexMd = path.join(fullPath, "index.md");
+        const targetMd = `${fullPath}.md`;
+        if (fs.existsSync(indexMd) && !fs.existsSync(targetMd)) {
+          fs.copyFileSync(indexMd, targetMd);
+        } else if (fs.existsSync(targetMd) && !fs.existsSync(indexMd)) {
+          fs.copyFileSync(targetMd, indexMd);
+        }
         createRouteAliases(fullPath);
       }
     }
@@ -174,6 +181,32 @@ function generateSwManifest() {
     }
   }
 
+  // Explicitly ensure all Markdown files (.md) are in precache
+  const requiredMdRoutes = [
+    "/index.md",
+    "/privacy-audit/index.md",
+    "/privacy-audit.md",
+    "/about/index.md",
+    "/about.md",
+    "/llms.md",
+    ...TOOLS_REGISTRY.flatMap((t) => [`${t.slug}/index.md`, `${t.slug}.md`]),
+  ];
+
+  for (const mdRoute of requiredMdRoutes) {
+    if (!assetMap.has(mdRoute)) {
+      const clean = mdRoute.replace(/^\//, "");
+      const fullPath = path.join(outDir, clean);
+      if (fs.existsSync(fullPath)) {
+        const buf = fs.readFileSync(fullPath);
+        assetMap.set(mdRoute, {
+          url: mdRoute,
+          size: buf.length,
+          hash: crypto.createHash("sha256").update(buf).digest("hex").slice(0, 12),
+        });
+      }
+    }
+  }
+
   // Convert to sorted array
   const assetList = Array.from(assetMap.values()).sort((a, b) => a.url.localeCompare(b.url));
 
@@ -283,6 +316,14 @@ async function precacheAllAssets() {
             } else if (url.endsWith(".txt") && !url.endsWith("/index.txt")) {
               const indexTxtAlias = url.replace(/\\.txt$/, "/index.txt");
               await cache.put(indexTxtAlias, res.clone());
+            }
+
+            if (url.endsWith("/index.md")) {
+              const mdAlias = url.replace(/\\/index\\.md$/, ".md");
+              await cache.put(mdAlias, res.clone());
+            } else if (url.endsWith(".md") && !url.endsWith("/index.md")) {
+              const indexMdAlias = url.replace(/\\.md$/, "/index.md");
+              await cache.put(indexMdAlias, res.clone());
             }
 
             if (url.endsWith("/") && url !== "/") {
@@ -398,7 +439,84 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // 1. Navigation requests (HTML document loads)
+  // 1. Markdown Content Negotiation (Accept: text/markdown, ?format=md, or .md requests)
+  const acceptHeader = request.headers.get("Accept") || "";
+  const wantsMarkdown =
+    acceptHeader.includes("text/markdown") ||
+    url.searchParams.get("format") === "md" ||
+    url.searchParams.get("format") === "markdown" ||
+    url.pathname.endsWith(".md");
+
+  if (wantsMarkdown && !url.pathname.startsWith("/_next/")) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        let cleanPath = url.pathname.replace(/\\/+$/, "");
+        if (cleanPath === "") {
+          cleanPath = "/index";
+        }
+        if (cleanPath.endsWith(".md")) {
+          cleanPath = cleanPath.slice(0, -".md".length);
+        }
+
+        const mdCandidates = [
+          cleanPath + ".md",
+          url.origin + cleanPath + ".md",
+          cleanPath + "/index.md",
+          url.origin + cleanPath + "/index.md",
+        ];
+
+        for (const cand of mdCandidates) {
+          const matched = await cache.match(cand, { ignoreSearch: true });
+          if (matched) {
+            const body = await matched.text();
+            return new Response(body, {
+              status: 200,
+              headers: {
+                "Content-Type": "text/markdown; charset=utf-8",
+                "Vary": "Accept",
+                "Access-Control-Allow-Origin": "*",
+              },
+            });
+          }
+        }
+
+        if (navigator.onLine) {
+          try {
+            for (const cand of mdCandidates) {
+              const netRes = await fetch(cand);
+              if (netRes && netRes.status === 200) {
+                const copy = netRes.clone();
+                cache.put(cand, copy);
+                const body = await netRes.text();
+                return new Response(body, {
+                  status: 200,
+                  headers: {
+                    "Content-Type": "text/markdown; charset=utf-8",
+                    "Vary": "Accept",
+                    "Access-Control-Allow-Origin": "*",
+                  },
+                });
+              }
+            }
+          } catch {
+            // Fall through to 404
+          }
+        }
+
+        return new Response("# 404 Not Found\\n\\nThe requested Markdown content was not found.\\n", {
+          status: 404,
+          headers: {
+            "Content-Type": "text/markdown; charset=utf-8",
+            "Vary": "Accept",
+          },
+        });
+      })()
+    );
+    return;
+  }
+
+  // 2. Navigation requests (HTML document loads)
   if (request.mode === "navigate") {
     event.respondWith(
       (async () => {
@@ -441,7 +559,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 2. Next.js RSC Flight Requests (Client-Side Navigation and Prefetching)
+  // 3. Next.js RSC Flight Requests (Client-Side Navigation and Prefetching)
   const isRsc =
     request.headers.get("RSC") === "1" ||
     url.searchParams.has("_rsc") ||
@@ -501,7 +619,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 3. Static Assets: JS chunks, CSS, Fonts, Images, SQLite WASM, Manifest
+  // 4. Static Assets: JS chunks, CSS, Fonts, Images, SQLite WASM, Manifest
   const isStaticAsset =
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/icons/") ||
@@ -543,7 +661,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 4. Default Stale-While-Revalidate
+  // 5. Default Stale-While-Revalidate
   event.respondWith(
     caches.match(request, { ignoreSearch: true }).then((cached) => {
       if (!navigator.onLine && cached) return cached;

@@ -59,8 +59,10 @@ function runOfflineAcceptanceTest() {
     if (!fs.existsSync(localPath)) {
       if (fs.existsSync(`${localPath}.html`)) return `${localPath}.html`;
       if (fs.existsSync(`${localPath}.txt`)) return `${localPath}.txt`;
+      if (fs.existsSync(`${localPath}.md`)) return `${localPath}.md`;
       if (fs.existsSync(path.join(localPath, "index.html"))) return path.join(localPath, "index.html");
       if (fs.existsSync(path.join(localPath, "index.txt"))) return path.join(localPath, "index.txt");
+      if (fs.existsSync(path.join(localPath, "index.md"))) return path.join(localPath, "index.md");
     }
     return localPath;
   }
@@ -108,6 +110,7 @@ function runOfflineAcceptanceTest() {
     else if (localPath.endsWith(".json") || localPath.endsWith(".txt")) contentType = "application/json";
     else if (localPath.endsWith(".wasm")) contentType = "application/wasm";
     else if (localPath.endsWith(".woff2")) contentType = "font/woff2";
+    else if (localPath.endsWith(".md")) contentType = "text/markdown; charset=utf-8";
 
     mockCache.set(asset.url, { body, contentType });
   }
@@ -117,9 +120,42 @@ function runOfflineAcceptanceTest() {
   // Offline Service Worker Fetch Simulation
   function simulateSwFetch(
     reqUrl: string,
-    mode: "navigate" | "rsc" | "no-cors" = "no-cors"
+    mode: "navigate" | "rsc" | "no-cors" = "no-cors",
+    headers?: Record<string, string>
   ): { status: number; body?: Buffer; contentType?: string } {
     const url = new URL(reqUrl, "https://privatools.dev");
+
+    // Markdown Content Negotiation
+    const acceptHeader = headers?.["Accept"] || headers?.["accept"] || "";
+    const wantsMarkdown =
+      acceptHeader.includes("text/markdown") ||
+      url.searchParams.get("format") === "md" ||
+      url.searchParams.get("format") === "markdown" ||
+      url.pathname.endsWith(".md");
+
+    if (wantsMarkdown && !url.pathname.startsWith("/_next/")) {
+      let cleanPath = url.pathname.replace(/\/+$/, "");
+      if (cleanPath === "") {
+        cleanPath = "/index";
+      }
+      if (cleanPath.endsWith(".md")) {
+        cleanPath = cleanPath.slice(0, -".md".length);
+      }
+
+      const mdCandidates = [
+        cleanPath + ".md",
+        cleanPath + "/index.md",
+      ];
+
+      for (const cand of mdCandidates) {
+        if (mockCache.has(cand)) {
+          const item = mockCache.get(cand)!;
+          return { status: 200, body: item.body, contentType: "text/markdown; charset=utf-8" };
+        }
+      }
+
+      return { status: 404, contentType: "text/markdown; charset=utf-8" };
+    }
 
     if (mode === "navigate") {
       const pathWithSlash = url.pathname.endsWith("/") ? url.pathname : url.pathname + "/";
@@ -317,9 +353,50 @@ function runOfflineAcceptanceTest() {
     process.exit(1);
   }
 
+  // 7. Test Offline Markdown Content Negotiation for LLMs
+  console.log("\n🔍 Step 6: Testing offline Markdown content negotiation for LLMs across all routes...\n");
+  let passedMarkdownRoutes = 0;
+
+  for (const route of routesToTest) {
+    // 1. Fetch route with Accept: text/markdown header
+    const mdRes = simulateSwFetch(route.slug, "no-cors", { Accept: "text/markdown" });
+    if (mdRes.status !== 200 || !mdRes.body || !mdRes.contentType?.includes("text/markdown")) {
+      console.error(`  ❌ Failed offline Markdown negotiation for ${route.slug} (HTTP ${mdRes.status})`);
+      process.exit(1);
+    }
+
+    const mdContent = mdRes.body.toString("utf8");
+    if (!mdContent.startsWith("# ")) {
+      console.error(`  ❌ Markdown for ${route.slug} does not start with '# ': "${mdContent.slice(0, 30)}..."`);
+      process.exit(1);
+    }
+
+    // 2. Fetch with query param ?format=md
+    const queryRes = simulateSwFetch(`${route.slug}?format=md`, "no-cors");
+    if (queryRes.status !== 200 || !queryRes.body || !queryRes.contentType?.includes("text/markdown")) {
+      console.error(`  ❌ Failed offline Markdown query param fetch for ${route.slug}?format=md (HTTP ${queryRes.status})`);
+      process.exit(1);
+    }
+
+    passedMarkdownRoutes++;
+    console.log(`  ✅ [${route.name}] (${route.slug}) -> Offline Markdown OK (${mdRes.body.length} bytes, starts with "${mdContent.slice(0, 30).trim()}...")`);
+  }
+
+  // Also test direct /index.md, /about.md, /privacy-audit.md, and /llms.md
+  const directMdRoutes = ["/index.md", "/about.md", "/privacy-audit.md", "/llms.md"];
+  for (const direct of directMdRoutes) {
+    const directRes = simulateSwFetch(direct, "no-cors");
+    if (directRes.status !== 200 || !directRes.body || !directRes.contentType?.includes("text/markdown")) {
+      console.error(`  ❌ Failed offline direct Markdown fetch for ${direct} (HTTP ${directRes.status})`);
+      process.exit(1);
+    }
+    console.log(`  ✅ Direct Markdown: ${direct} -> Status 200, Content-Type text/markdown`);
+  }
+
   console.log("\n=======================================================");
   console.log("🎉 ALL OFFLINE ACCEPTANCE TESTS PASSED (100% CACHE HIT)");
-  console.log(`   - Verified Routes: ${passedRoutes} / ${routesToTest.length}`);
+  console.log(`   - Verified HTML Routes: ${passedRoutes} / ${routesToTest.length}`);
+  console.log(`   - Verified Markdown Routes: ${passedMarkdownRoutes} / ${routesToTest.length}`);
   console.log(`   - Verified Assets: ${totalChunksChecked} runtime JS & CSS chunks`);
   console.log(`   - SQLite WebAssembly: Verified both 32-bit & browser WASM binaries`);
   console.log("   - 0 network requests required for any tool operation");

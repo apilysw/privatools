@@ -11,7 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { GithubIcon } from "@/components/shared/GithubIcon";
-import { SITE_NAME, GITHUB_REPO_URL, getCanonicalUrl, DEFAULT_OG_IMAGE } from "@/lib/config";
+import { SITE_NAME, SITE_URL, GITHUB_REPO_URL, getCanonicalUrl, DEFAULT_OG_IMAGE } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Independent Privacy Audit & Zero-Knowledge Proof | Privatools",
@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     "Verifiable DevTools audit proof demonstrating 100% client-side execution with zero data uploads, zero cookies, and zero tracking.",
   alternates: {
     canonical: getCanonicalUrl("/privacy-audit"),
+    types: {
+      "text/markdown": `${SITE_URL}/privacy-audit.md`,
+    },
   },
   openGraph: {
     title: "Independent Privacy Audit & Zero-Knowledge Proof | Privatools",

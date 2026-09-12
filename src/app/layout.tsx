@@ -40,6 +40,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Privatools" }],
   alternates: {
     canonical: "/",
+    types: {
+      "text/markdown": `${SITE_URL}/index.md`,
+    },
   },
   manifest: "/manifest.json",
   icons: {

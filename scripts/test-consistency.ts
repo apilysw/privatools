@@ -312,6 +312,31 @@ async function runTests() {
     assert(false, "Robots", `Failed to evaluate src/app/robots.ts: ${err}`);
   }
 
+  // 6c. Markdown Content Negotiation Invariants
+  console.log("\n--- 6c. Markdown Content Negotiation Invariants ---");
+  const publicDir = path.join(process.cwd(), "public");
+  const requiredPublicMd = [
+    "index.md",
+    "about.md",
+    "privacy-audit.md",
+    ...TOOLS_REGISTRY.map((t) => `tools/${t.id}.md`),
+  ];
+
+  for (const rel of requiredPublicMd) {
+    const full = path.join(publicDir, rel);
+    assert(fs.existsSync(full), "Markdown Pages", `public/${rel} exists on disk`);
+  }
+
+  for (const tool of TOOLS_REGISTRY) {
+    const meta = generateToolMetadata(tool.id);
+    const mdAlt = (meta.alternates?.types as Record<string, string> | undefined)?.["text/markdown"];
+    assert(
+      mdAlt === `https://privatools.dev${tool.slug}.md`,
+      "Markdown Alternate",
+      `Tool "${tool.id}" metadata advertises Markdown alternate: "${mdAlt}"`
+    );
+  }
+
   // 7. Sitemap & Canonical URL Integrity
   console.log("\n--- 7. Sitemap & Canonical URLs ---");
   try {
