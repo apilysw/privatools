@@ -65,8 +65,13 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/cert-inspector" className="hover:text-emerald-500 transition-colors">
-                  X.509 Certificate Inspector
+                <Link href="/tools/random-studio" className="hover:text-emerald-500 transition-colors">
+                  Provably Fair & Random Studio
+                </Link>
+              </li>
+              <li>
+                <Link href="/tools/regex-studio" className="hover:text-emerald-500 transition-colors">
+                  Regex Workbench & Tester
                 </Link>
               </li>
               <li>
@@ -75,13 +80,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tools/jwt-inspector" className="hover:text-emerald-500 transition-colors">
-                  JWT & OAuth Token Debugger
+                <Link href="/tools/cert-inspector" className="hover:text-emerald-500 transition-colors">
+                  X.509 Certificate Inspector
                 </Link>
               </li>
               <li>
-                <Link href="/tools/random-studio" className="hover:text-emerald-500 transition-colors font-medium text-emerald-600 dark:text-emerald-400">
-                  Provably Fair & Random Studio
+                <Link href="/tools/jwt-inspector" className="hover:text-emerald-500 transition-colors">
+                  JWT & OAuth Token Debugger
                 </Link>
               </li>
               <li>
@@ -92,11 +97,6 @@ export function Footer() {
               <li>
                 <Link href="/tools/subnet-calculator" className="hover:text-emerald-500 transition-colors">
                   Network & Subnet CIDR Studio
-                </Link>
-              </li>
-              <li>
-                <Link href="/tools/regex-studio" className="hover:text-emerald-500 transition-colors">
-                  Regex Workbench & Tester
                 </Link>
               </li>
             </ul>
@@ -110,13 +110,13 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/color-studio" className="hover:text-emerald-500 transition-colors font-medium text-emerald-600 dark:text-emerald-400">
-                  CSS & Modern Color Palette Studio
+                <Link href="/tools/image-converter" className="hover:text-emerald-500 transition-colors">
+                  Client-Side Image Lab (WebP/PNG/JPEG)
                 </Link>
               </li>
               <li>
-                <Link href="/tools/image-converter" className="hover:text-emerald-500 transition-colors">
-                  Client-Side Image Lab (WebP/PNG/JPEG)
+                <Link href="/tools/media-lab" className="hover:text-emerald-500 transition-colors">
+                  Media Privacy & EXIF Scrubber
                 </Link>
               </li>
               <li>
@@ -125,8 +125,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tools/media-lab" className="hover:text-emerald-500 transition-colors">
-                  Media Privacy & EXIF Scrubber
+                <Link href="/tools/color-studio" className="hover:text-emerald-500 transition-colors">
+                  CSS & Modern Color Palette Studio
                 </Link>
               </li>
               <li>
@@ -150,11 +150,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tools/sqlite-lab" className="hover:text-emerald-500 transition-colors">
-                  SQLite Database Explorer & Exporter
-                </Link>
-              </li>
-              <li>
                 <Link href="/tools/pdf-lab" className="hover:text-emerald-500 transition-colors">
                   Client-Side PDF Privacy Lab
                 </Link>
@@ -162,6 +157,11 @@ export function Footer() {
               <li>
                 <Link href="/tools/diff-viewer" className="hover:text-emerald-500 transition-colors">
                   Code & Text Diff / Patch Studio
+                </Link>
+              </li>
+              <li>
+                <Link href="/tools/sqlite-lab" className="hover:text-emerald-500 transition-colors">
+                  SQLite Database Explorer & Exporter
                 </Link>
               </li>
             </ul>
@@ -175,13 +175,13 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/text-converter" className="hover:text-emerald-500 transition-colors">
-                  Text & String Encoding Studio
+                <Link href="/tools/markdown-lab" className="hover:text-emerald-500 transition-colors">
+                  Markdown & Technical Doc Studio
                 </Link>
               </li>
               <li>
-                <Link href="/tools/markdown-lab" className="hover:text-emerald-500 transition-colors">
-                  Markdown & Technical Doc Studio
+                <Link href="/tools/text-converter" className="hover:text-emerald-500 transition-colors">
+                  Text & String Encoding Studio
                 </Link>
               </li>
               <li>
