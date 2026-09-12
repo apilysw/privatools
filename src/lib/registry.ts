@@ -18,7 +18,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "data-converter",
     name: "Structured Data Converter",
-    seoTitle: "JSON to YAML, CSV & XML Converter | Privatools",
+    seoTitle: "Private JSON to YAML, CSV & XML Converter | Privatools",
     slug: "/tools/data-converter",
     category: "Data & Config",
     shortDesc: "Convert between JSON, YAML, CSV, and XML instantly with live preview.",
@@ -65,7 +65,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "text-converter",
     name: "Text & Encoding Studio",
-    seoTitle: "Text & Base64 Hex Encoder / Decoder | Privatools",
+    seoTitle: "Private Text & Base64 Hex Encoder / Decoder | Privatools",
     slug: "/tools/text-converter",
     category: "Text & Encodings",
     shortDesc: "Encode/decode Base64, Hex, URL encoding, HTML entities, and Markdown.",
@@ -81,7 +81,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "cert-inspector",
     name: "X.509 Certificate Inspector & Exporter",
-    seoTitle: "X.509 Certificate Inspector & Parser | Privatools",
+    seoTitle: "Private X.509 Certificate Inspector & Parser | Privatools",
     slug: "/tools/cert-inspector",
     category: "Security & Dev",
     shortDesc: "Inspect SSL/TLS certificates and convert between PEM, DER, and Public Key formats.",
@@ -97,7 +97,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "edi-viewer",
     name: "EDI X12 & UN/EDIFACT Viewer & Converter",
-    seoTitle: "EDI X12 & EDIFACT Viewer & Validator | Privatools",
+    seoTitle: "Private EDI X12 & EDIFACT Viewer & Validator | Privatools",
     slug: "/tools/edi-viewer",
     category: "Security & Dev",
     shortDesc: "Inspect ANSI X12 and EDIFACT documents and convert between EDI, JSON, and XML.",
@@ -145,7 +145,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "hash-studio",
     name: "Cryptographic Checksum & File Hash Studio",
-    seoTitle: "File Checksum & SHA-256 Hash Studio | Privatools",
+    seoTitle: "Private File Checksum & SHA-256 Hash Studio | Privatools",
     slug: "/tools/hash-studio",
     category: "Security & Dev",
     shortDesc: "Compute and verify SHA-256, SHA-512, MD5, CRC32, HMACs, and PBKDF2 keys.",
@@ -177,7 +177,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "diff-viewer",
     name: "Code & Text Diff / Patch Studio",
-    seoTitle: "Code & Text Diff Checker | Privatools",
+    seoTitle: "Private Code & Text Diff Checker | Privatools",
     slug: "/tools/diff-viewer",
     category: "Data & Config",
     shortDesc: "Compare code and text side-by-side with word-level highlighting and patch export.",
@@ -227,7 +227,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "regex-studio",
     name: "Client-Side Regex Workbench & Tester",
-    seoTitle: "Regex Tester & Match Workbench | Privatools",
+    seoTitle: "Private Regex Tester & Match Workbench | Privatools",
     slug: "/tools/regex-studio",
     category: "Security & Dev",
     shortDesc: "Test regular expressions with real-time match highlighting, group extraction, and substitution.",
@@ -256,7 +256,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "markdown-lab",
     name: "Markdown & Technical Documentation Studio",
-    seoTitle: "Markdown Editor & Live PDF Preview | Privatools",
+    seoTitle: "Private Markdown Editor & Live PDF Preview | Privatools",
     slug: "/tools/markdown-lab",
     category: "Text & Encodings",
     shortDesc: "Author, preview, and format Markdown documents with frontmatter, tables, and HTML/PDF export.",
@@ -289,7 +289,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "media-lab",
     name: "Media Privacy Lab & Metadata Scrubber",
-    seoTitle: "EXIF & Photo Metadata Scrubber | Privatools",
+    seoTitle: "Private EXIF & Photo Metadata Scrubber | Privatools",
     slug: "/tools/media-lab",
     category: "Media & Images",
     shortDesc: "Inspect & strip EXIF/GPS metadata from photos losslessly and trim audio waveforms.",
@@ -322,7 +322,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "subnet-calculator",
     name: "Network & Subnet CIDR Studio",
-    seoTitle: "IPv4 & IPv6 Subnet CIDR Calculator | Privatools",
+    seoTitle: "Private IPv4 & IPv6 Subnet CIDR Calculator | Privatools",
     slug: "/tools/subnet-calculator",
     category: "Security & Dev",
     shortDesc: "IPv4 & IPv6 CIDR subnet calculator, VLSM planner, IP collision detector, and bitmask visualizer.",
@@ -355,7 +355,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "date-time-calculator",
     name: "Date, Time, Epoch & Cron Precision Studio",
-    seoTitle: "Unix Epoch Timestamp & Cron Studio | Privatools",
+    seoTitle: "Private Unix Epoch Timestamp & Cron Studio | Privatools",
     slug: "/tools/date-time-calculator",
     category: "Text & Encodings",
     shortDesc: "High-precision Unix epoch converter (s/ms/µs/ns), date math, timezone matrix, and cron explainer.",
@@ -389,7 +389,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "video-lab",
     name: "Video & Audio Transcoder Studio",
-    seoTitle: "Video & Audio Converter Lab | Privatools",
+    seoTitle: "Private Video & Audio Converter Lab | Privatools",
     slug: "/tools/video-lab",
     category: "Media & Images",
     shortDesc: "Strip audio losslessly, extract and convert MP3/FLAC/WAV/OGG/AAC, transcode video, and export animated GIFs.",
@@ -429,13 +429,15 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
       "video converter",
       "transcode",
       "media",
+      "video lab",
+      "media lab",
     ],
     status: "ready",
   },
   {
     id: "color-studio",
     name: "CSS & Modern Color Palette Studio",
-    seoTitle: "Color Converter & Contrast Checker | Privatools",
+    seoTitle: "Private Color Converter & Contrast Checker | Privatools",
     slug: "/tools/color-studio",
     category: "Media & Images",
     shortDesc: "Bi-directional HEX/RGB/HSL/OKLCH conversions, WCAG & APCA contrast checker, color blindness simulator, and harmonies.",
@@ -484,7 +486,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
   {
     id: "random-studio",
     name: "Provably Fair & Random Studio",
-    seoTitle: "Provably Fair Random Number Studio | Privatools",
+    seoTitle: "Private Provably Fair Random Number Studio | Privatools",
     slug: "/tools/random-studio",
     category: "Security & Dev",
     shortDesc: "Provably fair commit-reveal, polyhedral dice, Gaussian normal distribution, and Diceware.",

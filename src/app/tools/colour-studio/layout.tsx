@@ -2,7 +2,19 @@ import type { Metadata } from "next";
 import { generateToolMetadata } from "@/lib/seo";
 import { ToolLandingContent } from "@/components/shared/ToolLandingContent";
 
-export const metadata: Metadata = generateToolMetadata("color-studio");
+const baseMetadata = generateToolMetadata("color-studio");
+export const metadata: Metadata = {
+  ...baseMetadata,
+  title: "Private Colour Converter & Contrast Checker | Privatools",
+  openGraph: {
+    ...baseMetadata.openGraph,
+    title: "Private Colour Converter & Contrast Checker | Privatools",
+  },
+  twitter: {
+    ...baseMetadata.twitter,
+    title: "Private Colour Converter & Contrast Checker | Privatools",
+  },
+};
 
 export default function ToolLayout({
   children,

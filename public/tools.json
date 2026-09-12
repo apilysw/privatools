@@ -9,7 +9,7 @@
     {
       "id": "data-converter",
       "name": "Structured Data Converter",
-      "seoTitle": "JSON to YAML, CSV & XML Converter | Privatools",
+      "seoTitle": "Private JSON to YAML, CSV & XML Converter | Privatools",
       "slug": "/tools/data-converter",
       "canonicalUrl": "https://privatools.dev/tools/data-converter/",
       "category": "Data & Config",
@@ -71,7 +71,7 @@
     {
       "id": "text-converter",
       "name": "Text & Encoding Studio",
-      "seoTitle": "Text & Base64 Hex Encoder / Decoder | Privatools",
+      "seoTitle": "Private Text & Base64 Hex Encoder / Decoder | Privatools",
       "slug": "/tools/text-converter",
       "canonicalUrl": "https://privatools.dev/tools/text-converter/",
       "category": "Text & Encodings",
@@ -101,7 +101,7 @@
     {
       "id": "cert-inspector",
       "name": "X.509 Certificate Inspector & Exporter",
-      "seoTitle": "X.509 Certificate Inspector & Parser | Privatools",
+      "seoTitle": "Private X.509 Certificate Inspector & Parser | Privatools",
       "slug": "/tools/cert-inspector",
       "canonicalUrl": "https://privatools.dev/tools/cert-inspector/",
       "category": "Security & Dev",
@@ -134,7 +134,7 @@
     {
       "id": "edi-viewer",
       "name": "EDI X12 & UN/EDIFACT Viewer & Converter",
-      "seoTitle": "EDI X12 & EDIFACT Viewer & Validator | Privatools",
+      "seoTitle": "Private EDI X12 & EDIFACT Viewer & Validator | Privatools",
       "slug": "/tools/edi-viewer",
       "canonicalUrl": "https://privatools.dev/tools/edi-viewer/",
       "category": "Security & Dev",
@@ -231,7 +231,7 @@
     {
       "id": "hash-studio",
       "name": "Cryptographic Checksum & File Hash Studio",
-      "seoTitle": "File Checksum & SHA-256 Hash Studio | Privatools",
+      "seoTitle": "Private File Checksum & SHA-256 Hash Studio | Privatools",
       "slug": "/tools/hash-studio",
       "canonicalUrl": "https://privatools.dev/tools/hash-studio/",
       "category": "Security & Dev",
@@ -297,7 +297,7 @@
     {
       "id": "diff-viewer",
       "name": "Code & Text Diff / Patch Studio",
-      "seoTitle": "Code & Text Diff Checker | Privatools",
+      "seoTitle": "Private Code & Text Diff Checker | Privatools",
       "slug": "/tools/diff-viewer",
       "canonicalUrl": "https://privatools.dev/tools/diff-viewer/",
       "category": "Data & Config",
@@ -368,7 +368,7 @@
     {
       "id": "regex-studio",
       "name": "Client-Side Regex Workbench & Tester",
-      "seoTitle": "Regex Tester & Match Workbench | Privatools",
+      "seoTitle": "Private Regex Tester & Match Workbench | Privatools",
       "slug": "/tools/regex-studio",
       "canonicalUrl": "https://privatools.dev/tools/regex-studio/",
       "category": "Security & Dev",
@@ -401,7 +401,7 @@
     {
       "id": "markdown-lab",
       "name": "Markdown & Technical Documentation Studio",
-      "seoTitle": "Markdown Editor & Live PDF Preview | Privatools",
+      "seoTitle": "Private Markdown Editor & Live PDF Preview | Privatools",
       "slug": "/tools/markdown-lab",
       "canonicalUrl": "https://privatools.dev/tools/markdown-lab/",
       "category": "Text & Encodings",
@@ -439,7 +439,7 @@
     {
       "id": "media-lab",
       "name": "Media Privacy Lab & Metadata Scrubber",
-      "seoTitle": "EXIF & Photo Metadata Scrubber | Privatools",
+      "seoTitle": "Private EXIF & Photo Metadata Scrubber | Privatools",
       "slug": "/tools/media-lab",
       "canonicalUrl": "https://privatools.dev/tools/media-lab/",
       "category": "Media & Images",
@@ -478,7 +478,7 @@
     {
       "id": "subnet-calculator",
       "name": "Network & Subnet CIDR Studio",
-      "seoTitle": "IPv4 & IPv6 Subnet CIDR Calculator | Privatools",
+      "seoTitle": "Private IPv4 & IPv6 Subnet CIDR Calculator | Privatools",
       "slug": "/tools/subnet-calculator",
       "canonicalUrl": "https://privatools.dev/tools/subnet-calculator/",
       "category": "Security & Dev",
@@ -516,7 +516,7 @@
     {
       "id": "date-time-calculator",
       "name": "Date, Time, Epoch & Cron Precision Studio",
-      "seoTitle": "Unix Epoch Timestamp & Cron Studio | Privatools",
+      "seoTitle": "Private Unix Epoch Timestamp & Cron Studio | Privatools",
       "slug": "/tools/date-time-calculator",
       "canonicalUrl": "https://privatools.dev/tools/date-time-calculator/",
       "category": "Text & Encodings",
@@ -555,7 +555,7 @@
     {
       "id": "video-lab",
       "name": "Video & Audio Transcoder Studio",
-      "seoTitle": "Video & Audio Converter Lab | Privatools",
+      "seoTitle": "Private Video & Audio Converter Lab | Privatools",
       "slug": "/tools/video-lab",
       "canonicalUrl": "https://privatools.dev/tools/video-lab/",
       "category": "Media & Images",
@@ -603,7 +603,9 @@
         "audio converter",
         "video converter",
         "transcode",
-        "media"
+        "media",
+        "video lab",
+        "media lab"
       ],
       "privacyModel": "100% Client-Side In-Memory Execution, Zero Data Uploads",
       "status": "ready"
@@ -611,7 +613,7 @@
     {
       "id": "color-studio",
       "name": "CSS & Modern Color Palette Studio",
-      "seoTitle": "Color Converter & Contrast Checker | Privatools",
+      "seoTitle": "Private Color Converter & Contrast Checker | Privatools",
       "slug": "/tools/color-studio",
       "canonicalUrl": "https://privatools.dev/tools/color-studio/",
       "category": "Media & Images",
@@ -668,7 +670,7 @@
     {
       "id": "random-studio",
       "name": "Provably Fair & Random Studio",
-      "seoTitle": "Provably Fair Random Number Studio | Privatools",
+      "seoTitle": "Private Provably Fair Random Number Studio | Privatools",
       "slug": "/tools/random-studio",
       "canonicalUrl": "https://privatools.dev/tools/random-studio/",
       "category": "Security & Dev",

@@ -153,8 +153,18 @@ async function runTests() {
 
     // Check meta description length (strictly 140 - 155 chars)
     const meta = generateToolMetadata(tool.id);
+    const title = (meta.title as string) || "";
     const desc = meta.description || "";
     const len = desc.length;
+
+    // Check title contains privacy/offline hook
+    const hasPrivacyHook = /private|offline|no uploads/i.test(title);
+    assert(
+      hasPrivacyHook,
+      "SEO Title",
+      `Tool "${tool.id}" title contains privacy/offline hook ("Private", "Offline", or "No Uploads"): "${title}"`
+    );
+
     assert(
       len >= 140 && len <= 155,
       "SEO Description",
@@ -200,6 +210,11 @@ async function runTests() {
             jsonTool.name === registryTool.name,
             "tools.json",
             `Tool "${registryTool.id}" name matches ("${jsonTool.name}")`
+          );
+          assert(
+            jsonTool.seoTitle === registryTool.seoTitle,
+            "tools.json",
+            `Tool "${registryTool.id}" seoTitle matches ("${jsonTool.seoTitle}")`
           );
           assert(
             jsonTool.slug === registryTool.slug,

@@ -113,6 +113,15 @@ function runSmokeTests() {
     );
     seenTitles.set(title, route);
 
+    if (isTool) {
+      const hasPrivacyHook = /private|offline|no uploads/i.test(title);
+      assert(
+        hasPrivacyHook,
+        route,
+        `Tool title contains privacy/offline hook: "${title}"`
+      );
+    }
+
     // Check meta description
     const descMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i) ||
                       html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["']/i);
