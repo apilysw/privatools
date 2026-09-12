@@ -6,6 +6,7 @@ import { Shield, Search } from "lucide-react";
 import { PrivacyBadge } from "../shared/PrivacyBadge";
 import { GithubIcon } from "../shared/GithubIcon";
 import { PwaInstallButton } from "@/components/pwa/PwaManager";
+import { GITHUB_REPO_URL } from "@/lib/config";
 
 interface NavbarProps {
   onOpenCommandPalette?: () => void;
@@ -68,7 +69,7 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
             Proof & Audit
           </Link>
           <a
-            href="https://github.com/apilysw/privatools"
+            href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"

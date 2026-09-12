@@ -7,6 +7,7 @@ export const SITE_URL = "https://privatools.dev";
 export const SITE_NAME = "Privatools";
 export const SITE_TAGLINE = "100% Client-Side Privacy Utilities";
 export const GITHUB_REPO_URL = "https://github.com/apilysw/privatools";
+export const BUY_ME_A_COFFEE_URL = "https://buymeacoffee.com/privatools";
 export const GUMROAD_BUY_URL = "https://privatools.gumroad.com/l/pwa";
 export const GUMROAD_PRODUCT_PERMALINK = "N1BU6qyBq-repkH5XejMpQ==";
 

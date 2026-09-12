@@ -7,6 +7,7 @@ Privatools is an open-source suite of confidential web utilities designed to pro
 - **Offline Capable:** Progressive Web App (PWA) with Cache-First asset caching and offline navigation for visited tools and core shell assets.
 - **Canonical Domain:** https://privatools.dev
 - **Source Repository:** https://github.com/apilysw/privatools
+- **Buy Me a Coffee:** https://buymeacoffee.com/privatools
 
 ---
 

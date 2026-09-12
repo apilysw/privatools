@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { TOOLS_REGISTRY } from "../src/lib/registry";
 import { TOOLS_CONTENT } from "../src/lib/tool-content";
-import { SITE_URL, GUMROAD_BUY_URL } from "../src/lib/config";
+import { SITE_URL, GUMROAD_BUY_URL, BUY_ME_A_COFFEE_URL } from "../src/lib/config";
 
 interface TestFailure {
   category: string;
@@ -34,6 +34,11 @@ function runTests() {
     GUMROAD_BUY_URL === "https://privatools.gumroad.com/l/pwa",
     "Config",
     `GUMROAD_BUY_URL must be https://privatools.gumroad.com/l/pwa (actual: ${GUMROAD_BUY_URL})`
+  );
+  assert(
+    BUY_ME_A_COFFEE_URL === "https://buymeacoffee.com/privatools",
+    "Config",
+    `BUY_ME_A_COFFEE_URL must be https://buymeacoffee.com/privatools (actual: ${BUY_ME_A_COFFEE_URL})`
   );
 
   // 2. Tool Registry Invariants

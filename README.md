@@ -1,5 +1,7 @@
 # Privatools — Zero-Knowledge Privacy Converters
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-yellow?style=flat-square&logo=buy-me-a-coffee)](https://buymeacoffee.com/privatools)
+
 > **100% Client-Side Web Utilities.** Your data, files, certificates, and secrets never leave your browser.
 
 Privatools is a source-available, high-performance suite of utility converters built with **Next.js 15 (Static Export)**, **TypeScript**, and **Tailwind CSS**. All operations execute strictly within the browser's local sandbox (using JavaScript, Canvas APIs, and Web Workers) with **zero data uploads**.
@@ -174,6 +176,14 @@ The resulting `out/` directory contains standard static HTML/CSS/JS ready for de
 Love Privatools? Get the **installable offline app** — all 20+ tools on your home screen, no internet required, no ads. One-time purchase, no subscription.
 
 👉 **[Get it on Gumroad](https://privatools.gumroad.com/l/pwa)** — ~£3 / ~$4
+
+---
+
+## ☕ Support the Project
+
+If you find Privatools useful and would like to support independent development of privacy-first software:
+
+👉 **[Buy Me a Coffee](https://buymeacoffee.com/privatools)**
 
 ---
 

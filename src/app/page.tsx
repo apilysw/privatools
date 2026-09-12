@@ -738,7 +738,7 @@ export default function HomePage() {
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
               Inspect our{" "}
               <a
-                href="https://github.com/apilysw/privatools"
+                href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-emerald-600 dark:text-emerald-400 underline hover:text-emerald-500 transition-colors"

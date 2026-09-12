@@ -11,7 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { GithubIcon } from "@/components/shared/GithubIcon";
-import { SITE_NAME, getCanonicalUrl, DEFAULT_OG_IMAGE } from "@/lib/config";
+import { SITE_NAME, GITHUB_REPO_URL, getCanonicalUrl, DEFAULT_OG_IMAGE } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Independent Privacy Audit & Zero-Knowledge Proof | Privatools",
@@ -229,7 +229,7 @@ export default function PrivacyAuditPage() {
         </div>
 
         <a
-          href="https://github.com/apilysw/privatools"
+          href={GITHUB_REPO_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-xs transition-colors shadow-sm shrink-0"

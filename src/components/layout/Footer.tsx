@@ -2,9 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Lock, Cpu, Globe, WifiOff } from "lucide-react";
+import { ShieldCheck, Lock, Cpu, Globe, WifiOff, Coffee } from "lucide-react";
 import { GithubIcon } from "../shared/GithubIcon";
 import { usePwa, PwaInstallButton } from "@/components/pwa/PwaManager";
+import { GITHUB_REPO_URL, BUY_ME_A_COFFEE_URL } from "@/lib/config";
 
 export function Footer() {
   const { isOnline } = usePwa();
@@ -205,13 +206,24 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/apilysw/privatools"
+                  href={GITHUB_REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
                 >
                   <GithubIcon className="w-3.5 h-3.5" />
                   <span>GitHub Repository</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={BUY_ME_A_COFFEE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-amber-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
+                >
+                  <Coffee className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Buy Me a Coffee</span>
                 </a>
               </li>
               <li className="text-[11px] text-zinc-400">
@@ -227,13 +239,23 @@ export function Footer() {
             <p>© {new Date().getFullYear()} Privatools. Designed for privacy, speed, and zero friction.</p>
             <span>•</span>
             <a
-              href="https://github.com/apilysw/privatools"
+              href={GITHUB_REPO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 hover:text-emerald-500 transition-colors"
             >
               <GithubIcon className="w-3.5 h-3.5" />
               <span>apilysw/privatools</span>
+            </a>
+            <span>•</span>
+            <a
+              href={BUY_ME_A_COFFEE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 hover:text-amber-500 transition-colors"
+            >
+              <Coffee className="w-3 h-3 text-amber-500" />
+              <span>Buy Me a Coffee</span>
             </a>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-[11px]">
