@@ -199,7 +199,7 @@ export function Footer() {
                 </Link>
               </li>
               <li className="pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                <Link href="/privacy-audit" className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                <Link href="/privacy-audit" className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
                   <span>Client-Side Audit Proof</span>
                 </Link>
               </li>
