@@ -2,13 +2,47 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShieldCheck, Lock, Cpu, Globe, WifiOff, Coffee } from "lucide-react";
 import { GithubIcon } from "../shared/GithubIcon";
 import { usePwa, PwaInstallButton } from "@/components/pwa/PwaManager";
 import { GITHUB_REPO_URL, BUY_ME_A_COFFEE_URL } from "@/lib/config";
 
+interface ToolLinkProps {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+function ToolLink({ href, children, className = "" }: ToolLinkProps) {
+  const pathname = usePathname();
+  const cleanPath = (pathname || "").replace(/\/+$/, "");
+  const cleanHref = href.replace(/\/+$/, "");
+  const active = cleanPath !== "" && cleanPath === cleanHref;
+
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`inline-flex items-center gap-1.5 transition-all ${
+        active
+          ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 dark:bg-emerald-500/15 px-2 py-0.5 -mx-2 rounded-md border border-emerald-500/25 shadow-2xs"
+          : `hover:text-emerald-500 transition-colors ${className}`
+      }`}
+    >
+      {active && (
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 animate-pulse" aria-hidden="true" />
+      )}
+      <span>{children}</span>
+    </Link>
+  );
+}
+
 export function Footer() {
   const { isOnline } = usePwa();
+  const pathname = usePathname();
+  const cleanPath = (pathname || "").replace(/\/+$/, "");
+  const isActive = (href: string) => cleanPath !== "" && cleanPath === href.replace(/\/+$/, "");
 
   return (
     <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 py-12 mt-20 print:hidden">
@@ -35,7 +69,12 @@ export function Footer() {
             {/* Row 1, Col 1: About & Mission */}
             <Link
               href="/about"
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs whitespace-nowrap w-full"
+              aria-current={isActive("/about") ? "page" : undefined}
+              className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors shadow-xs whitespace-nowrap w-full ${
+                isActive("/about")
+                  ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold"
+                  : "border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300"
+              }`}
             >
               <Cpu className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
               <span>About & Mission</span>
@@ -44,7 +83,12 @@ export function Footer() {
             {/* Row 1, Col 2: Verify Audit Proof */}
             <Link
               href="/privacy-audit"
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs whitespace-nowrap w-full"
+              aria-current={isActive("/privacy-audit") ? "page" : undefined}
+              className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors shadow-xs whitespace-nowrap w-full ${
+                isActive("/privacy-audit")
+                  ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold"
+                  : "border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300"
+              }`}
             >
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
               <span>Verify Audit Proof</span>
@@ -86,39 +130,39 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/random-studio" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/random-studio">
                   Provably Fair & Random Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/regex-studio" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/regex-studio">
                   Regex Workbench & Tester
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/hash-studio" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/hash-studio">
                   Checksum & File Hash Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/cert-inspector" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/cert-inspector">
                   X.509 Certificate Inspector
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/jwt-inspector" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/jwt-inspector">
                   JWT & OAuth Token Debugger
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/edi-viewer" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/edi-viewer">
                   EDI X12 & UN/EDIFACT Viewer
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/subnet-calculator" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/subnet-calculator">
                   Network & Subnet CIDR Studio
-                </Link>
+                </ToolLink>
               </li>
             </ul>
           </div>
@@ -131,29 +175,29 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/image-converter" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/image-converter">
                   Client-Side Image Lab (WebP/PNG/JPEG)
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/media-lab" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/media-lab">
                   Media Privacy & EXIF Scrubber
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/video-lab" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/video-lab">
                   Video & Audio Transcoder Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/color-studio" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/color-studio">
                   CSS & Modern Color Palette Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/qr-studio" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/qr-studio">
                   Offline QR Code & Barcode Studio
-                </Link>
+                </ToolLink>
               </li>
             </ul>
           </div>
@@ -166,24 +210,24 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/data-converter" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/data-converter">
                   Structured Data (JSON/YAML/CSV/XML)
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/pdf-lab" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/pdf-lab">
                   Client-Side PDF Privacy Lab
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/diff-viewer" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/diff-viewer">
                   Code & Text Diff / Patch Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/sqlite-lab" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/sqlite-lab">
                   SQLite Database Explorer & Exporter
-                </Link>
+                </ToolLink>
               </li>
             </ul>
           </div>
@@ -196,29 +240,35 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
               <li>
-                <Link href="/tools/markdown-lab" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/markdown-lab">
                   Markdown & Technical Doc Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/text-converter" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/text-converter">
                   Text & String Encoding Studio
-                </Link>
+                </ToolLink>
               </li>
               <li>
-                <Link href="/tools/date-time-calculator" className="hover:text-emerald-500 transition-colors">
+                <ToolLink href="/tools/date-time-calculator">
                   Date, Time, Epoch & Cron Studio
-                </Link>
+                </ToolLink>
               </li>
               <li className="pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                <Link href="/about" className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
-                  <span>About & Creator</span>
-                </Link>
+                <ToolLink
+                  href="/about"
+                  className="font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
+                >
+                  About & Creator
+                </ToolLink>
               </li>
               <li>
-                <Link href="/privacy-audit" className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
-                  <span>Client-Side Audit Proof</span>
-                </Link>
+                <ToolLink
+                  href="/privacy-audit"
+                  className="font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300"
+                >
+                  Client-Side Audit Proof
+                </ToolLink>
               </li>
               <li>
                 <a
@@ -254,11 +304,25 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-2">
             <p>© {new Date().getFullYear()} Privatools. Designed for privacy, speed, and zero friction.</p>
             <span>•</span>
-            <Link href="/about" className="hover:text-emerald-500 transition-colors">
+            <Link
+              href="/about"
+              className={
+                isActive("/about")
+                  ? "text-emerald-600 dark:text-emerald-400 font-medium transition-colors"
+                  : "hover:text-emerald-500 transition-colors"
+              }
+            >
               About & Mission
             </Link>
             <span>•</span>
-            <Link href="/privacy-audit" className="hover:text-emerald-500 transition-colors">
+            <Link
+              href="/privacy-audit"
+              className={
+                isActive("/privacy-audit")
+                  ? "text-emerald-600 dark:text-emerald-400 font-medium transition-colors"
+                  : "hover:text-emerald-500 transition-colors"
+              }
+            >
               Audit Proof
             </Link>
             <span>•</span>
