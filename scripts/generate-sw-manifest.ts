@@ -83,6 +83,7 @@ function generateSwManifest() {
   const requiredRoutes = [
     "/",
     "/privacy-audit/",
+    "/about/",
     ...TOOLS_REGISTRY.map((t) => `${t.slug}/`),
     "/404.html",
   ];

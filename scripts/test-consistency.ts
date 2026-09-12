@@ -118,6 +118,15 @@ async function runTests() {
     }
   }
 
+  // Non-tool standalone routes
+  const aboutPagePath = path.join(process.cwd(), "src", "app", "about", "page.tsx");
+  const aboutLayoutPath = path.join(process.cwd(), "src", "app", "about", "layout.tsx");
+  assert(fs.existsSync(aboutPagePath), "Routes", "src/app/about/page.tsx exists");
+  assert(fs.existsSync(aboutLayoutPath), "Routes", "src/app/about/layout.tsx exists");
+
+  const privacyAuditPath = path.join(process.cwd(), "src", "app", "privacy-audit", "page.tsx");
+  assert(fs.existsSync(privacyAuditPath), "Routes", "src/app/privacy-audit/page.tsx exists");
+
   // 4. Rich Landing Content & SEO Catalog
   console.log("\n--- 4. Rich Landing Content & Meta Descriptions ---");
   for (const tool of TOOLS_REGISTRY) {
@@ -288,9 +297,9 @@ async function runTests() {
   try {
     const sitemapEntries = sitemap();
     assert(
-      Array.isArray(sitemapEntries) && sitemapEntries.length === TOOLS_REGISTRY.length + 2,
+      Array.isArray(sitemapEntries) && sitemapEntries.length === TOOLS_REGISTRY.length + 3,
       "Sitemap",
-      `Sitemap has ${TOOLS_REGISTRY.length + 2} entries (root, privacy-audit, and 19 tools)`
+      `Sitemap has ${TOOLS_REGISTRY.length + 3} entries (root, privacy-audit, about, and 19 tools)`
     );
 
     const sitemapUrls = new Set<string>();
@@ -303,8 +312,31 @@ async function runTests() {
         `Sitemap URL has correct base: ${entry.url}`
       );
     }
+
+    assert(
+      sitemapUrls.has("https://privatools.dev/about/"),
+      "Sitemap",
+      "Sitemap contains canonical https://privatools.dev/about/"
+    );
   } catch (err) {
     assert(false, "Sitemap", `Failed to generate sitemap: ${err}`);
+  }
+
+  // 7b. Organization & Creator Schema Invariants
+  console.log("\n--- 7b. Organization & Creator Schema Invariants ---");
+  const homepagePath = path.join(process.cwd(), "src", "app", "page.tsx");
+  if (fs.existsSync(homepagePath)) {
+    const homeContent = fs.readFileSync(homepagePath, "utf8");
+    assert(
+      homeContent.includes("Gareth Barlow"),
+      "Schema",
+      "Homepage Organization schema attributes Gareth Barlow as founder"
+    );
+    assert(
+      homeContent.includes("BUY_ME_A_COFFEE_URL"),
+      "Schema",
+      "Homepage Organization schema includes BUY_ME_A_COFFEE_URL in sameAs"
+    );
   }
 
   // 8. Security Headers Verification (public/_headers)

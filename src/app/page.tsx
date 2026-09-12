@@ -42,7 +42,14 @@ import {
 import { TOOL_CATEGORIES, TOOLS_REGISTRY, searchTools, ToolMetadata } from "@/lib/registry";
 import { useToolPreferences, orderToolsByCustomOrder } from "@/lib/useToolPreferences";
 import { usePwa } from "@/components/pwa/PwaManager";
-import { SITE_URL, SITE_NAME, GITHUB_REPO_URL, GUMROAD_BUY_URL, getCanonicalUrl } from "@/lib/config";
+import {
+  SITE_URL,
+  SITE_NAME,
+  GITHUB_REPO_URL,
+  BUY_ME_A_COFFEE_URL,
+  GUMROAD_BUY_URL,
+  getCanonicalUrl,
+} from "@/lib/config";
 
 const iconMap: Record<string, React.ElementType> = {
   FileSpreadsheet,
@@ -393,7 +400,29 @@ export default function HomePage() {
         name: SITE_NAME,
         url: `${SITE_URL}/`,
         logo: `${SITE_URL}/icons/icon-512.png`,
-        sameAs: [GITHUB_REPO_URL],
+        sameAs: [GITHUB_REPO_URL, BUY_ME_A_COFFEE_URL],
+        founder: {
+          "@type": "Person",
+          "@id": `${getCanonicalUrl("/about")}#creator`,
+          name: "Gareth Barlow",
+          url: "https://github.com/apilysw",
+          sameAs: ["https://github.com/apilysw", BUY_ME_A_COFFEE_URL],
+          jobTitle: "Software Engineer & Creator of Privatools",
+        },
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            contactType: "technical support",
+            url: `${GITHUB_REPO_URL}/issues`,
+          },
+        ],
+        knowsAbout: [
+          "Zero-Knowledge Web Applications",
+          "Client-Side Cryptography",
+          "WebAssembly",
+          "Privacy Engineering",
+          "Offline Web Applications",
+        ],
       },
       {
         "@type": "ItemList",

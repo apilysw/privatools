@@ -53,6 +53,14 @@ export function Footer() {
             </div>
 
             <Link
+              href="/about"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
+            >
+              <Cpu className="w-3.5 h-3.5 text-emerald-500" />
+              <span>About & Mission</span>
+            </Link>
+
+            <Link
               href="/privacy-audit"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
             >
@@ -200,6 +208,11 @@ export function Footer() {
                 </Link>
               </li>
               <li className="pt-2 border-t border-zinc-200 dark:border-zinc-800">
+                <Link href="/about" className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+                  <span>About & Creator</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy-audit" className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
                   <span>Client-Side Audit Proof</span>
                 </Link>
@@ -237,6 +250,14 @@ export function Footer() {
         <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
           <div className="flex flex-wrap items-center gap-2">
             <p>© {new Date().getFullYear()} Privatools. Designed for privacy, speed, and zero friction.</p>
+            <span>•</span>
+            <Link href="/about" className="hover:text-emerald-500 transition-colors">
+              About & Mission
+            </Link>
+            <span>•</span>
+            <Link href="/privacy-audit" className="hover:text-emerald-500 transition-colors">
+              Audit Proof
+            </Link>
             <span>•</span>
             <a
               href={GITHUB_REPO_URL}

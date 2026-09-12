@@ -154,6 +154,7 @@ function runOfflineAcceptanceTest() {
   const routesToTest = [
     { name: "Home Directory", slug: "/" },
     { name: "Privacy Audit Proof", slug: "/privacy-audit" },
+    { name: "About & Creator", slug: "/about" },
     ...TOOLS_REGISTRY.map((t) => ({ name: t.name, slug: t.slug })),
   ];
 

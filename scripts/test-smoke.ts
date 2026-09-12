@@ -79,6 +79,7 @@ function runSmokeTests() {
   const routesToTest: Array<{ route: string; name: string; isTool?: boolean }> = [
     { route: "/", name: "Homepage" },
     { route: "/privacy-audit", name: "Privacy Audit" },
+    { route: "/about", name: "About & Creator" },
     ...TOOLS_REGISTRY.map((t) => ({ route: t.slug, name: t.name, isTool: true })),
   ];
 
