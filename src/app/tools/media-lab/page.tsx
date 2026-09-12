@@ -108,6 +108,7 @@ export default function MediaLabPage() {
 
   // Process Single Image
   const processSingleImage = async (file: File | Blob, name?: string) => {
+    setActiveTab("single");
     setIsAnalyzing(true);
     setScrubbedResult(null);
     if (singlePreviewUrl) {
@@ -258,6 +259,7 @@ export default function MediaLabPage() {
   // Presets Loader
   const loadSampleGeotaggedPreset = async () => {
     setActivePreset("iphone-gps");
+    setActiveTab("single");
     const bytes = generateSampleGeotaggedJpeg({
       make: "Apple",
       model: "iPhone 16 Pro Max",
@@ -280,6 +282,7 @@ export default function MediaLabPage() {
 
   const loadSampleDslrPreset = async () => {
     setActivePreset("dslr-serial");
+    setActiveTab("single");
     const bytes = generateSampleGeotaggedJpeg({
       make: "Canon",
       model: "EOS R5 Mark II",
