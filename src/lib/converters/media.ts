@@ -1,5 +1,9 @@
-// @ts-expect-error - exifr lite ESM bundle
-import exifr from "exifr/dist/lite.esm.mjs";
+import exifr from "exifr";
+import {
+  GOLDEN_GATE_JPEG_BASE64,
+  STUDIO_TARGET_JPEG_BASE64,
+  decodeBase64Jpeg,
+} from "./sample-images";
 
 export interface GpsCoordinates {
   latitude: number;
@@ -97,7 +101,15 @@ export async function inspectImageMetadata(
       mergeOutput: true,
     })) || {};
   } catch {
-    raw = {};
+    try {
+      raw = (await exifr.parse(input as unknown as Blob, {
+        tiff: true,
+        gps: true,
+        mergeOutput: true,
+      })) || {};
+    } catch {
+      raw = {};
+    }
   }
 
   // Extract GPS
@@ -513,66 +525,245 @@ export function extractWaveformPeaks(channelData: Float32Array, numBars: number)
   return peaks;
 }
 
-/**
- * Generates synthetic geotagged JPEG image buffer in memory.
- */
-export function generateSampleGeotaggedJpeg(options: {
+export interface SampleGeotaggedJpegOptions {
   make?: string;
   model?: string;
+  lensModel?: string;
+  lensMake?: string;
   lat?: number;
   lon?: number;
   altitude?: number;
   serial?: string;
   date?: string;
-} = {}): Uint8Array {
+  iso?: number;
+  fNumber?: number;
+  exposureTime?: [number, number];
+  focalLength?: number;
+  software?: string;
+  basePreset?: "landscape" | "studio";
+}
+
+/**
+ * Generates synthetic geotagged JPEG image buffer in memory.
+ * Emits real, colorful photography scenes (Golden Gate sunset or Studio Color Checker)
+ * with complete EXIF, GPS coordinates, hardware, and exposure tags.
+ */
+export function generateSampleGeotaggedJpeg(
+  options: SampleGeotaggedJpegOptions = {}
+): Uint8Array {
   const bytes: number[] = [];
-  function p8(b: number) { bytes.push(b & 0xff); }
-  function p16(s: number) { bytes.push(s & 0xff, (s >> 8) & 0xff); }
-  function p32(i: number) { bytes.push(i & 0xff, (i >> 8) & 0xff, (i >> 16) & 0xff, (i >> 24) & 0xff); }
-
-  p8(0x49); p8(0x49); p16(42); p32(8); // Little-Endian TIFF Header
-
-  const ifd0Tags = [
-    { id: 0x010f, type: 2, value: options.make || "Apple" },
-    { id: 0x0110, type: 2, value: options.model || "iPhone 16 Pro Max" },
-    { id: 0x0131, type: 2, value: "iOS 18.2 Camera App" },
-    { id: 0x0132, type: 2, value: options.date || "2026:09:11 14:32:05" },
-    { id: 0xa431, type: 2, value: options.serial || "DN6ZL01Q0D82" },
-    { id: 0x8825, type: 4, value: 0 }, // GPS IFD pointer
-  ];
-
-  p16(ifd0Tags.length);
-  const ifd0Offset = 8;
-  const ifd0Size = 2 + ifd0Tags.length * 12 + 4;
-  let poolOffset = ifd0Offset + ifd0Size;
-  const pool: number[] = [];
-  const gpsOffset = poolOffset + 300;
-
-  for (const tag of ifd0Tags) {
-    p16(tag.id);
-    p16(tag.type);
-    if (tag.id === 0x8825) {
-      p32(1);
-      p32(gpsOffset);
-    } else {
-      const strVal = tag.value + "\0";
-      p32(strVal.length);
-      if (strVal.length <= 4) {
-        for (let i = 0; i < 4; i++) p8(strVal.charCodeAt(i) || 0);
-      } else {
-        p32(poolOffset);
-        poolOffset += strVal.length;
-        for (let i = 0; i < strVal.length; i++) pool.push(strVal.charCodeAt(i));
-      }
-    }
+  function p8(b: number) {
+    bytes.push(b & 0xff);
   }
+  function p16(s: number) {
+    bytes.push(s & 0xff, (s >> 8) & 0xff);
+  }
+  function p32(i: number) {
+    bytes.push(
+      i & 0xff,
+      (i >> 8) & 0xff,
+      (i >> 16) & 0xff,
+      (i >> 24) & 0xff
+    );
+  }
+
+  // Little-Endian TIFF Header (II, 42, offset 8)
+  p8(0x49);
+  p8(0x49);
+  p16(42);
+  p32(8);
+
+  const make = options.make || "Apple";
+  const model = options.model || "iPhone 16 Pro Max";
+  const software = options.software || "iOS 18.2 Camera App";
+  const date = options.date || "2026:09:11 14:32:05";
+  const serial = options.serial || "DN6ZL01Q0D82";
+  const lensModel =
+    options.lensModel || "iPhone 16 Pro Max back camera 6.78mm f/1.78";
+  const lensMake = options.lensMake || make;
+  const iso = options.iso || 64;
+  const fNumber = options.fNumber || 1.78;
+  const expTime = options.exposureTime || [1, 240];
+  const focalLength = options.focalLength || 6.78;
+
+  // Calculate layout:
+  // IFD0 entries: Make, Model, Software, ModifyDate, ExifIFD (0x8769), GPSIFD (0x8825)
+  const ifd0Count = 6;
+  const ifd0Offset = 8;
+  const ifd0Size = 2 + ifd0Count * 12 + 4;
+  let poolOffset = ifd0Offset + ifd0Size;
+
+  const strMake = make + "\0";
+  const strModel = model + "\0";
+  const strSoftware = software + "\0";
+  const strDate = date + "\0";
+
+  const ifd0Strings = [
+    { offset: poolOffset, data: strMake },
+    { offset: poolOffset + strMake.length, data: strModel },
+    { offset: poolOffset + strMake.length + strModel.length, data: strSoftware },
+    {
+      offset:
+        poolOffset +
+        strMake.length +
+        strModel.length +
+        strSoftware.length,
+      data: strDate,
+    },
+  ];
+  poolOffset +=
+    strMake.length + strModel.length + strSoftware.length + strDate.length;
+  if (poolOffset % 2 !== 0) poolOffset++;
+
+  const exifIfdOffset = poolOffset;
+  const exifCount = 10;
+  const exifSize = 2 + exifCount * 12 + 4;
+  let exifPoolOffset = exifIfdOffset + exifSize;
+
+  const strSerial = serial + "\0";
+  const strLensModel = lensModel + "\0";
+  const strLensMake = lensMake + "\0";
+  const strOffsetTime = "-07:00\0";
+
+  const exifDataStart = exifPoolOffset;
+  const expTimeBytes = 8;
+  const fNumberBytes = 8;
+  const focalLengthBytes = 8;
+  const exifPoolLength =
+    expTimeBytes +
+    fNumberBytes +
+    focalLengthBytes +
+    strDate.length +
+    strDate.length +
+    strOffsetTime.length +
+    strSerial.length +
+    strLensModel.length +
+    strLensMake.length;
+  let nextOffset = exifDataStart + exifPoolLength;
+  if (nextOffset % 2 !== 0) nextOffset++;
+
+  const gpsIfdOffset = nextOffset;
+  const gpsCount = 5;
+  const gpsSize = 2 + gpsCount * 12 + 4;
+  let gpsPoolOffset = gpsIfdOffset + gpsSize;
+
+  // WRITE IFD0
+  p16(ifd0Count);
+  p16(0x010f);
+  p16(2);
+  p32(strMake.length);
+  p32(ifd0Strings[0].offset);
+  p16(0x0110);
+  p16(2);
+  p32(strModel.length);
+  p32(ifd0Strings[1].offset);
+  p16(0x0131);
+  p16(2);
+  p32(strSoftware.length);
+  p32(ifd0Strings[2].offset);
+  p16(0x0132);
+  p16(2);
+  p32(strDate.length);
+  p32(ifd0Strings[3].offset);
+  p16(0x8769);
+  p16(4);
+  p32(1);
+  p32(exifIfdOffset);
+  p16(0x8825);
+  p16(4);
+  p32(1);
+  p32(gpsIfdOffset);
+  p32(0); // Next IFD (none)
+
+  for (const item of ifd0Strings) {
+    for (let i = 0; i < item.data.length; i++) p8(item.data.charCodeAt(i));
+  }
+  while (bytes.length < exifIfdOffset) p8(0);
+
+  // WRITE EXIF IFD
+  p16(exifCount);
+  p16(0x829a);
+  p16(5);
+  p32(1);
+  p32(exifPoolOffset);
+  exifPoolOffset += 8;
+
+  p16(0x829d);
+  p16(5);
+  p32(1);
+  p32(exifPoolOffset);
+  exifPoolOffset += 8;
+
+  p16(0x8827);
+  p16(3);
+  p32(1);
+  p16(iso);
+  p16(0);
+
+  p16(0x9003);
+  p16(2);
+  p32(strDate.length);
+  p32(exifPoolOffset);
+  exifPoolOffset += strDate.length;
+
+  p16(0x9004);
+  p16(2);
+  p32(strDate.length);
+  p32(exifPoolOffset);
+  exifPoolOffset += strDate.length;
+
+  p16(0x9010);
+  p16(2);
+  p32(strOffsetTime.length);
+  p32(exifPoolOffset);
+  exifPoolOffset += strOffsetTime.length;
+
+  p16(0x920a);
+  p16(5);
+  p32(1);
+  p32(exifPoolOffset);
+  exifPoolOffset += 8;
+
+  p16(0xa431);
+  p16(2);
+  p32(strSerial.length);
+  p32(exifPoolOffset);
+  exifPoolOffset += strSerial.length;
+
+  p16(0xa434);
+  p16(2);
+  p32(strLensModel.length);
+  p32(exifPoolOffset);
+  exifPoolOffset += strLensModel.length;
+
+  p16(0xa435);
+  p16(2);
+  p32(strLensMake.length);
+  p32(exifPoolOffset);
+  exifPoolOffset += strLensMake.length;
+
   p32(0);
-  for (const b of pool) p8(b);
 
-  while (bytes.length < gpsOffset) bytes.push(0);
+  // Write Exif Pool Data
+  p32(expTime[0]);
+  p32(expTime[1]);
+  p32(Math.round(fNumber * 100));
+  p32(100);
+  for (let i = 0; i < strDate.length; i++) p8(strDate.charCodeAt(i));
+  for (let i = 0; i < strDate.length; i++) p8(strDate.charCodeAt(i));
+  for (let i = 0; i < strOffsetTime.length; i++)
+    p8(strOffsetTime.charCodeAt(i));
+  p32(Math.round(focalLength * 100));
+  p32(100);
+  for (let i = 0; i < strSerial.length; i++) p8(strSerial.charCodeAt(i));
+  for (let i = 0; i < strLensModel.length; i++)
+    p8(strLensModel.charCodeAt(i));
+  for (let i = 0; i < strLensMake.length; i++) p8(strLensMake.charCodeAt(i));
 
-  // GPS IFD
-  const latVal = options.lat !== undefined ? options.lat : 37.8199; // Golden Gate Bridge
+  while (bytes.length < gpsIfdOffset) p8(0);
+
+  // WRITE GPS IFD
+  const latVal = options.lat !== undefined ? options.lat : 37.8199;
   const lonVal = options.lon !== undefined ? options.lon : -122.4783;
   const latRef = latVal >= 0 ? "N" : "S";
   const lonRef = lonVal >= 0 ? "E" : "W";
@@ -587,37 +778,61 @@ export function generateSampleGeotaggedJpeg(options: {
   const lonMin = Math.floor((absLon - lonDeg) * 60);
   const lonSec = Math.round(((absLon - lonDeg) * 60 - lonMin) * 60 * 100);
 
-  const gpsTags = [
-    { id: 0x0001, type: 2, value: latRef },
-    { id: 0x0002, type: 5, rationals: [[latDeg, 1], [latMin, 1], [latSec, 100]] },
-    { id: 0x0003, type: 2, value: lonRef },
-    { id: 0x0004, type: 5, rationals: [[lonDeg, 1], [lonMin, 1], [lonSec, 100]] },
-    { id: 0x0006, type: 5, rationals: [[Math.round(options.altitude || 67), 1]] },
-  ];
+  p16(gpsCount);
+  p16(0x0001);
+  p16(2);
+  p32(2);
+  p8(latRef.charCodeAt(0));
+  p8(0);
+  p16(0);
 
-  p16(gpsTags.length);
-  let gpsPoolOffset = gpsOffset + 2 + gpsTags.length * 12 + 4;
-  const gpsPool: number[] = [];
+  const gpsLatOffset = gpsPoolOffset;
+  p16(0x0002);
+  p16(5);
+  p32(3);
+  p32(gpsLatOffset);
+  gpsPoolOffset += 24;
 
-  for (const tag of gpsTags) {
-    p16(tag.id);
-    p16(tag.type);
-    if (tag.type === 2 && typeof tag.value === "string") {
-      const s = tag.value + "\0";
-      p32(s.length);
-      for (let i = 0; i < 4; i++) p8(s.charCodeAt(i) || 0);
-    } else if (tag.type === 5 && tag.rationals) {
-      p32(tag.rationals.length);
-      p32(gpsPoolOffset);
-      gpsPoolOffset += tag.rationals.length * 8;
-      for (const [num, den] of tag.rationals) {
-        gpsPool.push(num & 0xff, (num >> 8) & 0xff, (num >> 16) & 0xff, (num >> 24) & 0xff);
-        gpsPool.push(den & 0xff, (den >> 8) & 0xff, (den >> 16) & 0xff, (den >> 24) & 0xff);
-      }
-    }
-  }
+  p16(0x0003);
+  p16(2);
+  p32(2);
+  p8(lonRef.charCodeAt(0));
+  p8(0);
+  p16(0);
+
+  const gpsLonOffset = gpsPoolOffset;
+  p16(0x0004);
+  p16(5);
+  p32(3);
+  p32(gpsLonOffset);
+  gpsPoolOffset += 24;
+
+  const gpsAltOffset = gpsPoolOffset;
+  p16(0x0006);
+  p16(5);
+  p32(1);
+  p32(gpsAltOffset);
+  gpsPoolOffset += 8;
+
   p32(0);
-  for (const b of gpsPool) p8(b);
+
+  // GPS Pool Rationals
+  p32(latDeg);
+  p32(1);
+  p32(latMin);
+  p32(1);
+  p32(latSec);
+  p32(100);
+
+  p32(lonDeg);
+  p32(1);
+  p32(lonMin);
+  p32(1);
+  p32(lonSec);
+  p32(100);
+
+  p32(Math.round(options.altitude || 67));
+  p32(1);
 
   const tiffBuffer = new Uint8Array(bytes);
   const exifPrefix = new TextEncoder().encode("Exif\0\0");
@@ -633,15 +848,20 @@ export function generateSampleGeotaggedJpeg(options: {
   app1[3] = app1Length & 0xff;
   app1.set(app1Payload, 4);
 
-  // Minimal 1x1 JPEG bytes base64
-  const base641x1 =
-    "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=";
-  const raw1x1 = Uint8Array.from(atob(base641x1), (c) => c.charCodeAt(0));
+  // Select base image: Studio color checker for Canon/studio preset, Golden Gate for default/landscape
+  const isStudio =
+    options.basePreset === "studio" ||
+    (typeof options.make === "string" &&
+      options.make.toLowerCase().includes("canon"));
 
-  const result = new Uint8Array(2 + app1.length + raw1x1.length - 2);
-  result.set(raw1x1.subarray(0, 2), 0); // SOI
+  const baseRaw = decodeBase64Jpeg(
+    isStudio ? STUDIO_TARGET_JPEG_BASE64 : GOLDEN_GATE_JPEG_BASE64
+  );
+
+  const result = new Uint8Array(2 + app1.length + baseRaw.length - 2);
+  result.set(baseRaw.subarray(0, 2), 0); // SOI
   result.set(app1, 2); // APP1 EXIF
-  result.set(raw1x1.subarray(2), 2 + app1.length); // remainder of JPEG
+  result.set(baseRaw.subarray(2), 2 + app1.length); // remainder of JPEG
   return result;
 }
 

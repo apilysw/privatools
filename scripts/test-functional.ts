@@ -13,7 +13,7 @@ import { parseCertificate } from "../src/lib/converters/certificate";
 import { generateBarcodeSVG, parseGS1Payload, parseWiFiQR } from "../src/lib/converters/barcode";
 import { executeRegex } from "../src/lib/converters/regex";
 import { createDatabase, executeSql, exportTableToCsv, exportTableToJson } from "../src/lib/converters/sqlite";
-import { stripJpegLossless, generateSampleGeotaggedJpeg } from "../src/lib/converters/media";
+import { stripJpegLossless, generateSampleGeotaggedJpeg, inspectImageMetadata } from "../src/lib/converters/media";
 import { calculateScaledDimensions, encodeWav, extractWaveformPeaks } from "../src/lib/converters/video";
 import { parsePageRangeString, generateSamplePdf } from "../src/lib/converters/pdf";
 
@@ -362,13 +362,18 @@ AQ8AMIIBCgKCAQEA340W0+K8c6QeS12u9a8Z88qR8G+iA+jK4qLh8k+8u8lZ5P4m
   }
 
   // 16. Media Lab
-  console.log("\n--- 16. Media Lab (EXIF Stripper & Audio WAV) ---");
+  console.log("\n--- 16. Media Lab (EXIF Stripper, Metadata Inspector & Audio WAV) ---");
   try {
     const sampleJpeg = generateSampleGeotaggedJpeg({ lat: 37.7749, lon: -122.4194 });
     assert(sampleJpeg.length > 0, "Media Lab", "Generates sample geotagged JPEG in memory");
 
+    const inspected = await inspectImageMetadata(sampleJpeg);
+    assert(inspected.metadata.tagCount > 0, "Media Lab", "Inspects image metadata and extracts EXIF tags");
+    assert(inspected.metadata.gps?.latitude !== undefined, "Media Lab", "Extracts GPS latitude coordinates");
+    assert(inspected.riskReport.score === "High", "Media Lab", "Detects privacy risk on geotagged image");
+
     const strippedJpeg = stripJpegLossless(sampleJpeg);
-    assert(strippedJpeg.length > 0 && strippedJpeg.length <= sampleJpeg.length, "Media Lab", "Losslessly strips metadata without re-encoding");
+    assert(strippedJpeg.length > 0 && strippedJpeg.length < sampleJpeg.length, "Media Lab", "Losslessly strips metadata without re-encoding");
   } catch (err) {
     assert(false, "Media Lab", "Execution failure", String(err));
   }

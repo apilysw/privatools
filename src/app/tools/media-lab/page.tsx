@@ -261,11 +261,18 @@ export default function MediaLabPage() {
     const bytes = generateSampleGeotaggedJpeg({
       make: "Apple",
       model: "iPhone 16 Pro Max",
+      lensModel: "iPhone 16 Pro Max back camera 6.78mm f/1.78",
+      lensMake: "Apple",
       lat: 37.8199,
       lon: -122.4783,
       altitude: 67.5,
       serial: "DN6ZL01Q0D82",
       date: "2026:09:11 14:32:05",
+      iso: 64,
+      fNumber: 1.78,
+      exposureTime: [1, 240],
+      focalLength: 6.78,
+      basePreset: "landscape",
     });
     const blob = new Blob([bytes as unknown as BlobPart], { type: "image/jpeg" });
     processSingleImage(blob, "IMG_4821_GoldenGate.jpg");
@@ -276,11 +283,19 @@ export default function MediaLabPage() {
     const bytes = generateSampleGeotaggedJpeg({
       make: "Canon",
       model: "EOS R5 Mark II",
+      lensModel: "RF24-70mm F2.8 L IS USM",
+      lensMake: "Canon",
       lat: 51.5074,
       lon: -0.1278,
       altitude: 18.0,
       serial: "042021003981",
       date: "2026:09:10 11:15:30",
+      iso: 100,
+      fNumber: 2.8,
+      exposureTime: [1, 500],
+      focalLength: 50.0,
+      software: "Canon EOS Firmware 1.0.1",
+      basePreset: "studio",
     });
     const blob = new Blob([bytes as unknown as BlobPart], { type: "image/jpeg" });
     processSingleImage(blob, "RAW_2026_StudioMaster.jpg");
