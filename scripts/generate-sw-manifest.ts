@@ -317,7 +317,7 @@ self.addEventListener("fetch", (event) => {
         const cachedSlash = await cache.match(pathWithSlash);
         if (cachedSlash) return cachedSlash;
 
-        const pathWithoutSlash = url.pathname.replace(/\/+$/, "");
+        const pathWithoutSlash = url.pathname.replace(/\\/+$/, "");
         if (pathWithoutSlash) {
           const cachedNoSlash = await cache.match(pathWithoutSlash);
           if (cachedNoSlash) return cachedNoSlash;
