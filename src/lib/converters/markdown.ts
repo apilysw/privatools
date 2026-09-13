@@ -482,16 +482,26 @@ export function htmlToMarkdown(htmlString: string): string {
   return result.replace(/\n{3,}/g, "\n\n").trim();
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 /**
  * Generates a standalone, self-contained HTML document with embedded CSS.
  */
 export function generateStandaloneHtml(title: string, bodyHtml: string): string {
+  const safeTitle = escapeHtml(title || "Markdown Document");
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title || "Markdown Document"}</title>
+  <title>${safeTitle}</title>
   <style>
     :root {
       --bg: #ffffff;

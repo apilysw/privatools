@@ -90,10 +90,61 @@ export default function MediaLabPage() {
 
 
 
+  const singleRequestIdRef = useRef<number>(0);
+  const batchItemsRef = useRef<BatchItem[]>(batchItems);
+  const singlePreviewUrlRef = useRef<string | null>(singlePreviewUrl);
+  const audioUrlRef = useRef<string | null>(audioUrl);
+
+  useEffect(() => {
+    batchItemsRef.current = batchItems;
+  }, [batchItems]);
+
+  useEffect(() => {
+    singlePreviewUrlRef.current = singlePreviewUrl;
+  }, [singlePreviewUrl]);
+
+  useEffect(() => {
+    audioUrlRef.current = audioUrl;
+  }, [audioUrl]);
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (singlePreviewUrlRef.current) URL.revokeObjectURL(singlePreviewUrlRef.current);
+      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+      batchItemsRef.current.forEach((it) => {
+        if (it.previewUrl) URL.revokeObjectURL(it.previewUrl);
+      });
+    };
+  }, []);
+
+  // Clear Batch Queue Handler
+  const handleClearBatch = () => {
+    batchItems.forEach((item) => {
+      if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+    });
+    setBatchItems([]);
+  };
+
+  // Remove Single Batch Item
+  const handleRemoveBatchItem = (id: string) => {
+    setBatchItems((prev) => {
+      const item = prev.find((it) => it.id === id);
+      if (item?.previewUrl) {
+        URL.revokeObjectURL(item.previewUrl);
+      }
+      return prev.filter((it) => it.id !== id);
+    });
+  };
+
   // Clear Input Handler
   const handleClear = () => {
+    singleRequestIdRef.current++;
     if (singlePreviewUrl) URL.revokeObjectURL(singlePreviewUrl);
     if (audioUrl) URL.revokeObjectURL(audioUrl);
+    batchItems.forEach((item) => {
+      if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+    });
     setSingleFile(null);
     setSingleFileName(null);
     setSinglePreviewUrl(null);
@@ -108,6 +159,7 @@ export default function MediaLabPage() {
 
   // Process Single Image
   const processSingleImage = async (file: File | Blob, name?: string) => {
+    const currentRequestId = ++singleRequestIdRef.current;
     setActiveTab("single");
     setIsAnalyzing(true);
     setScrubbedResult(null);
@@ -123,13 +175,17 @@ export default function MediaLabPage() {
     try {
       const { metadata: parsedMeta, riskReport: parsedRisk } =
         await inspectImageMetadata(file);
+      if (currentRequestId !== singleRequestIdRef.current) return;
       setMetadata(parsedMeta);
       setRiskReport(parsedRisk);
     } catch {
+      if (currentRequestId !== singleRequestIdRef.current) return;
       setMetadata(null);
       setRiskReport(null);
     } finally {
-      setIsAnalyzing(false);
+      if (currentRequestId === singleRequestIdRef.current) {
+        setIsAnalyzing(false);
+      }
     }
   };
 
@@ -1086,6 +1142,15 @@ export default function MediaLabPage() {
 
                 <div className="flex items-center gap-2">
                   <button
+                    onClick={handleClearBatch}
+                    disabled={isBatchScrubbing}
+                    className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs font-semibold transition-colors flex items-center gap-1.5"
+                    title="Clear batch queue"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Clear Queue</span>
+                  </button>
+                  <button
                     onClick={handleScrubAllBatch}
                     disabled={isBatchScrubbing}
                     className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white text-xs font-semibold transition-colors flex items-center gap-2 shadow-sm"
@@ -1156,21 +1221,30 @@ export default function MediaLabPage() {
                           )}
                         </td>
                         <td className="p-3 text-right">
-                          {item.scrubbed && (
+                          <div className="flex items-center justify-end gap-2">
+                            {item.scrubbed && (
+                              <button
+                                onClick={() => {
+                                  const url = URL.createObjectURL(item.scrubbed!.blob);
+                                  const a = document.createElement("a");
+                                  a.href = url;
+                                  a.download = `scrubbed_${item.name}`;
+                                  a.click();
+                                  URL.revokeObjectURL(url);
+                                }}
+                                className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-500 hover:text-white transition-colors text-xs font-medium"
+                              >
+                                Download
+                              </button>
+                            )}
                             <button
-                              onClick={() => {
-                                const url = URL.createObjectURL(item.scrubbed!.blob);
-                                const a = document.createElement("a");
-                                a.href = url;
-                                a.download = `scrubbed_${item.name}`;
-                                a.click();
-                                URL.revokeObjectURL(url);
-                              }}
-                              className="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-emerald-500 hover:text-white transition-colors text-xs font-medium"
+                              onClick={() => handleRemoveBatchItem(item.id)}
+                              className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-red-500 transition-colors"
+                              title="Remove photo from batch"
                             >
-                              Download
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
-                          )}
+                          </div>
                         </td>
                       </tr>
                     ))}

@@ -6,7 +6,7 @@ import { parseEpoch, calculateDateDifference, parseCronExpression } from "../src
 import { hexToRgb, rgbToHex, calculateContrast, parseColor } from "../src/lib/converters/color";
 import { getRandomBytes, bytesToHex, generateUuidV4, generateDicewarePassphrase } from "../src/lib/converters/random";
 import { alignSideBySide, calculateDiffStats, generatePatch } from "../src/lib/converters/diff";
-import { parseMarkdown, calculateDocStats } from "../src/lib/converters/markdown";
+import { parseMarkdown, calculateDocStats, generateStandaloneHtml } from "../src/lib/converters/markdown";
 import { parseEdiDocument } from "../src/lib/converters/edi";
 import { decodeJwt } from "../src/lib/converters/jwt";
 import { parseCertificate } from "../src/lib/converters/certificate";
@@ -228,6 +228,15 @@ async function runFunctionalTests() {
 
     const stats = calculateDocStats(parsed.cleanMarkdown);
     assert(stats.taskItemsCount === 2 && stats.completedTasksCount === 1, "Markdown Lab", "Task count statistics");
+
+    const xssTitle = 'Test </title><script>alert("xss")</script>';
+    const standaloneHtml = generateStandaloneHtml(xssTitle, "<p>Content</p>");
+    assert(
+      !standaloneHtml.includes("</title><script>") &&
+      standaloneHtml.includes("&lt;/title&gt;&lt;script&gt;"),
+      "Markdown Lab",
+      "Escapes HTML special characters in exported standalone document title"
+    );
   } catch (err) {
     assert(false, "Markdown Lab", "Execution failure", String(err));
   }

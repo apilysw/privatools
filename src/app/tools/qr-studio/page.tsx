@@ -222,14 +222,14 @@ export default function QRStudioPage() {
   // Scanner: Initialize and decode image file
   const decodeImageFile = useCallback(async (file: File) => {
     setScanError(null);
+    let imageUrl: string | null = null;
     try {
       if (!codeReaderRef.current) {
         codeReaderRef.current = new BrowserMultiFormatReader();
       }
       const reader = codeReaderRef.current;
-      const imageUrl = URL.createObjectURL(file);
+      imageUrl = URL.createObjectURL(file);
       const result = await reader.decodeFromImageUrl(imageUrl);
-      URL.revokeObjectURL(imageUrl);
 
       const rawText = result.getText();
       const rawFormat = BarcodeFormat[result.getBarcodeFormat()] || "UNKNOWN";
@@ -248,6 +248,10 @@ export default function QRStudioPage() {
         "No recognizable barcode or QR code found in this image. Ensure the barcode is sharp, well-lit, and not heavily cropped."
       );
       setScanResult(null);
+    } finally {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
     }
   }, []);
 
